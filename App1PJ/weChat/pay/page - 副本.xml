@@ -1,0 +1,2008 @@
+<page>
+  <controls count="66">
+    <control type="DivRoot" pathname="/divRoot">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad>
+/*alert(document.getElementById("divRoot").style.height)
+var a=document.getElementById("divRoot").style.height;
+    document.getElementById("ee_panel43").style.height=document.getElementById("divRoot").style.height;
+*/ 
+setTimeout(function(){
+    ee.autoResize = false;
+},1000);
+ee.setVisible(ee.getControl("panel17"),true);  
+var url = window.location.search  
+
+//alert(url);
+if (url == "?_L_=/App1PJ/wechat/pay"){
+    //alert(1);
+    window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxeeb9b2f6e1f01d23&amp;response_type=code&amp;redirect_uri=http%3A%2F%2Fm.1peijia.com%2Feengine%2Fa.htm&amp;scope=snsapi_base&amp;state=STATE#wechat_redirect";
+}
+ 
+var index=url.indexOf("code"); 
+var code=url.substr(index+5,url.length);   
+
+g5.code = code;
+//alert(index);
+
+//alert("code="+g5.code);
+
+
+var flag=1;
+var wait=60;                               
+function time(o) { 
+       var mobile = ee.getEditText(ee.getControl("edit1"));
+            //手机号码检测
+           if (mobile.length!=11) {
+               alert("对不起，您输入的不是一个有效的手机号码");
+               return;
+           }
+           if (!(/^\d+$/.test(mobile))) {
+               alert("对不起，您输入的不是一个有效的手机号码");
+               return;
+        }   
+        if (wait == 0) {  
+            ee.setVisible(ee.getControl("panel4"),false);             
+            ee.getControl(o).removeAttribute("disabled");           
+            ee.setText(ee.getControl(o),"获取验证码");  
+            ee.setTextColor(ee.getControl(o),"rgb(71, 169, 249)") 
+            wait = 60;  
+            flag=1;
+        } else {    
+            if(flag==1){
+               getSmsCode();;
+            }    
+            flag=0;
+            ee.setVisible(ee.getControl("panel4"),true); 
+            ee.getControl(o).setAttribute("disabled", true);  
+            ee.setText(ee.getControl(o),"重新发送(" + wait + ")");   
+            ee.setTextColor(ee.getControl(o),"rgb(181, 181, 181)")
+            wait--;  
+            setTimeout(function() {  
+                time(o)  
+            },  
+            1000)  
+        }  
+    }  
+ 
+ee.setOnClick(ee.getControl("layoutxitem7"),function(){time("layoutxitem7");});
+
+
+
+g5.payIndex=-1;  
+g5.flag1=0;
+g5.flag2=0;
+g5.change=function(panel){
+    ee.setTextColor(ee.getControl(panel),"#808080"); 
+    ee.getControl(panel).style.background="#fff";
+}
+   
+//var url = window.location.search  
+
+//alert(url);
+
+ 
+//var index=url.indexOf("code"); 
+//var code=url.substr(index+5,url.length);   
+
+//g5.code = code;
+//alert("code="+g5.code);</onControlLoad>
+      <pageHead><![CDATA[<meta name="viewport" content="width=device-width, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script> 
+<script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
+<meta name="format-detection" content="telephone=no">]]></pageHead>
+      <scrollPosX>-1</scrollPosX>
+      <scrollPosY>3</scrollPosY>
+      <top>0</top>
+      <width>436</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <backgroundImg>tequan.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>314</height>
+      <heightRatio>0.384803921568627</heightRatio>
+      <left>14</left>
+      <leftRatio>0.031390134529148</leftRatio>
+      <sizeRatio>0.751196172248804</sizeRatio>
+      <top>70</top>
+      <topRatio>0.0857843137254902</topRatio>
+      <width>409</width>
+      <widthRatio>0.937219730941704</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>18222B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.0526960784313725</heightRatio>
+      <left>30</left>
+      <leftRatio>0.0695067264573991</leftRatio>
+      <sizeRatio>0.364406779661017</sizeRatio>
+      <text>自带车陪驾</text>
+      <top>378</top>
+      <topRatio>0.463235294117647</topRatio>
+      <width>115</width>
+      <widthRatio>0.26457399103139</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel4">
+      <backgroundImg>btn2.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.0306372549019608</heightRatio>
+      <left>217</left>
+      <leftRatio>0.497757847533632</leftRatio>
+      <onClick><![CDATA[//alert("123");
+g5.flag2=0;  
+g5.payIndex=-1;
+ee.setImage(this,"/App1PJ/weChat/pay/btn2.jpg","fill","","");
+ee.setImage(ee.getControl("panel7"),"/App1PJ/weChat/pay/btn1.jpg","fill","","");  
+ee.setImage(ee.getControl("panel22"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel24"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag1=0;
+g5.change("panel8");
+g5.change("panel9");   
+g5.change("panel10");
+g5.change("panel11");
+g5.change("panel18");
+g5.change("panel19");
+g5.change("panel20");  
+ee.setText(ee.getControl("panel18"),"2小时<br />赠送20积分");
+ee.setText(ee.getControl("panel19"),"3小时<br />赠送35积分");
+ee.setText(ee.getControl("panel20"),"4小时<br />赠送50积分");
+ee.setText(ee.getControl("panel8"),"10小时<br />赠送140积分");
+ee.setText(ee.getControl("panel9"),"15小时<br />赠送220积分");
+ee.setText(ee.getControl("panel10"),"20小时<br />赠送300积分");
+ee.setText(ee.getControl("panel11"),"30小时<br />赠送465积分");
+
+]]></onClick>
+      <sizeRatio>0.961538461538462</sizeRatio>
+      <top>387</top>
+      <topRatio>0.474264705882353</topRatio>
+      <width>25</width>
+      <widthRatio>0.0582959641255605</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>18222B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.0526960784313725</heightRatio>
+      <left>239</left>
+      <leftRatio>0.547085201793722</leftRatio>
+      <sizeRatio>0.977272727272727</sizeRatio>
+      <text>是</text>
+      <top>378</top>
+      <topRatio>0.463235294117647</topRatio>
+      <width>43</width>
+      <widthRatio>0.0986547085201794</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel6">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>18222B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.0526960784313725</heightRatio>
+      <left>360</left>
+      <leftRatio>0.825112107623318</leftRatio>
+      <sizeRatio>0.977272727272727</sizeRatio>
+      <text>否</text>
+      <top>378</top>
+      <topRatio>0.463235294117647</topRatio>
+      <width>43</width>
+      <widthRatio>0.0986547085201794</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel7">
+      <backgroundImg>btn1.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.0306372549019608</heightRatio>
+      <left>344</left>
+      <leftRatio>0.789237668161435</leftRatio>
+      <onClick><![CDATA[g5.flag2=1;
+g5.payIndex=-1;
+ee.setImage(this,"/App1PJ/weChat/pay/btn2.jpg","fill","","");
+ee.setImage(ee.getControl("panel4"),"/App1PJ/weChat/pay/btn1.jpg","fill","","");
+ee.setImage(ee.getControl("panel22"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel24"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag1=0; 
+g5.change("panel8");
+g5.change("panel9");   
+g5.change("panel10");
+g5.change("panel11");
+g5.change("panel18");
+g5.change("panel19");
+g5.change("panel20");  
+ee.setText(ee.getControl("panel18"),"2小时<br />赠送20积分");
+ee.setText(ee.getControl("panel19"),"3小时<br />赠送35积分");
+ee.setText(ee.getControl("panel20"),"4小时<br />赠送50积分");
+ee.setText(ee.getControl("panel8"),"10小时<br />赠送220积分");
+ee.setText(ee.getControl("panel9"),"15小时<br />赠送320积分");
+ee.setText(ee.getControl("panel10"),"20小时<br />赠送465积分");
+ee.setText(ee.getControl("panel11"),"30小时<br />赠送700积分");
+]]></onClick>
+      <sizeRatio>0.961538461538462</sizeRatio>
+      <top>387</top>
+      <topRatio>0.474264705882353</topRatio>
+      <width>25</width>
+      <widthRatio>0.0582959641255605</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8">
+      <backgroundSkin>line1000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>68</height>
+      <heightRatio>0.0833333333333333</heightRatio>
+      <left>24</left>
+      <leftRatio>0.0560538116591928</leftRatio>
+      <onClick>this.style.background="#47a9f9";  
+ee.setTextColor(this,"#fff");    
+g5.change("panel9");   
+g5.change("panel10");
+g5.change("panel11");
+g5.change("panel18");
+g5.change("panel19");
+g5.change("panel20");  
+ee.setImage(ee.getControl("panel22"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel24"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag1=0;
+if(g5.flag2==0){
+    g5.payIndex=6;
+}
+else{
+    g5.payIndex=7;
+}                
+//alert(g5.payIndex);
+//alert(g5.flag2);
+</onClick>
+      <sizeRatio>0.348717948717949</sizeRatio>
+      <text>10小时
+赠送140积分</text>
+      <top>425</top>
+      <topRatio>0.520833333333333</topRatio>
+      <width>191</width>
+      <widthRatio>0.437219730941704</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel9">
+      <backgroundSkin>line1000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>68</height>
+      <heightRatio>0.0833333333333333</heightRatio>
+      <left>223</left>
+      <leftRatio>0.511210762331839</leftRatio>
+      <onClick>if(g5.flag2==0){
+    g5.payIndex=8;
+}
+else{
+    g5.payIndex=9;
+}                
+//alert(g5.payIndex);
+this.style.background="#47a9f9";  
+ee.setTextColor(this,"#fff");    
+g5.change("panel8");   
+g5.change("panel10");
+g5.change("panel11");
+g5.change("panel18");
+g5.change("panel19");
+g5.change("panel20");  
+ee.setImage(ee.getControl("panel22"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel24"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag1=0;</onClick>
+      <sizeRatio>0.348717948717949</sizeRatio>
+      <text>15小时
+赠送220积分</text>
+      <top>425</top>
+      <topRatio>0.520833333333333</topRatio>
+      <width>191</width>
+      <widthRatio>0.437219730941704</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel10">
+      <backgroundSkin>line1000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>68</height>
+      <heightRatio>0.0833333333333333</heightRatio>
+      <left>24</left>
+      <leftRatio>0.0560538116591928</leftRatio>
+      <onClick>if(g5.flag2==0){
+    g5.payIndex=10;
+}
+else{
+    g5.payIndex=11;
+}                
+//alert(g5.payIndex);
+this.style.background="#47a9f9";  
+ee.setTextColor(this,"#fff");    
+g5.change("panel9");   
+g5.change("panel8");
+g5.change("panel11");
+g5.change("panel18");
+g5.change("panel19");
+g5.change("panel20"); 
+ee.setImage(ee.getControl("panel22"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel24"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag1=0;</onClick>
+      <sizeRatio>0.348717948717949</sizeRatio>
+      <text>20小时
+赠送300积分</text>
+      <top>501</top>
+      <topRatio>0.613970588235294</topRatio>
+      <width>191</width>
+      <widthRatio>0.437219730941704</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel11">
+      <backgroundSkin>line1000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>68</height>
+      <heightRatio>0.0833333333333333</heightRatio>
+      <left>223</left>
+      <leftRatio>0.511210762331839</leftRatio>
+      <onClick>if(g5.flag2==0){
+    g5.payIndex=12;
+}
+else{
+    g5.payIndex=13;
+}                
+//alert(g5.payIndex);
+this.style.background="#47a9f9";  
+ee.setTextColor(this,"#fff");    
+g5.change("panel9");   
+g5.change("panel10");
+g5.change("panel8");
+g5.change("panel18");
+g5.change("panel19");
+g5.change("panel20");   
+ee.setImage(ee.getControl("panel22"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel24"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag1=0;</onClick>
+      <sizeRatio>0.348717948717949</sizeRatio>
+      <text>30小时
+赠送465积分</text>
+      <top>501</top>
+      <topRatio>0.613970588235294</topRatio>
+      <width>191</width>
+      <widthRatio>0.437219730941704</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel12">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>55</height>
+      <heightRatio>0.0674019607843137</heightRatio>
+      <left>25</left>
+      <leftRatio>0.0577777777777778</leftRatio>
+      <onClick>if(g5.payIndex==-1){
+    alert("请先选择陪驾课时");
+    return;
+}
+ee.setVisible(ee.getControl("panel27"),true);</onClick>
+      <sizeRatio>0.138539042821159</sizeRatio>
+      <text>提交</text>
+      <top>586</top>
+      <topRatio>0.718137254901961</topRatio>
+      <width>385</width>
+      <widthRatio>0.882222222222222</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>64</height>
+      <heightRatio>0.0784313725490196</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.163682864450128</sizeRatio>
+      <top>0</top>
+      <width>436</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1">
+      <backgroundColor>47A9F9</backgroundColor>
+      <backgroundSkin>empty</backgroundSkin>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>64</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>this.style.background="#47a9f9"; 
+ee.setTextColor(this,"#fff");
+ee.getControl("layoutxitem2").style.background="#fff";  
+ee.setTextColor(ee.getControl("layoutxitem2"),"#47a9f9");
+ee.setVisible(ee.getControl("panel17"),true);</onClick>
+      <sizeRatio>0.256</sizeRatio>
+      <text>预约陪驾</text>
+      <top>0</top>
+      <width>218</width>
+      <widthRatio>0.501002004008016</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/panel1">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.03125</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.008</sizeRatio>
+      <top>62</top>
+      <topRatio>0.96875</topRatio>
+      <width>218</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem2">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundSkin>empty</backgroundSkin>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontColor>47A9F9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>64</height>
+      <heightRatio>1</heightRatio>
+      <left>218</left>
+      <leftRatio>0.501002004008016</leftRatio>
+      <onClick>this.style.background="#47a9f9"; 
+ee.setTextColor(this,"#fff");
+ee.getControl("layoutxitem1").style.background="#fff";  
+ee.setTextColor(ee.getControl("layoutxitem1"),"#47a9f9");
+ee.setVisible(ee.getControl("panel17"),false)</onClick>
+      <sizeRatio>0.257028112449799</sizeRatio>
+      <text>优惠套餐</text>
+      <top>0</top>
+      <width>218</width>
+      <widthRatio>0.498997995991984</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/panel26">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.03125</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00803212851405622</sizeRatio>
+      <top>62</top>
+      <topRatio>0.96875</topRatio>
+      <width>218</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel13">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>18222B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>35</height>
+      <heightRatio>0.0428921568627451</heightRatio>
+      <left>2</left>
+      <leftRatio>0.0051150895140665</leftRatio>
+      <sizeRatio>0.35</sizeRatio>
+      <text>温馨提示</text>
+      <top>658</top>
+      <topRatio>0.806372549019608</topRatio>
+      <width>112</width>
+      <widthRatio>0.255754475703325</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel14">
+      <backgroundColor>18222B</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>2</height>
+      <heightRatio>0.00245098039215686</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0051150895140665</sizeRatio>
+      <top>697</top>
+      <topRatio>0.854166666666667</topRatio>
+      <width>436</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>18222B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>31</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>111</height>
+      <heightRatio>0.136029411764706</heightRatio>
+      <left>17</left>
+      <leftRatio>0.0383631713554987</leftRatio>
+      <sizeRatio>0.308333333333333</sizeRatio>
+      <text>预约成功后我们会通过电话联系您，请保持您的手机畅通。
+请您填写真实的个人信息，1陪驾会赠送您80万元的人身意外险。
+1陪驾客服热线：400-026-9090(工作日9：00-18：00)。
+长按二维码关注“1陪驾”享受更多贴心服务。</text>
+      <top>704</top>
+      <topRatio>0.862745098039216</topRatio>
+      <vAlign>top</vAlign>
+      <width>401</width>
+      <widthRatio>0.920716112531969</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel16">
+      <backgroundImg>2weima.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>240</height>
+      <heightRatio>0.294117647058824</heightRatio>
+      <left>83</left>
+      <leftRatio>0.18925831202046</leftRatio>
+      <onClick>window.location.href= ee.pageRoot + "/test";</onClick>
+      <sizeRatio>1</sizeRatio>
+      <top>834</top>
+      <topRatio>1.02205882352941</topRatio>
+      <width>268</width>
+      <widthRatio>0.61381074168798</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel17">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>510</height>
+      <heightRatio>0.625</heightRatio>
+      <layerName>预约陪驾</layerName>
+      <left>0</left>
+      <sizeRatio>1.02204408817635</sizeRatio>
+      <top>63</top>
+      <topRatio>0.0772058823529412</topRatio>
+      <width>436</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel17/panel18">
+      <backgroundSkin>line1000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>169</height>
+      <heightRatio>0.331372549019608</heightRatio>
+      <left>26</left>
+      <leftRatio>0.0597701149425287</leftRatio>
+      <onClick>this.style.background="#47a9f9";  
+ee.setTextColor(this,"#fff");    
+g5.change("panel9");   
+g5.change("panel10");
+g5.change("panel11");
+g5.change("panel8");
+g5.change("panel19");
+g5.change("panel20");  
+ee.setImage(ee.getControl("panel4"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel7"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag2=0;
+
+if(g5.flag1==0){
+    g5.payIndex=0;  
+}
+else{
+    g5.payIndex=1;
+} 
+               
+//alert(g5.payIndex);
+//alert(g5.flag1);</onClick>
+      <sizeRatio>0.441253263707572</sizeRatio>
+      <text>2小时
+赠送20积分</text>
+      <top>115</top>
+      <topRatio>0.225490196078431</topRatio>
+      <width>384</width>
+      <widthRatio>0.880459770114942</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel17/panel19">
+      <backgroundSkin>line1000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>87</height>
+      <heightRatio>0.170588235294118</heightRatio>
+      <layerName>3小时</layerName>
+      <layerVisible>false</layerVisible>
+      <left>236</left>
+      <leftRatio>0.540229885057471</leftRatio>
+      <onClick>this.style.background="#47a9f9";  
+ee.setTextColor(this,"#fff");    
+g5.change("panel9");   
+g5.change("panel10");
+g5.change("panel11");
+g5.change("panel18");
+g5.change("panel8");
+g5.change("panel20");      
+ee.setImage(ee.getControl("panel4"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel7"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag2=0;
+
+
+if(g5.flag1==0){
+    g5.payIndex=2;
+}
+else{
+    g5.payIndex=3;
+}                
+//alert(g5.payIndex);
+</onClick>
+      <sizeRatio>0.511764705882353</sizeRatio>
+      <text>3小时
+赠送35积分</text>
+      <top>106</top>
+      <topRatio>0.207843137254902</topRatio>
+      <width>170</width>
+      <widthRatio>0.390804597701149</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel17/panel20">
+      <backgroundSkin>line1000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>169</height>
+      <heightRatio>0.331372549019608</heightRatio>
+      <left>26</left>
+      <leftRatio>0.0597701149425287</leftRatio>
+      <onClick>this.style.background="#47a9f9";  
+ee.setTextColor(this,"#fff");    
+g5.change("panel9");   
+g5.change("panel10");
+g5.change("panel11");
+g5.change("panel18");
+g5.change("panel19");
+g5.change("panel8"); 
+ee.setImage(ee.getControl("panel4"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel7"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag2=0; 
+
+
+if(g5.flag1==0){
+    g5.payIndex=4;
+}
+else{
+    g5.payIndex=5;
+}                
+//alert(g5.payIndex);</onClick>
+      <sizeRatio>0.441253263707572</sizeRatio>
+      <text>4小时
+赠送50积分</text>
+      <top>298</top>
+      <topRatio>0.584313725490196</topRatio>
+      <width>384</width>
+      <widthRatio>0.880459770114942</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel17/panel21">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>18222B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.0843137254901961</heightRatio>
+      <left>33</left>
+      <leftRatio>0.0755555555555556</leftRatio>
+      <sizeRatio>0.361344537815126</sizeRatio>
+      <text>自带车陪驾</text>
+      <top>32</top>
+      <topRatio>0.0627450980392157</topRatio>
+      <width>115</width>
+      <widthRatio>0.264444444444444</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel17/panel22">
+      <backgroundImg>btn2.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.0490196078431373</heightRatio>
+      <left>222</left>
+      <leftRatio>0.508045977011494</leftRatio>
+      <onClick><![CDATA[g5.flag1=0; 
+g5.payIndex=-1;
+ee.setImage(this,"/App1PJ/weChat/pay/btn2.jpg","fill","","");
+ee.setImage(ee.getControl("panel24"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel4"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel7"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag2=0;   
+g5.change("panel8");
+g5.change("panel9");   
+g5.change("panel10");
+g5.change("panel11");
+g5.change("panel18");
+g5.change("panel19");
+g5.change("panel20");  
+ee.setText(ee.getControl("panel18"),"2小时<br />赠送20积分");
+ee.setText(ee.getControl("panel19"),"3小时<br />赠送35积分");
+ee.setText(ee.getControl("panel20"),"4小时<br />赠送50积分");   
+ee.setText(ee.getControl("panel8"),"10小时<br />赠送140积分");
+ee.setText(ee.getControl("panel9"),"15小时<br />赠送220积分");
+ee.setText(ee.getControl("panel10"),"20小时<br />赠送300积分");
+ee.setText(ee.getControl("panel11"),"30小时<br />赠送465积分");
+]]></onClick>
+      <sizeRatio>1</sizeRatio>
+      <top>41</top>
+      <topRatio>0.0803921568627451</topRatio>
+      <width>25</width>
+      <widthRatio>0.0574712643678161</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel17/panel23">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>18222B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.0843137254901961</heightRatio>
+      <left>241</left>
+      <leftRatio>0.553333333333333</leftRatio>
+      <sizeRatio>0.955555555555556</sizeRatio>
+      <text>是</text>
+      <top>32</top>
+      <topRatio>0.0627450980392157</topRatio>
+      <width>44</width>
+      <widthRatio>0.1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel17/panel24">
+      <backgroundImg>btn1.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.0490196078431373</heightRatio>
+      <left>343</left>
+      <leftRatio>0.786206896551724</leftRatio>
+      <onClick><![CDATA[g5.flag1=1;       
+g5.payIndex=-1;
+ee.setImage(this,"/App1PJ/weChat/pay/btn2.jpg","fill","","");
+ee.setImage(ee.getControl("panel22"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel4"),"/App1PJ/weChat/pay/btn2.jpg","fill","",""); 
+ee.setImage(ee.getControl("panel7"),"/App1PJ/weChat/pay/btn1.jpg","fill","",""); 
+g5.flag2=0; 
+g5.change("panel8");
+g5.change("panel9");   
+g5.change("panel10");
+g5.change("panel11");
+g5.change("panel18");
+g5.change("panel19");
+g5.change("panel20"); 
+ee.setText(ee.getControl("panel18"),"2小时<br />赠送35积分");
+ee.setText(ee.getControl("panel19"),"3小时<br />赠送60积分");
+ee.setText(ee.getControl("panel20"),"4小时<br />赠送90积分"); 
+ee.setText(ee.getControl("panel8"),"10小时<br />赠送140积分");
+ee.setText(ee.getControl("panel9"),"15小时<br />赠送220积分");
+ee.setText(ee.getControl("panel10"),"20小时<br />赠送300积分");
+ee.setText(ee.getControl("panel11"),"30小时<br />赠送465积分");]]></onClick>
+      <sizeRatio>1</sizeRatio>
+      <top>41</top>
+      <topRatio>0.0803921568627451</topRatio>
+      <width>25</width>
+      <widthRatio>0.0574712643678161</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel17/panel25">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>18222B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.0843137254901961</heightRatio>
+      <left>363</left>
+      <leftRatio>0.833333333333333</leftRatio>
+      <sizeRatio>0.955555555555556</sizeRatio>
+      <text>否</text>
+      <top>32</top>
+      <topRatio>0.0627450980392157</topRatio>
+      <width>44</width>
+      <widthRatio>0.1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>659</height>
+      <heightRatio>0.807598039215686</heightRatio>
+      <layerName>手机验证</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.40511727078891</sizeRatio>
+      <top>0</top>
+      <width>436</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/panel27/layouty1">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>90</height>
+      <heightRatio>0.136570561456753</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.182186234817814</sizeRatio>
+      <top>0</top>
+      <width>436</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel27/layouty1/layoutyitem1">
+      <backgroundColor>BFCEDF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>0</heavy>
+      <height>0</height>
+      <left>0</left>
+      <top>0</top>
+      <width>436</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel27/layouty1/layoutyitem2">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>90</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.180360721442886</sizeRatio>
+      <text>手机验证</text>
+      <top>0</top>
+      <width>436</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel27/layoutx2">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>80</height>
+      <heightRatio>0.121396054628225</heightRatio>
+      <left>0</left>
+      <leftRatio>-0.00202429149797571</leftRatio>
+      <sizeRatio>0.183908045977011</sizeRatio>
+      <top>88</top>
+      <topRatio>0.133535660091047</topRatio>
+      <width>436</width>
+      <widthRatio>0.880566801619433</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel27/layoutx2/layoutxitem3">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>47A9F9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>80</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>//g5.a="a";     
+ee.setVisible(ee.getControl("panel5"),false);   
+ee.setTextColor(ee.getControl("layoutxitem2"),"#727272"); 
+ee.setVisible(ee.getControl("panel3"),true);   
+ee.setTextColor(ee.getControl("layoutxitem1"),"#47a9f9");   
+g5.userType=0;
+
+</onClick>
+      <sizeRatio>0.338983050847458</sizeRatio>
+      <text>手机验证</text>
+      <top>0</top>
+      <width>218</width>
+      <widthRatio>0.501061571125265</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/layoutx2/layoutxitem3/panel31">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0125</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.004</sizeRatio>
+      <top>79</top>
+      <topRatio>0.9875</topRatio>
+      <width>218</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/layoutx2/layoutxitem3/panel34">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>3</height>
+      <heightRatio>0.0375</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.012</sizeRatio>
+      <top>77</top>
+      <topRatio>0.9625</topRatio>
+      <width>218</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel27/layoutx2/layoutxitem4">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>727272</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>80</height>
+      <heightRatio>1</heightRatio>
+      <left>218</left>
+      <leftRatio>0.5</leftRatio>
+      <sizeRatio>0.37037037037037</sizeRatio>
+      <top>0</top>
+      <width>218</width>
+      <widthRatio>0.5</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/layoutx2/layoutxitem4/panel35">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0125</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00401606425702811</sizeRatio>
+      <top>79</top>
+      <topRatio>0.9875</topRatio>
+      <width>218</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/layoutx2/layoutxitem4/panel36">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>3</height>
+      <heightRatio>0.0375</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0120481927710843</sizeRatio>
+      <top>77</top>
+      <topRatio>0.9625</topRatio>
+      <width>218</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel27/layoutx3">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>44</height>
+      <heightRatio>0.0667678300455235</heightRatio>
+      <left>8</left>
+      <leftRatio>0.0186915887850467</leftRatio>
+      <sizeRatio>0.107317073170732</sizeRatio>
+      <top>201</top>
+      <topRatio>0.305007587253414</topRatio>
+      <width>418</width>
+      <widthRatio>0.957943925233645</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel27/layoutx3/layoutxitem5">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>727272</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>80</heavy>
+      <height>44</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.333333333333333</sizeRatio>
+      <text>手机号码　</text>
+      <top>0</top>
+      <width>115</width>
+      <widthRatio>0.276150627615063</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/layoutx3/layoutxitem5/panel37">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0227272727272727</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00757575757575758</sizeRatio>
+      <top>43</top>
+      <topRatio>0.977272727272727</topRatio>
+      <width>115</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel27/layoutx3/layoutxitem6">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <heavy>210</heavy>
+      <height>44</height>
+      <heightRatio>1</heightRatio>
+      <left>115</left>
+      <leftRatio>0.276150627615063</leftRatio>
+      <sizeRatio>0.127167630057803</sizeRatio>
+      <top>0</top>
+      <width>303</width>
+      <widthRatio>0.723849372384937</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel27/layoutx3/layoutxitem6/edit1">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>C7C7C7</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>44</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSize>30</inputFontSize>
+      <inputFontSizeAuto>20</inputFontSizeAuto>
+      <left>-1</left>
+      <leftRatio>-0.00386100386100386</leftRatio>
+      <sizeRatio>0.15547703180212</sizeRatio>
+      <text>请输入手机号</text>
+      <top>0</top>
+      <width>166</width>
+      <widthRatio>0.546332046332046</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/layoutx3/layoutxitem6/panel38">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0227272727272727</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00289017341040462</sizeRatio>
+      <top>43</top>
+      <topRatio>0.977272727272727</topRatio>
+      <width>303</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel27/layoutx4">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>41</height>
+      <heightRatio>0.0622154779969651</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0210280373831776</leftRatio>
+      <sizeRatio>0.1</sizeRatio>
+      <top>277</top>
+      <topRatio>0.420333839150228</topRatio>
+      <width>418</width>
+      <widthRatio>0.957943925233645</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel27/layoutx4/layoutxitem8">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>727272</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>150</heavy>
+      <height>41</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.303703703703704</sizeRatio>
+      <text>短信验证码</text>
+      <top>0</top>
+      <width>118</width>
+      <widthRatio>0.282426778242678</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/layoutx4/layoutxitem8/panel39">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.024390243902439</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00740740740740741</sizeRatio>
+      <top>40</top>
+      <topRatio>0.975609756097561</topRatio>
+      <width>118</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel27/layoutx4/layoutxitem9">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <heavy>200</heavy>
+      <height>41</height>
+      <heightRatio>1</heightRatio>
+      <left>118</left>
+      <leftRatio>0.282426778242678</leftRatio>
+      <sizeRatio>0.226519337016575</sizeRatio>
+      <top>0</top>
+      <width>158</width>
+      <widthRatio>0.378661087866109</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel27/layoutx4/layoutxitem9/edit2">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>C7C7C7</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>41</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSize>30</inputFontSize>
+      <inputFontSizeAuto>20</inputFontSizeAuto>
+      <left>0</left>
+      <sizeRatio>0.226519337016575</sizeRatio>
+      <text>请输入验证码</text>
+      <top>0</top>
+      <width>158</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/layoutx4/layoutxitem9/panel40">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.024390243902439</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00552486187845304</sizeRatio>
+      <top>40</top>
+      <topRatio>0.975609756097561</topRatio>
+      <width>158</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel27/layoutx4/layoutxitem7">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>47A9F9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>right</hAlign>
+      <heavy>180</heavy>
+      <height>41</height>
+      <heightRatio>1</heightRatio>
+      <left>276</left>
+      <leftRatio>0.661087866108787</leftRatio>
+      <sizeRatio>0.253086419753086</sizeRatio>
+      <text>获取验证码</text>
+      <top>0</top>
+      <width>142</width>
+      <widthRatio>0.338912133891213</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/layoutx4/layoutxitem7/panel41">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.024390243902439</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00617283950617284</sizeRatio>
+      <top>40</top>
+      <topRatio>0.975609756097561</topRatio>
+      <width>142</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/panel42">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>C7C7C7</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>54</height>
+      <heightRatio>0.0819423368740516</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.126168224299065</sizeRatio>
+      <text>输入手机号码，以后将以此号码登录系统</text>
+      <top>358</top>
+      <topRatio>0.543247344461305</topRatio>
+      <width>436</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/panel44">
+      <backgroundImg>btn.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>57</height>
+      <heightRatio>0.08649468892261</heightRatio>
+      <left>25</left>
+      <leftRatio>0.058411214953271</leftRatio>
+      <onClick>checkSmsCode();
+
+   /*   
+var money = "0.01";
+var s = "";
+s = "您将进入支付系统支付￥"+money;  
+ee.setText(ee.getControl("panel50"),s); 
+ee.setVisible(ee.getControl("panel43"),true);
+
+      */
+
+</onClick>
+      <sizeRatio>0.152406417112299</sizeRatio>
+      <text>下一步</text>
+      <top>441</top>
+      <topRatio>0.669195751138088</topRatio>
+      <width>381</width>
+      <widthRatio>0.873831775700935</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel27/panel45">
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>57</height>
+      <heightRatio>0.08649468892261</heightRatio>
+      <left>25</left>
+      <leftRatio>0.058411214953271</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel27"),false);
+
+   /*   
+var money = "0.01";
+var s = "";
+s = "您将进入支付系统支付￥"+money;  
+ee.setText(ee.getControl("panel50"),s); 
+ee.setVisible(ee.getControl("panel43"),true);
+
+      */
+
+</onClick>
+      <sizeRatio>0.152406417112299</sizeRatio>
+      <text>取消</text>
+      <top>529</top>
+      <topRatio>0.802731411229135</topRatio>
+      <width>381</width>
+      <widthRatio>0.873831775700935</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43">
+      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImg>dialogMask.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>1100</height>
+      <heightRatio>1.34803921568627</heightRatio>
+      <layerName>确认充值</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>2.3454157782516</sizeRatio>
+      <top>0</top>
+      <width>436</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel28">
+      <backgroundSkin>button3a000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>457</height>
+      <heightRatio>0.415454545454545</heightRatio>
+      <left>44</left>
+      <leftRatio>0.100213219616205</leftRatio>
+      <sizeRatio>1.25549450549451</sizeRatio>
+      <top>205</top>
+      <topRatio>0.186363636363636</topRatio>
+      <width>338</width>
+      <widthRatio>0.776119402985075</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel28/panel32">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>59</height>
+      <heightRatio>0.128668171557562</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0270618556701031</leftRatio>
+      <sizeRatio>0.0785123966942149</sizeRatio>
+      <text>充值确认</text>
+      <top>66</top>
+      <topRatio>0.144469525959368</topRatio>
+      <width>316</width>
+      <widthRatio>0.935567010309278</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel28/panel47">
+      <backgroundSkin>button3000</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>54</height>
+      <heightRatio>0.118161925601751</heightRatio>
+      <left>77</left>
+      <leftRatio>0.228021978021978</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel43"), false);</onClick>
+      <sizeRatio>0.271356783919598</sizeRatio>
+      <text>关 闭</text>
+      <top>350</top>
+      <topRatio>0.765864332603939</topRatio>
+      <width>185</width>
+      <widthRatio>0.546703296703297</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel28/panel29">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>48A1DD</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>48</height>
+      <heightRatio>0.106094808126411</heightRatio>
+      <left>15</left>
+      <leftRatio>0.0438144329896907</leftRatio>
+      <sizeRatio>0.254054054054054</sizeRatio>
+      <text>确认充值</text>
+      <top>10</top>
+      <topRatio>0.0225733634311512</topRatio>
+      <width>81</width>
+      <widthRatio>0.23840206185567</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel28/panel30">
+      <backgroundColor>48A1DD</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>2</height>
+      <heightRatio>0.0050125313283208</heightRatio>
+      <left>14</left>
+      <leftRatio>0.040650406504065</leftRatio>
+      <sizeRatio>0.0044543429844098</sizeRatio>
+      <top>54</top>
+      <topRatio>0.117794486215539</topRatio>
+      <width>308</width>
+      <widthRatio>0.91260162601626</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel28/panel50">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>128</height>
+      <heightRatio>0.280087527352298</heightRatio>
+      <left>46</left>
+      <leftRatio>0.137362637362637</leftRatio>
+      <sizeRatio>0.486692015209125</sizeRatio>
+      <text>用户信息：</text>
+      <top>119</top>
+      <topRatio>0.260393873085339</topRatio>
+      <width>244</width>
+      <widthRatio>0.722527472527473</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel28/panel33">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>54</height>
+      <heightRatio>0.118161925601751</heightRatio>
+      <left>77</left>
+      <leftRatio>0.228021978021978</leftRatio>
+      <onClick>//createOrder(); //产生订单
+
+//window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxeeb9b2f6e1f01d23&amp;response_type=code&amp;redirect_uri=http%3A%2F%2Fm.1peijia.com%2Feengine%2Fee.aspx&amp;scope=snsapi_base&amp;state=STATE#wechat_redirect";
+ 
+ payWechat();</onClick>
+      <sizeRatio>0.271356783919598</sizeRatio>
+      <text>去微信充值</text>
+      <top>275</top>
+      <topRatio>0.601750547045952</topRatio>
+      <width>185</width>
+      <widthRatio>0.546703296703297</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="4">
+    <taskSetItem name="payWechat">
+      <script1>/*var myDate = new Date();
+var time=myDate.getTime(); ;
+alert(time);
+return;*/
+
+
+
+//alert("123")
+/*var token={"access_token":"ahFQD-pJ2VwyqZF20JfBas26y3lLrx1VGhFn_qEbddQ7-xSgDyad0rUvPMPehCdkaS4hqCYx3TsfQ6ho-qCkjNOGnfw4cvN59gmhUs4k12DTTV3gwwQqiRYpuhMMUQQkIMLeADAAED","expires_in":7200};
+    token=JSON.stringify(token);
+
+
+var json=token.split(",");
+var access_token=json[0].split(":"); 
+var a=access_token[1].split("\"") */
+//alert(a[1]);
+//var json = eval(token);
+//alert(json.access_token);
+var mobile = ee.getEditText(ee.getControl("edit1"));
+var pwd = ee.getEditText(ee.getControl("edit2"));
+/*if (mobile == ""){
+   // return;
+}*/        
+eio.appendString8(mobile); 
+eio.appendString8(pwd);
+//alert(g5.money);
+/*
+var url = window.location.search   
+var index=url.indexOf("code"); 
+var code=url.substr(index+5,url.length);
+//alert(index);
+alert(url); 
+alert(code);  
+*/
+//微信生成预处理订单
+eio.appendString16(g5.code);
+//alert("payIndex:"+g5.payIndex); 
+//eio.appendInt32(g5.payIndex);     
+eio.appendString8(g5.money); 
+
+//eio.appendString8(eb.getCookie("pjToken"));</script1>
+      <script2><![CDATA[
+/*var token = es.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&amp;appid=wxeeb9b2f6e1f01d23&amp;secret=3efec074c3b012d58e297a1d75265f3b&amp;code=031vZR7n0jjbLe1LxS6n0K7Q7n0vZR7U");
+token=JSON.stringify(token);
+
+var json=token.split(",");
+var access=json[0].split(":"); 
+var a=access[1].split("\"")  
+var access_token=a[1];    
+    access_token=access_token.substr(0,access_token.length-1);
+//var json = eval(token);
+//var access_token=json.access_token; 
+*/ 
+//var mobile = session.get("mobile"); 
+//var pwd = session.get("mobileCode"); 
+var mobile = eio.readString8(); 
+var pwd = eio.readString8();
+es.logWarning("mobile="+mobile);
+es.logWarning("pwd="+pwd);
+    
+    
+var code =eio.readString16(); 
+es.logWarning("code:"+code); 
+var oid =session.get("openid");   
+es.logWarning("oid="+oid);
+if(oid==""){
+var get = es.get("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxeeb9b2f6e1f01d23&amp;secret=3efec074c3b012d58e297a1d75265f3b&amp;code="+code+"&amp;grant_type=authorization_code");
+es.logWarning("get="+get);
+get=JSON.stringify(get);
+es.logWarning("get1="+get);
+ 
+var json=get.split(","); 
+es.logWarning("json="+json);
+var access=json[3].split(":"); 
+es.logWarning("access="+access);
+var a=access[1].split("\""); 
+es.logWarning("a="+access[1]); 
+    var openid=a[1]; 
+    openid=openid.substr(0,openid.length-1); 
+  es.logWarning("openid="+openid);
+  session.set("openid",openid);
+}else {
+    var openid = oid;
+}
+
+
+
+/*
+var openid=es.get("https://api.weixin.qq.com/cgi-bin/user/info?access_token="+access_token+"&amp;openid=OPENID");
+es.logWarning(token);
+es.logWarning(access_token);  
+es.logWarning("openid:"+openid);
+*/
+
+//var payIndex = eio.readInt32(); 
+ 
+//var lt = eio.readString8(); 
+
+
+//var money = "0.01,0.02,0.03,0.04,0.05,0.06,0.07,0.08,0.09,0.1,0.11,0.12,0.13,0.14";
+//var moneyArr=money.split(",");    
+
+
+/*if ((payIndex<0)||(payIndex>=money.length)) {
+    eio.appendString8("F");
+    eio.appendString8("用户输入数据非法");
+    return;
+}*/ 
+//var payMoney =moneyArr[payIndex]*100; //支付金额，分为单位 ,必须*100   
+
+var payMoney=eio.readString8()*100; 
+    //payMoney=payMoney*100;
+es.logWarning("payMoney"+payMoney); 
+
+//产生支付订单
+/*sql = "exec createPay " + "8680" + ",'微信支付'," + money[payIndex] + "," + "0";
+sqlResult = db.executeQuery("PJ", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var localTicket = db.getString(sqlResult, "ticket");
+*/
+
+sql = "exec webCreatePay '微信公众号支付'," +payMoney+",'"+mobile+"','"+pwd+"'";
+es.logWarning(sql);       
+    
+sqlResult = db.executeQuery("PJ", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var localTicket = db.getString(sqlResult, "ticket");  
+es.logWarning("localTicket:"+localTicket); 
+
+/*
+var localTicket = session.get("localTicket1"); 
+es.logWarning("localTicketGET="+session.get("localTicket"));    
+var localTicket = lt; 
+es.logWarning("localTicketGET2="+lt); 
+ */
+ 
+var data = "";
+var sign = "";
+var randString = "A" + (new Date()).getTime();
+randString = es.getMd5(randString).toUpperCase(); 
+es.logWarning("randString:"+randString);
+//计算sign
+sign += "appid=wxeeb9b2f6e1f01d23";
+sign += "&amp;attach=充值";
+sign += "&amp;body=1陪驾充值";
+sign += "&amp;mch_id=1239143502";  
+sign += "&amp;nonce_str=" + randString;
+sign += "&amp;notify_url=http://m.1peijia.com/eengine/ee.aspx"; 
+sign += "&amp;openid="+openid;//o_2KrszDgDmw--9LpCQqomVr1lF0
+sign += "&amp;out_trade_no=" + localTicket;
+sign += "&amp;spbill_create_ip=127.0.0.1";
+sign += "&amp;total_fee=" + payMoney;
+sign += "&amp;trade_type=JSAPI";
+sign += "&amp;key=YIpeijia123456789012345678901234";
+sign = es.getMd5(sign).toUpperCase();
+//产生递交数据
+data =
+    "<xml>\n" + 
+    "   <appid>wxeeb9b2f6e1f01d23</appid>\n" + //不解释
+    "   <attach>充值</attach>\n" + //附加数据，在查询API和支付通知中原样返回，该字段主要用于商户携带订单的自定义数据
+    "   <body>1陪驾充值</body>\n" + //商品或支付单简要描述
+    "   <mch_id>1239143502</mch_id>\n" + //微信支付分配的商户号
+    "   <nonce_str>" + randString + "</nonce_str>\n" + //随机字符串，不长于32位
+    "   <notify_url>http://m.1peijia.com/eengine/ee.aspx</notify_url>\n" + //接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
+    //"   <openid>o_2KrszDgDmw--9LpCQqomVr1lF0</openid>\n"+ 
+    "   <openid>"+ openid +"</openid>\n"+
+    "   <out_trade_no>" + localTicket + "</out_trade_no>\n" + //商户系统内部的订单号,32个字符内、可包含字母
+    "   <spbill_create_ip>127.0.0.1</spbill_create_ip>\n" + //用户端实际ip
+    "   <total_fee>" + payMoney + "</total_fee>\n" + //订单总金额，单位（分）
+    "   <trade_type>JSAPI</trade_type>\n" + //支付类型  
+   // "   <openid>DFvSN8MRQrV6R-AAbUY-xmVslmrAuSkzgkaklzlgc8jCICHtOBVjiQEGtXqMTajWKesn80u_DKMAON5tq35_djNvavBeVmG-_73RdlWnHnqWybEVuilsv10pzuVc8fgmDIPfAJAJOV</openid>\n"+
+     "   <sign>" + sign + "</sign>\n" +
+    "</xml>\n";
+//post   
+
+
+var result = es.post("https://api.mch.weixin.qq.com/pay/unifiedorder", data);
+/* 返回消息
+<xml><return_code><![CDATA[SUCCESS]]]]><![CDATA[></return_code>
+<return_msg><![CDATA[OK]]]]><![CDATA[></return_msg>
+<appid><![CDATA[wx9b5794aacbbdf257]]]]><![CDATA[></appid>
+<mch_id><![CDATA[1264325101]]]]><![CDATA[></mch_id>
+<nonce_str><![CDATA[heGKmfwAQ2zSjfAI]]]]><![CDATA[></nonce_str>
+<sign><![CDATA[48BB46F9CCF2901D97F884EB44A7C5DF]]]]><![CDATA[></sign>
+<result_code><![CDATA[SUCCESS]]]]><![CDATA[></result_code>
+<prepay_id><![CDATA[wx20160520184034d34c9c543c0304138885]]]]><![CDATA[></prepay_id>
+<trade_type><![CDATA[APP]]]]><![CDATA[></trade_type>
+</xml>
+*/
+if (result.indexOf("<return_code><![CDATA[SUCCESS]]]]><![CDATA[>")<0) {  
+   // eio.appendString16(result);
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试1");
+    return;
+}
+//从返回值中提取prepay_id
+var r = result.indexOf("<prepay_id><![CDATA[");
+if (r<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试2");
+    return;
+}
+r += "<prepay_id><![CDATA[".length;
+var r1 = result.indexOf("]", r);
+if (r1<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试3");
+    return;
+} 
+var prepayId = result.substring(r, r1);
+eio.appendString8("T");
+eio.appendString16(prepayId);
+eio.appendString16(randString);   
+var paysign = "";
+//计算sign
+paysign += "appId=wxeeb9b2f6e1f01d23"; 
+paysign += "&amp;nonceStr="+randString;
+paysign += "&amp;package=prepay_id="+prepayId;       
+paysign += "&amp;signType=MD5";  
+paysign += "&amp;timeStamp=1395712654";  
+paysign += "&amp;key=YIpeijia123456789012345678901234";
+paysign = es.getMd5(paysign).toUpperCase();  
+eio.appendString16(paysign);
+eio.appendString8(localTicket);  
+
+//eio.appendString16(sign);
+//eio.appendString16(result);]]></script2>
+      <script3>//alert(eio.readString8()); 
+
+var r = eio.readString8(); 
+//alert("r:"+r);
+if (r!="T") {
+    alert(eio.readString16());
+    return;
+}
+var prepayId = eio.readString16();
+var randString = eio.readString16();
+var paysign = eio.readString16();  
+var localTicket = eio.readString8(); 
+    
+
+g5.localTicket = localTicket;
+
+//alert("paysign:"+paysign); 
+//var sign = eio.readString16();     
+//alert(prepayId);
+//alert(randString);  
+
+ 
+//alert(sign);
+
+//ee.setText(ee.getControl("panel1"),prepayId);  
+//ee.setText(ee.getControl("panel2"),randString);
+ 
+
+/*
+alert("sign:"+sign)*/; 
+function onBridgeReady(){ 
+//alert("123");
+   //alert("onbridge ready");
+ WeixinJSBridge.invoke(
+       "getBrandWCPayRequest", {
+           "appId":"wxeeb9b2f6e1f01d23",     //公众号名称，由商户传入     
+           "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
+           "nonceStr":randString, //随机串     
+           "package":"prepay_id="+prepayId,                
+           "signType":"MD5",        //微信签名方式：     
+           "paySign":paysign//paysign //微信签名            
+       },
+       function(res){  
+           //alert(res.err_msg);   
+           if(res.err_msg == "get_brand_wcpay_request:ok" ) { 
+               //alert("11"); 
+               checkInfo();
+               /*
+               alert("支付成功");
+               window.location.href = ee.pageRoot +"/downloadApp";   
+               */
+           }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+           else {
+               alert("支付失败");
+           }
+       }  
+   );  
+}     
+if (typeof WeixinJSBridge == "undefined"){
+   if( document.addEventListener ){
+       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+   }else if (document.attachEvent){
+       document.attachEvent('WeixinJSBridgeReady',onBridgeReady); 
+       document.attachEvent('onWeixinJSBridgeReady',onBridgeReady);
+   }  
+}else{
+   onBridgeReady();
+}  
+//alert(WeixinJSBridge);
+//alert("222"); 
+
+
+/*g5.tamPlugin.payWechat(prepayId,nonceStr,
+    function() {
+        //g5.log("success");
+    },
+    function(msg) {
+        //g5.log("fail:" + msg);
+    }
+);*/
+
+////alert(prepayId);
+</script3>
+    </taskSetItem>
+    <taskSetItem name="checkInfo">
+      <script1>//alert("ticket="+g5.localTicket);
+eio.appendString8(g5.localTicket);  
+</script1>
+      <script2>var ticket = eio.readString8();
+var sql = "select * from log where strParam1='"+ ticket +"'";
+var sqlResult = db.executeQuery("PJ",sql);
+db.read(sqlResult);
+var mobile = db.getString(sqlResult,"strParam3");
+var pwd  = db.getString(sqlResult,"intParam5");
+var logType = db.getString(sqlResult,"logType");
+es.logWarning("get from log of applyWeiXin");
+es.logWarning("mobile="+mobile);
+es.logWarning("pwd="+pwd);
+es.logWarning("logType="+logType);
+
+sql = "select * from userInfo where mobile='"+ mobile +"'";
+sqlResult = db.executeQuery("PJ",sql);
+db.read(sqlResult);
+var id =db.getString(sqlResult,"id");
+var balance = db.getString(sqlResult,"balance");   
+es.logWarning("id="+id);
+es.logWarning("balance="+balance);
+
+if (id == ""){
+    eio.appendString8("F");
+    return;
+}
+
+
+
+
+eio.appendString8("T"); 
+eio.appendString8(mobile);
+eio.appendString8(pwd);</script2>
+      <script3>var code = eio.readString8();
+//alert(code);
+if (code != "T"){
+    alert("注册账户失败，请联系客服处理，客服电话：400-026-9090");
+    return;
+}  
+var mobile = eio.readString8();
+var pwd = eio.readString8();
+
+
+alert("支付成功");
+window.location.href = ee.pageRoot +"/downloadAppWX&amp;"+ mobile +"&amp;"+ pwd+"";</script3>
+    </taskSetItem>
+    <taskSetItem name="getSmsCode">
+      <script1>var mobile = ee.getEditText(ee.getControl("edit1"));
+//手机号码检测
+if (mobile.length!=11) {
+    alert("对不起，您输入的不是一个有效的手机号码");
+    return;
+}
+if (!(/^\d+$/.test(mobile))) {
+    alert("对不起，您输入的不是一个有效的手机号码");
+    return;
+} 
+
+eio.appendString8(mobile); 
+eio.appendInt32(g5.userType)
+</script1>
+      <script2><![CDATA[var mobile = eio.readString8();
+var chooseType = eio.readInt32(); 
+
+session.set("codeFlag11",0);//使用于checkSmsCode
+while (true) { 
+    var sql = "select * from userInfo where mobile='" + mobile + "' and enabled='T'";
+    var sqlResult = db.executeQuery("PJ", sql);  
+   
+    /*if (db.read(sqlResult)) {
+        eio.appendString8("F");
+        var userType = db.getString(sqlResult,"userType");
+        if(userType =="教练" || chooseType=="0"){
+            eio.appendString8("您输入的手机号码已经被注册使用过，不能参与此次活动。"); 
+        } else if(userType == "学员") {
+            eio.appendString8("applyCoaches")
+        } else {
+            eio.appendString8("判断失败");
+        }
+        return;
+    }*/
+    //后台手机号验证
+    if (mobile.length!=11) {
+        eio.appendString8("F");
+        eio.appendString8("手机号非法");
+        break;
+    }
+    if (!(/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(mobile))) {
+        eio.appendString8("F");
+        eio.appendString8("手机号非法");
+        break;
+    }
+    //产生验证码
+    var code = 0;
+    var seed = (new Date()).getTime();
+    while (code<100000) {
+        seed = ( seed * 9301 + 49297 ) % 233280;
+        var rand = seed / 233280.0;
+        code = Math.floor(rand * 1000000);     //六位
+    }
+    /*var len = code.length; 
+    es.logWarning("len"+len); 
+    if(len ==5){
+        code += "1";
+    }
+    if (len == 4){
+        code += "11";
+    } */
+    
+    //存储验证码和手机号
+    session.set("mobileCode", code + "");
+    session.set("mobile", mobile);  
+    
+    //发送验证码
+    var sql = "insert into sms (mobile, message) values (" +
+        "'" + db.encode(mobile) + "'," +
+        "'您的验证码是：" + code + "')";
+    if (!db.executeNoneQuery("PJ", sql)) {
+        eio.appendString8("F");
+        eio.appendString8("系统繁忙请稍后再试");
+        break;
+    } 
+    eio.appendString8("T"); 
+    break;
+}     
+
+              ]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    var code = eio.readString8();
+    /*console.log("code="+code);
+    if (code.length ==12 &amp;&amp; g5.userType== "1"){
+        var a = confirm("您已有学员端账户，是否要申请成为陪练员？")  
+        if (a== true){
+            ee.setVisible(ee.getControl("panel17"),true);
+            ee.setEditText(ee.getControl("edit3"),ee.getEditText(ee.getControl("edit1")));
+        }else {
+            return;
+        }
+    } else {
+        alert("发送验证码失败：" + code);
+    } */      
+    alert("发送验证码失败：" + code);
+    return;
+}   
+
+alert("验证码已经以短信的形式发送到您的手机上，请注意查收。验证码是一个6位的数字，请将它填写在下面的栏目中");
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="checkSmsCode">
+      <script1>var mobileCode = ee.getEditText(ee.getControl("edit2")); 
+ 
+
+eio.appendString8(mobileCode);  
+eio.appendInt32(g5.userType);
+eio.appendInt32(g5.payIndex);  </script1>
+      <script2><![CDATA[var mobileCode = eio.readString8();  
+var userType = eio.readInt32();
+while (true) {
+    var mobileCodeS = session.get("mobileCode");
+    if (mobileCodeS.length<=0) {
+        //eio.appendString8("tt1");//debug
+        //eio.appendString8("tt2");//debug         
+        eio.appendString8("F");
+        eio.appendString8("请点击“获取验证码”，收到短信后填写验证码");
+        break;
+    } 
+     /*
+    if (mobileCodeS!=mobileCode) {
+        session.set("mobileCode", "");
+        eio.appendString8("F");
+        eio.appendString8("您输入的验证码不正确，请重新发送并输入一次验证码");
+        break;
+    }     */
+    
+    if(mobileCodeS!=mobileCode){
+        var flag = session.get("codeFlag11"); 
+       //  eio.appendString8("flag::"+flag);
+        flag = parseInt(flag)+1;
+       // flag +=1;  
+       //  eio.appendString8("flag++::"+flag);
+        session.set("codeFlag11",flag);
+        eio.appendString8("F");
+        if(flag ==1){
+           eio.appendString8("输入的验证码不正确，您还有 2 次机会重新输入验证码");
+        }else if(flag ==2){
+           eio.appendString8("输入的验证码不正确，您还有 1 次机会重新输入验证码");
+        }else if(flag ==3){
+            session.set("codeFlag11",0);           
+            session.set("mobileCode",""); 
+            eio.appendString8("您输入的验证码不正确，请重新获取并输入验证码");
+        }
+        break;
+        
+    } 
+    
+   // eio.appendString8("tt1");
+   // eio.appendString8("tt2");
+    session.set("codeFlag11",0);
+    eio.appendString8("T");
+    session.set("mobileCheck", "true"); 
+    session.set("userType",userType);
+    session.set("mobileCode",mobileCodeS);
+    
+    var payIndex = eio.readInt32(); 
+    var money = "200,300,300,450,400,600,1000,1500,1500,2250,2000,3000,3000,4500";
+    var moneyArr=money.split(",");    
+    //var moneyFree = "0,20,50,120,240,500".split(",");
+    //var money = "100,200,400,0.03,1500,3000,5000".split(",");    
+    //var moneyFree = "0,20,50,0.04,240,500,1000".split(",");
+
+    if ((payIndex<0)||(payIndex>=money.length)) {
+        eio.appendString8("F");
+        eio.appendString8("用户输入数据非法");
+        return;
+    } 
+    var payMoney =moneyArr[payIndex]; 
+    eio.appendString8(payMoney);
+    //var a= session.get("userType")  
+    //es.logWarning(a);  
+    //es.logWarning(userType);
+    //eio.appendString8(session.get("userType"));
+    break;
+} 
+
+
+]]></script2>
+      <script3>//alert(eio.readString8());
+//alert(eio.readString8());
+if (eio.readString8()!="T") {
+    alert("验证失败：" + eio.readString8());     
+    //alert(session.get("userType"))
+    ee.setEditText(ee.getControl("Edit2"),"");
+    return;
+}  
+
+g5.money =eio.readString8();
+//var s = "";
+//s = "您将进入支付系统支付￥"+money;  
+//ee.setText(ee.getControl("panel50"),s); 
+//ee.setVisible(ee.getControl("panel43"),true); 
+//window.location.href=ee.pageRoot + "/weChat/pay";
+ee.setText(ee.getControl("panel50"),"充值金额为："+g5.money+"元");
+ee.setVisible(ee.getControl("panel43"),true);
+
+
+
+ 
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

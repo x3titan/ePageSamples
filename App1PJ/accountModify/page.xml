@@ -1,80 +1,13 @@
 <page>
   <controls count="40">
     <control type="DivRoot" pathname="/divRoot">
-      <left>0</left>
-      <top>0</top>
-      <width>524</width>
-      <height>819</height>
+      <backgroundColor>F3F3F3</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <backgroundColor>F3F3F3</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <backgroundImg>xz_bn.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
-      <onPageCreate><![CDATA[/*
-根据〖中华人民共和国国家标准 GB 11643-1999〗中有关公民身份号码的规定，公民身份号码是特征组合码，由十七位数字本体码和一位数字校验码组成。排列顺序从左至右依次为：六位数字地址码，八位数字出生日期码，三位数字顺序码和一位数字校验码。
-    地址码表示编码对象常住户口所在县(市、旗、区)的行政区划代码。
-    出生日期码表示编码对象出生的年、月、日，其中年份用四位数字表示，年、月、日之间不用分隔符。
-    顺序码表示同一地址码所标识的区域范围内，对同年、月、日出生的人员编定的顺序号。顺序码的奇数分给男性，偶数分给女性。
-    校验码是根据前面十七位数字码，按照ISO 7064:1983.MOD 11-2校验码计算出来的检验码。
-
-出生日期计算方法。
-    15位的身份证编码首先把出生年扩展为4位，简单的就是增加一个19或18,这样就包含了所有1800-1999年出生的人;
-    2000年后出生的肯定都是18位的了没有这个烦恼，至于1800年前出生的,那啥那时应该还没身份证号这个东东，⊙﹏⊙b汗...
-下面是正则表达式:
- 出生日期1800-2099  (18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])
- 身份证正则表达式 /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i            
- 15位校验规则 6位地址编码+6位出生日期+3位顺序号
- 18位校验规则 6位地址编码+8位出生日期+3位顺序号+1位校验位
- 
- 校验位规则     公式:∑(ai×Wi)(mod 11)……………………………………(1)
-                公式(1)中： 
-                i----表示号码字符从由至左包括校验码在内的位置序号； 
-                ai----表示第i位置上的号码字符值； 
-                Wi----示第i位置上的加权因子，其数值依据公式Wi=2^(n-1）(mod 11)计算得出。
-                i 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
-                Wi 7 9 10 5 8 4 2 1 6 3 7 9 10 5 8 4 2 1
-
-*/
-//身份证号合法性验证 
-//支持15位和18位身份证号
-//支持地址编码、出生日期、校验位验证
-function idCodeValid (code) {
-    var city = { 11: "北京", 12: "天津", 13: "河北", 14: "山西", 15: "内蒙古", 21: "辽宁", 22: "吉林", 23: "黑龙江 ", 31: "上海", 32: "江苏", 33: "浙江", 34: "安徽", 35: "福建", 36: "江西", 37: "山东", 41: "河南", 42: "湖北 ", 43: "湖南", 44: "广东", 45: "广西", 46: "海南", 50: "重庆", 51: "四川", 52: "贵州", 53: "云南", 54: "西藏 ", 61: "陕西", 62: "甘肃", 63: "青海", 64: "宁夏", 65: "新疆", 71: "台湾", 81: "香港", 82: "澳门", 91: "国外 " };
-    var result = "";
-
-    if (!code || !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(code)) {
-        result = "身份证号格式错误";
-    } else if (!city[code.substr(0, 2)]) {
-        result = "地址编码错误";
-    } else {
-        //18位身份证需要验证最后一位校验位
-        if (code.length == 18) {
-            code = code.split('');
-            //∑(ai×Wi)(mod 11)
-            //加权因子
-            var factor = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
-            //校验位
-            var parity = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2];
-            var sum = 0;
-            var ai = 0;
-            var wi = 0;
-            for (var i = 0; i < 17; i++) {
-                ai = code[i];
-                wi = factor[i];
-                sum += ai * wi;
-            }
-            var last = parity[sum % 11];
-            if (parity[sum % 11] != code[17]) {
-                result = "校验位错误";
-            }
-        }
-    }
-    return result;
-}
-//var c = '130981199312253466';
-//var res = IdentityCodeValid(c);
-]]></onPageCreate>
+      <height>816</height>
+      <left>0</left>
       <onControlLoad>var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
 if (!isIOS) {
     ee.getControl("layoutyitem1").heavy = 0;
@@ -183,333 +116,428 @@ setTimeout(function(){
 
 
 </onControlLoad>
+      <onPageCreate><![CDATA[/*
+根据〖中华人民共和国国家标准 GB 11643-1999〗中有关公民身份号码的规定，公民身份号码是特征组合码，由十七位数字本体码和一位数字校验码组成。排列顺序从左至右依次为：六位数字地址码，八位数字出生日期码，三位数字顺序码和一位数字校验码。
+    地址码表示编码对象常住户口所在县(市、旗、区)的行政区划代码。
+    出生日期码表示编码对象出生的年、月、日，其中年份用四位数字表示，年、月、日之间不用分隔符。
+    顺序码表示同一地址码所标识的区域范围内，对同年、月、日出生的人员编定的顺序号。顺序码的奇数分给男性，偶数分给女性。
+    校验码是根据前面十七位数字码，按照ISO 7064:1983.MOD 11-2校验码计算出来的检验码。
+
+出生日期计算方法。
+    15位的身份证编码首先把出生年扩展为4位，简单的就是增加一个19或18,这样就包含了所有1800-1999年出生的人;
+    2000年后出生的肯定都是18位的了没有这个烦恼，至于1800年前出生的,那啥那时应该还没身份证号这个东东，⊙﹏⊙b汗...
+下面是正则表达式:
+ 出生日期1800-2099  (18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])
+ 身份证正则表达式 /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i            
+ 15位校验规则 6位地址编码+6位出生日期+3位顺序号
+ 18位校验规则 6位地址编码+8位出生日期+3位顺序号+1位校验位
+ 
+ 校验位规则     公式:∑(ai×Wi)(mod 11)……………………………………(1)
+                公式(1)中： 
+                i----表示号码字符从由至左包括校验码在内的位置序号； 
+                ai----表示第i位置上的号码字符值； 
+                Wi----示第i位置上的加权因子，其数值依据公式Wi=2^(n-1）(mod 11)计算得出。
+                i 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+                Wi 7 9 10 5 8 4 2 1 6 3 7 9 10 5 8 4 2 1
+
+*/
+//身份证号合法性验证 
+//支持15位和18位身份证号
+//支持地址编码、出生日期、校验位验证
+function idCodeValid (code) {
+    var city = { 11: "北京", 12: "天津", 13: "河北", 14: "山西", 15: "内蒙古", 21: "辽宁", 22: "吉林", 23: "黑龙江 ", 31: "上海", 32: "江苏", 33: "浙江", 34: "安徽", 35: "福建", 36: "江西", 37: "山东", 41: "河南", 42: "湖北 ", 43: "湖南", 44: "广东", 45: "广西", 46: "海南", 50: "重庆", 51: "四川", 52: "贵州", 53: "云南", 54: "西藏 ", 61: "陕西", 62: "甘肃", 63: "青海", 64: "宁夏", 65: "新疆", 71: "台湾", 81: "香港", 82: "澳门", 91: "国外 " };
+    var result = "";
+
+    if (!code || !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(code)) {
+        result = "身份证号格式错误";
+    } else if (!city[code.substr(0, 2)]) {
+        result = "地址编码错误";
+    } else {
+        //18位身份证需要验证最后一位校验位
+        if (code.length == 18) {
+            code = code.split('');
+            //∑(ai×Wi)(mod 11)
+            //加权因子
+            var factor = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+            //校验位
+            var parity = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2];
+            var sum = 0;
+            var ai = 0;
+            var wi = 0;
+            for (var i = 0; i < 17; i++) {
+                ai = code[i];
+                wi = factor[i];
+                sum += ai * wi;
+            }
+            var last = parity[sum % 11];
+            if (parity[sum % 11] != code[17]) {
+                result = "校验位错误";
+            }
+        }
+    }
+    return result;
+}
+//var c = '130981199312253466';
+//var res = IdentityCodeValid(c);
+]]></onPageCreate>
       <pageHead><![CDATA[<meta name="viewport" content="width=device-width, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <script type="text/javascript" charset="utf-8" src="scripts/cordova-2.0.0.js"></script>
 
 ]]></pageHead>
+      <top>0</top>
+      <width>460</width>
     </control>
     <control type="Panel" pathname="/divRoot/panel2">
-      <left>-2</left>
-      <top>169</top>
-      <width>529</width>
-      <height>594</height>
-      <leftRatio>-0.00343053173241852</leftRatio>
-      <topRatio>0.206349206349206</topRatio>
-      <widthRatio>1.01029159519726</widthRatio>
-      <heightRatio>0.725274725274725</heightRatio>
-      <sizeRatio>1.00848896434635</sizeRatio>
+      <backgroundSkin>body4</backgroundSkin>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>body4</backgroundSkin>
       <fontSizeAuto>30</fontSizeAuto>
+      <height>592</height>
+      <heightRatio>0.725274725274725</heightRatio>
       <layerVisible>false</layerVisible>
+      <left>-2</left>
+      <leftRatio>-0.00343053173241852</leftRatio>
+      <sizeRatio>1.00848896434635</sizeRatio>
+      <top>168</top>
+      <topRatio>0.206349206349206</topRatio>
+      <width>465</width>
+      <widthRatio>1.01029159519726</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel2/layoutx1">
-      <left>51</left>
-      <top>271</top>
-      <width>436</width>
-      <height>43</height>
-      <leftRatio>0.0969827586206897</leftRatio>
-      <topRatio>0.455535390199637</topRatio>
-      <widthRatio>0.823275862068966</widthRatio>
-      <heightRatio>0.0725952813067151</heightRatio>
-      <sizeRatio>0.104712041884817</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
       <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0725952813067151</heightRatio>
+      <left>45</left>
+      <leftRatio>0.0969827586206897</leftRatio>
+      <sizeRatio>0.104712041884817</sizeRatio>
+      <top>270</top>
+      <topRatio>0.455535390199637</topRatio>
+      <width>383</width>
+      <widthRatio>0.823275862068966</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx1/layoutxitem1">
-      <left>0</left>
-      <top>0</top>
-      <width>135</width>
-      <height>43</height>
-      <widthRatio>0.310173697270471</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.344</sizeRatio>
       <backgroundColor>f0f0f0</backgroundColor>
-      <text>姓名：</text>
+      <fontFamily>黑体</fontFamily>
       <fontSizeAuto>30</fontSizeAuto>
       <hAlign>right</hAlign>
       <heavy>45</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.323308270676692</sizeRatio>
+      <text>姓名：</text>
+      <top>0</top>
+      <width>119</width>
+      <widthRatio>0.309302325581395</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx1/layoutxitem2">
-      <left>135</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <leftRatio>0.310173697270471</leftRatio>
-      <widthRatio>0.689826302729529</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
       <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>119</left>
+      <leftRatio>0.309302325581395</leftRatio>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>0.690697674418605</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel2/layoutx1/layoutxitem2/edit1">
-      <left>0</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
+      <backgroundSkin>line3</backgroundSkin>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <backgroundSkin>line3</backgroundSkin>
+      <fontFamily>黑体</fontFamily>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
       <inputFontSizeAuto>30</inputFontSizeAuto>
+      <left>0</left>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel2/layoutx4">
-      <left>50</left>
-      <top>327</top>
-      <width>436</width>
-      <height>43</height>
-      <leftRatio>0.0948275862068965</leftRatio>
-      <topRatio>0.549909255898367</topRatio>
-      <widthRatio>0.823275862068966</widthRatio>
-      <heightRatio>0.0725952813067151</heightRatio>
-      <sizeRatio>0.104712041884817</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
       <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0725952813067151</heightRatio>
+      <left>44</left>
+      <leftRatio>0.0948275862068965</leftRatio>
+      <sizeRatio>0.104712041884817</sizeRatio>
+      <top>326</top>
+      <topRatio>0.549909255898367</topRatio>
+      <width>383</width>
+      <widthRatio>0.823275862068966</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx4/layoutxitem7">
-      <left>0</left>
-      <top>0</top>
-      <width>135</width>
-      <height>43</height>
-      <widthRatio>0.310173697270471</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.344</sizeRatio>
       <backgroundColor>f0f0f0</backgroundColor>
-      <text>身份证号码：</text>
+      <fontFamily>黑体</fontFamily>
       <fontSizeAuto>30</fontSizeAuto>
       <hAlign>right</hAlign>
       <heavy>45</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.323308270676692</sizeRatio>
+      <text>身份证号码：</text>
+      <top>0</top>
+      <width>119</width>
+      <widthRatio>0.309302325581395</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx4/layoutxitem8">
-      <left>135</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <leftRatio>0.310173697270471</leftRatio>
-      <widthRatio>0.689826302729529</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
       <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>119</left>
+      <leftRatio>0.309302325581395</leftRatio>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>0.690697674418605</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel2/layoutx4/layoutxitem8/edit2">
-      <left>0</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
+      <backgroundSkin>line3</backgroundSkin>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <backgroundSkin>line3</backgroundSkin>
+      <fontFamily>黑体</fontFamily>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
       <inputFontSizeAuto>30</inputFontSizeAuto>
+      <left>0</left>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel2/layoutx5">
-      <left>50</left>
-      <top>382</top>
-      <width>436</width>
-      <height>43</height>
-      <leftRatio>0.0948275862068965</leftRatio>
-      <topRatio>0.642468239564428</topRatio>
-      <widthRatio>0.823275862068966</widthRatio>
-      <heightRatio>0.0725952813067151</heightRatio>
-      <sizeRatio>0.104712041884817</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
       <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0725952813067151</heightRatio>
+      <left>44</left>
+      <leftRatio>0.0948275862068965</leftRatio>
+      <sizeRatio>0.104712041884817</sizeRatio>
+      <top>380</top>
+      <topRatio>0.642468239564428</topRatio>
+      <width>383</width>
+      <widthRatio>0.823275862068966</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx5/layoutxitem9">
-      <left>0</left>
-      <top>0</top>
-      <width>135</width>
-      <height>43</height>
-      <widthRatio>0.310173697270471</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.344</sizeRatio>
       <backgroundColor>f0f0f0</backgroundColor>
-      <text>联系地址：</text>
+      <fontFamily>黑体</fontFamily>
       <fontSizeAuto>30</fontSizeAuto>
       <hAlign>right</hAlign>
       <heavy>45</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.323308270676692</sizeRatio>
+      <text>联系地址：</text>
+      <top>0</top>
+      <width>119</width>
+      <widthRatio>0.309302325581395</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx5/layoutxitem10">
-      <left>135</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <leftRatio>0.310173697270471</leftRatio>
-      <widthRatio>0.689826302729529</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
       <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>119</left>
+      <leftRatio>0.309302325581395</leftRatio>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>0.690697674418605</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel2/layoutx5/layoutxitem10/edit3">
-      <left>0</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
+      <backgroundSkin>line3</backgroundSkin>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <backgroundSkin>line3</backgroundSkin>
+      <fontFamily>黑体</fontFamily>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
       <inputFontSizeAuto>30</inputFontSizeAuto>
+      <left>0</left>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel2/layoutx6">
-      <left>50</left>
-      <top>434</top>
-      <width>436</width>
-      <height>43</height>
-      <leftRatio>0.0948275862068965</leftRatio>
-      <topRatio>0.731397459165154</topRatio>
-      <widthRatio>0.823275862068966</widthRatio>
-      <heightRatio>0.0725952813067151</heightRatio>
-      <sizeRatio>0.104712041884817</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
       <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0725952813067151</heightRatio>
+      <left>44</left>
+      <leftRatio>0.0948275862068965</leftRatio>
+      <sizeRatio>0.104712041884817</sizeRatio>
+      <top>433</top>
+      <topRatio>0.731397459165154</topRatio>
+      <width>383</width>
+      <widthRatio>0.823275862068966</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx6/layoutxitem11">
-      <left>0</left>
-      <top>0</top>
-      <width>135</width>
-      <height>43</height>
-      <widthRatio>0.310173697270471</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.344</sizeRatio>
       <backgroundColor>f0f0f0</backgroundColor>
-      <text>紧急联系人：</text>
+      <fontFamily>黑体</fontFamily>
       <fontSizeAuto>30</fontSizeAuto>
       <hAlign>right</hAlign>
       <heavy>45</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.323308270676692</sizeRatio>
+      <text>紧急联系人：</text>
+      <top>0</top>
+      <width>119</width>
+      <widthRatio>0.309302325581395</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx6/layoutxitem12">
-      <left>135</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <leftRatio>0.310173697270471</leftRatio>
-      <widthRatio>0.689826302729529</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
       <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>119</left>
+      <leftRatio>0.309302325581395</leftRatio>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>0.690697674418605</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel2/layoutx6/layoutxitem12/edit4">
-      <left>0</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
+      <backgroundSkin>line3</backgroundSkin>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <backgroundSkin>line3</backgroundSkin>
+      <fontFamily>黑体</fontFamily>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
       <inputFontSizeAuto>30</inputFontSizeAuto>
+      <left>0</left>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel2/layoutx7">
-      <left>50</left>
-      <top>488</top>
-      <width>436</width>
-      <height>43</height>
-      <leftRatio>0.0948275862068965</leftRatio>
-      <topRatio>0.822141560798548</topRatio>
-      <widthRatio>0.823275862068966</widthRatio>
-      <heightRatio>0.0725952813067151</heightRatio>
-      <sizeRatio>0.104712041884817</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
       <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0725952813067151</heightRatio>
+      <left>44</left>
+      <leftRatio>0.0948275862068965</leftRatio>
+      <sizeRatio>0.104712041884817</sizeRatio>
+      <top>487</top>
+      <topRatio>0.822141560798548</topRatio>
+      <width>383</width>
+      <widthRatio>0.823275862068966</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx7/layoutxitem13">
-      <left>0</left>
-      <top>0</top>
-      <width>135</width>
-      <height>43</height>
-      <widthRatio>0.310173697270471</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.344</sizeRatio>
       <backgroundColor>f0f0f0</backgroundColor>
-      <text>紧急联系人电话：</text>
+      <fontFamily>黑体</fontFamily>
       <fontSizeAuto>35</fontSizeAuto>
       <hAlign>right</hAlign>
       <heavy>45</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.323308270676692</sizeRatio>
+      <text>紧急联系人电话：</text>
+      <top>0</top>
+      <width>119</width>
+      <widthRatio>0.309302325581395</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/panel2/layoutx7/layoutxitem14">
-      <left>135</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <leftRatio>0.310173697270471</leftRatio>
-      <widthRatio>0.689826302729529</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
       <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>119</left>
+      <leftRatio>0.309302325581395</leftRatio>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>0.690697674418605</widthRatio>
     </control>
     <control type="Edit" pathname="/divRoot/panel2/layoutx7/layoutxitem14/edit5">
-      <left>0</left>
-      <top>0</top>
-      <width>301</width>
-      <height>43</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.154676258992806</sizeRatio>
+      <backgroundSkin>line3</backgroundSkin>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <backgroundSkin>line3</backgroundSkin>
+      <fontFamily>黑体</fontFamily>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
       <inputFontSizeAuto>30</inputFontSizeAuto>
+      <left>0</left>
+      <sizeRatio>0.144781144781145</sizeRatio>
+      <top>0</top>
+      <width>264</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel2/panel5">
-      <left>200</left>
-      <top>26</top>
-      <width>153</width>
-      <height>150</height>
-      <leftRatio>0.368534482758621</leftRatio>
-      <topRatio>0.043557168784029</topRatio>
-      <widthRatio>0.306034482758621</widthRatio>
-      <heightRatio>0.252268602540835</heightRatio>
-      <sizeRatio>0.97887323943662</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <lockRatio>true</lockRatio>
       <backgroundImg>CPY0000.jpg</backgroundImg>
       <backgroundSkin>line1000</backgroundSkin>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel2/panel6">
-      <left>187</left>
-      <top>196</top>
-      <width>177</width>
-      <height>43</height>
-      <leftRatio>0.354378818737271</leftRatio>
-      <topRatio>0.32996632996633</topRatio>
-      <widthRatio>0.334012219959267</widthRatio>
-      <heightRatio>0.0723905723905724</heightRatio>
-      <sizeRatio>0.26219512195122</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
+      <height>139</height>
+      <heightRatio>0.252268602540835</heightRatio>
+      <left>172</left>
+      <leftRatio>0.368534482758621</leftRatio>
+      <lockRatio>true</lockRatio>
+      <sizeRatio>0.97887323943662</sizeRatio>
+      <top>31</top>
+      <topRatio>0.043557168784029</topRatio>
+      <width>142</width>
+      <widthRatio>0.306034482758621</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel6">
       <backgroundSkin>button3</backgroundSkin>
-      <text>上传头像</text>
-      <fontSizeAuto>20</fontSizeAuto>
-      <fontColor>FFFFFF</fontColor>
       <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.0723905723905724</heightRatio>
+      <left>165</left>
+      <leftRatio>0.354378818737271</leftRatio>
+      <sizeRatio>0.26219512195122</sizeRatio>
+      <text>上传头像</text>
+      <top>195</top>
+      <topRatio>0.32996632996633</topRatio>
+      <width>155</width>
+      <widthRatio>0.334012219959267</widthRatio>
     </control>
     <control type="FileUpload" pathname="/divRoot/panel2/panel6/fileupload1">
-      <left>0</left>
-      <top>0</top>
-      <width>177</width>
-      <height>43</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.242937853107345</sizeRatio>
+      <alpha>0.98</alpha>
+      <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <bgColorEnabled>true</bgColorEnabled>
-      <alpha>0.98</alpha>
+      <fontFamily>黑体</fontFamily>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onUploadCompleteC>g5.photo1 = eio.readString8();
+eb.setCookie("am_photo1", g5.photo1);
+ee.setImage(ee.getControl("panel5"), "url:/userRes/" +g5.photo1, "trim");   
+ee.setVisible(ee.getControl("panel20"), false);
+
+</onUploadCompleteC>
+      <onUploadCompleteS>//取文件名
+var pos=newFileName.lastIndexOf("\\");
+var filename = newFileName.substring(pos+1);
+//写入session供后续或者页面掉线后使用
+session.set("photo1", filename);
+eio.appendString8(filename);  
+</onUploadCompleteS>
+      <onUploadError>alert("上传文件失败："+errorString);
+ee.setVisible(ee.getControl("panel20"), false);
+
+
+          
+</onUploadError>
+      <onUploadProgress>g5.setProgress(sizeCurrent/sizeTotal);
+
+</onUploadProgress>
       <onUploadStartC>//初步过滤
 fileExt = fileExt.toUpperCase();
 if ((fileExt!=".JPG")&amp;&amp;(fileExt!=".BMP")&amp;&amp;(fileExt!=".PNG")&amp;&amp;(fileExt!=".JPEG")) {
@@ -540,82 +568,59 @@ while (true) {
     break;
 }
 ]]></onUploadStartS>
-      <onUploadProgress>g5.setProgress(sizeCurrent/sizeTotal);
-
-</onUploadProgress>
-      <onUploadError>alert("上传文件失败："+errorString);
-ee.setVisible(ee.getControl("panel20"), false);
-
-
-          
-</onUploadError>
-      <onUploadCompleteC>g5.photo1 = eio.readString8();
-eb.setCookie("am_photo1", g5.photo1);
-ee.setImage(ee.getControl("panel5"), "url:/userRes/" +g5.photo1, "trim");   
-ee.setVisible(ee.getControl("panel20"), false);
-
-</onUploadCompleteC>
-      <onUploadCompleteS>//取文件名
-var pos=newFileName.lastIndexOf("\\");
-var filename = newFileName.substring(pos+1);
-//写入session供后续或者页面掉线后使用
-session.set("photo1", filename);
-eio.appendString8(filename);  
-</onUploadCompleteS>
+      <sizeRatio>0.247126436781609</sizeRatio>
+      <top>0</top>
+      <width>155</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel4">
-      <left>-1</left>
-      <top>89</top>
-      <width>524</width>
-      <height>80</height>
-      <leftRatio>-0.00171526586620926</leftRatio>
-      <topRatio>0.108669108669109</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.0976800976800977</heightRatio>
-      <sizeRatio>0.137221269296741</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
       <backgroundColor>FFFFFF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
       <fontSizeAuto>30</fontSizeAuto>
+      <height>80</height>
+      <heightRatio>0.0976800976800977</heightRatio>
       <layerVisible>false</layerVisible>
+      <left>-1</left>
+      <leftRatio>-0.00171526586620926</leftRatio>
+      <sizeRatio>0.137221269296741</sizeRatio>
+      <top>89</top>
+      <topRatio>0.108669108669109</topRatio>
+      <width>460</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel4/panel12">
-      <left>69</left>
-      <top>0</top>
-      <width>391</width>
-      <height>80</height>
-      <leftRatio>0.131687242798354</leftRatio>
-      <widthRatio>0.746913580246914</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.220385674931129</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>fill</dockY>
       <backgroundColor>FFFFFF</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
       <backgroundImg>step1.png</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
       <fontSizeAuto>30</fontSizeAuto>
+      <height>80</height>
+      <heightRatio>1</heightRatio>
       <layerVisible>false</layerVisible>
+      <left>61</left>
+      <leftRatio>0.131687242798354</leftRatio>
+      <sizeRatio>0.220385674931129</sizeRatio>
+      <top>0</top>
+      <width>344</width>
+      <widthRatio>0.746913580246914</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel3">
-      <left>116</left>
-      <top>750</top>
-      <width>308</width>
-      <height>53</height>
-      <leftRatio>0.221269296740995</leftRatio>
-      <topRatio>0.915750915750916</topRatio>
-      <widthRatio>0.588336192109777</widthRatio>
-      <heightRatio>0.0647130647130647</heightRatio>
-      <sizeRatio>0.154518950437318</sizeRatio>
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>button3</backgroundSkin>
-      <text>下一步</text>
-      <fontSizeAuto>20</fontSizeAuto>
       <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>53</height>
+      <heightRatio>0.0647130647130647</heightRatio>
       <layerVisible>false</layerVisible>
-      <cursor>pointer</cursor>
+      <left>101</left>
+      <leftRatio>0.220502901353965</leftRatio>
       <onClick><![CDATA[//客户端验证
 var value;
 value = ee.getEditText(ee.getControl("edit1"));
@@ -662,199 +667,206 @@ eb.setCookie("am_emTel", ee.getEditText(ee.getControl("edit5")));
 window.location.href = ee.pageRoot + "/accountModify/step2";
 
  ]]></onClick>
+      <sizeRatio>0.174342105263158</sizeRatio>
+      <text>下一步</text>
+      <top>747</top>
+      <topRatio>0.915750915750916</topRatio>
+      <width>270</width>
+      <widthRatio>0.588007736943907</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20">
-      <left>0</left>
-      <top>0</top>
-      <width>524</width>
-      <height>819</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>1.69214876033058</sizeRatio>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
+      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
       <backgroundColor>000000</backgroundColor>
       <backgroundImg>dialogMask.png</backgroundImg>
       <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
       <layerName>m1</layerName>
       <layerVisible>false</layerVisible>
-      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
+      <left>0</left>
+      <sizeRatio>1.58413926499033</sizeRatio>
+      <top>0</top>
+      <width>460</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20/panel13">
-      <left>28</left>
-      <top>154</top>
-      <width>463</width>
-      <height>289</height>
-      <leftRatio>0.0539956803455724</leftRatio>
-      <topRatio>0.187760778859527</topRatio>
-      <widthRatio>0.883369330453564</widthRatio>
-      <heightRatio>0.35326842837274</heightRatio>
-      <sizeRatio>0.621026894865526</sizeRatio>
+      <backgroundSkin>body2</backgroundSkin>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>body2</backgroundSkin>
-      <fontSizeAuto>20</fontSizeAuto>
       <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>288</height>
+      <heightRatio>0.35326842837274</heightRatio>
+      <left>25</left>
+      <leftRatio>0.0539956803455724</leftRatio>
+      <sizeRatio>0.621026894865526</sizeRatio>
+      <top>153</top>
+      <topRatio>0.187760778859527</topRatio>
+      <width>406</width>
+      <widthRatio>0.883369330453564</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20/panel13/panel14">
-      <left>15</left>
-      <top>20</top>
-      <width>432</width>
-      <height>86</height>
-      <leftRatio>0.0317848410757946</leftRatio>
-      <topRatio>0.0708661417322835</topRatio>
-      <widthRatio>0.93398533007335</widthRatio>
-      <heightRatio>0.299212598425197</heightRatio>
-      <sizeRatio>0.198952879581152</sizeRatio>
+      <backgroundSkin>line1001</backgroundSkin>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>line1001</backgroundSkin>
-      <text>文件正在上传中，请耐心等候</text>
       <fontSizeAuto>30</fontSizeAuto>
+      <height>86</height>
+      <heightRatio>0.299212598425197</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0317848410757946</leftRatio>
+      <sizeRatio>0.198952879581152</sizeRatio>
+      <text>文件正在上传中，请耐心等候</text>
+      <top>20</top>
+      <topRatio>0.0708661417322835</topRatio>
+      <width>379</width>
+      <widthRatio>0.93398533007335</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20/panel13/panel7">
-      <left>47</left>
-      <top>215</top>
-      <width>366</width>
-      <height>46</height>
-      <leftRatio>0.102564102564103</leftRatio>
-      <topRatio>0.743944636678201</topRatio>
-      <widthRatio>0.79020979020979</widthRatio>
-      <heightRatio>0.15916955017301</heightRatio>
-      <sizeRatio>0.135693215339233</sizeRatio>
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>button3</backgroundSkin>
-      <text>取消上传</text>
-      <fontSizeAuto>20</fontSizeAuto>
       <fontColor>FFFFFF</fontColor>
-      <cursor>pointer</cursor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>46</height>
+      <heightRatio>0.15916955017301</heightRatio>
+      <left>42</left>
+      <leftRatio>0.102564102564103</leftRatio>
       <onClick>ee.getControl("fileupload1").stop();
 ee.setVisible(ee.getControl("panel20"), false);
 
 
                                                    </onClick>
+      <sizeRatio>0.135693215339233</sizeRatio>
+      <text>取消上传</text>
+      <top>214</top>
+      <topRatio>0.743944636678201</topRatio>
+      <width>321</width>
+      <widthRatio>0.79020979020979</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20/panel13/panel8">
-      <left>15</left>
-      <top>134</top>
-      <width>432</width>
-      <height>25</height>
-      <leftRatio>0.0317848410757946</leftRatio>
-      <topRatio>0.464566929133858</topRatio>
-      <widthRatio>0.93398533007335</widthRatio>
-      <heightRatio>0.0866141732283465</heightRatio>
-      <sizeRatio>0.0575916230366492</sizeRatio>
+      <backgroundSkin>line1001</backgroundSkin>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>line1001</backgroundSkin>
       <fontSizeAuto>30</fontSizeAuto>
+      <height>25</height>
+      <heightRatio>0.0866141732283465</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0317848410757946</leftRatio>
+      <sizeRatio>0.0575916230366492</sizeRatio>
+      <top>134</top>
+      <topRatio>0.464566929133858</topRatio>
+      <width>379</width>
+      <widthRatio>0.93398533007335</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20/panel13/panel8/panel10">
-      <left>5</left>
-      <top>5</top>
-      <width>422</width>
-      <height>15</height>
-      <leftRatio>0.0125</leftRatio>
-      <topRatio>0.2</topRatio>
-      <widthRatio>0.975</widthRatio>
-      <heightRatio>0.6</heightRatio>
-      <sizeRatio>0.0384615384615385</sizeRatio>
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>15</height>
+      <heightRatio>0.6</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0117096018735363</leftRatio>
+      <outerBottom>5</outerBottom>
       <outerLeft>5</outerLeft>
       <outerRight>5</outerRight>
       <outerTop>5</outerTop>
-      <outerBottom>5</outerBottom>
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-      <fontSizeAuto>30</fontSizeAuto>
+      <sizeRatio>0.0359712230215827</sizeRatio>
+      <top>5</top>
+      <topRatio>0.2</topRatio>
+      <width>369</width>
+      <widthRatio>0.976580796252927</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel20/panel13/panel8/panel10/panel11">
-      <left>0</left>
-      <top>0</top>
-      <width>141</width>
-      <height>15</height>
-      <widthRatio>0.361538461538462</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.106382978723404</sizeRatio>
-      <dockX>left</dockX>
-      <dockY>fill</dockY>
       <backgroundColor>008080</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
+      <dockX>left</dockX>
+      <dockY>fill</dockY>
       <fontSizeAuto>30</fontSizeAuto>
+      <height>15</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.106382978723404</sizeRatio>
+      <top>0</top>
+      <width>141</width>
+      <widthRatio>0.338129496402878</widthRatio>
     </control>
     <control type="LayoutY" pathname="/divRoot/layouty1">
-      <left>0</left>
-      <top>0</top>
-      <width>524</width>
-      <height>90</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.10989010989011</heightRatio>
-      <sizeRatio>0.154373927958834</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
       <fieldCount>2</fieldCount>
+      <height>90</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.154373927958834</sizeRatio>
+      <top>0</top>
+      <width>460</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
-      <left>0</left>
-      <top>0</top>
-      <width>524</width>
-      <height>29</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.322222222222222</heightRatio>
-      <sizeRatio>0.0599173553719008</sizeRatio>
       <backgroundColor>BFCEDF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <heavy>47</heavy>
+      <height>29</height>
+      <heightRatio>0.322222222222222</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0560928433268859</sizeRatio>
+      <top>0</top>
+      <width>460</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
-      <left>0</left>
-      <top>29</top>
-      <width>524</width>
-      <height>61</height>
-      <topRatio>0.322222222222222</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.677777777777778</heightRatio>
-      <sizeRatio>0.12603305785124</sizeRatio>
       <backgroundColor>47A9F9</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <text>个人信息认证</text>
-      <fontSizeAuto>15</fontSizeAuto>
       <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>0.677777777777778</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.117988394584139</sizeRatio>
+      <text>个人信息认证</text>
+      <top>29</top>
+      <topRatio>0.322222222222222</topRatio>
+      <width>460</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel15">
-      <left>14</left>
-      <top>13</top>
-      <width>62</width>
-      <height>34</height>
-      <leftRatio>0.0274442538593482</leftRatio>
-      <topRatio>0.213114754098361</topRatio>
-      <widthRatio>0.118353344768439</widthRatio>
-      <heightRatio>0.557377049180328</heightRatio>
-      <sizeRatio>0.492753623188406</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
       <backgroundImg>back.png</backgroundImg>
       <backgroundImgMode>fill</backgroundImgMode>
-      <fontSizeAuto>30</fontSizeAuto>
       <cursor>pointer</cursor>
-    </control>
-    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel16">
-      <left>1</left>
-      <top>1</top>
-      <width>102</width>
-      <height>57</height>
-      <leftRatio>0.00171526586620926</leftRatio>
-      <topRatio>0.0163934426229508</topRatio>
-      <widthRatio>0.195540308747856</widthRatio>
-      <heightRatio>0.934426229508197</heightRatio>
-      <sizeRatio>0.5</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>34</height>
+      <heightRatio>0.557377049180328</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0274442538593482</leftRatio>
+      <sizeRatio>0.492753623188406</sizeRatio>
+      <top>13</top>
+      <topRatio>0.213114754098361</topRatio>
+      <width>54</width>
+      <widthRatio>0.118353344768439</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel16">
       <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>57</height>
+      <heightRatio>0.934426229508197</heightRatio>
+      <left>1</left>
+      <leftRatio>0.00171526586620926</leftRatio>
       <onClick>window.location.href = ee.pageRoot + "/cMain";
 </onClick>
+      <sizeRatio>0.5</sizeRatio>
+      <top>1</top>
+      <topRatio>0.0163934426229508</topRatio>
+      <width>90</width>
+      <widthRatio>0.195540308747856</widthRatio>
     </control>
   </controls>
   <taskSet count="0" />

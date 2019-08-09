@@ -1,0 +1,238 @@
+<page>
+  <controls count="4">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>639</height>
+      <left>0</left>
+      <onPageCreate><![CDATA[
+function idCodeValid (code) {
+    var city = { 11: "北京", 12: "天津", 13: "河北", 14: "山西", 15: "内蒙古", 21: "辽宁", 22: "吉林", 23: "黑龙江 ", 31: "上海", 32: "江苏", 33: "浙江", 34: "安徽", 35: "福建", 36: "江西", 37: "山东", 41: "河南", 42: "湖北 ", 43: "湖南", 44: "广东", 45: "广西", 46: "海南", 50: "重庆", 51: "四川", 52: "贵州", 53: "云南", 54: "西藏 ", 61: "陕西", 62: "甘肃", 63: "青海", 64: "宁夏", 65: "新疆", 71: "台湾", 81: "香港", 82: "澳门", 91: "国外 " };
+    var result = "";
+
+    if (!code || !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(code)) {
+        result = "身份证号格式错误";
+    } else if (!city[code.substr(0, 2)]) {
+        result = "地址编码错误";
+    } else {
+        //18位身份证需要验证最后一位校验位
+        if (code.length == 18) {
+            code = code.split('');
+            //∑(ai×Wi)(mod 11)
+            //加权因子
+            var factor = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+            //校验位
+            var parity = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2];
+            var sum = 0;
+            var ai = 0;
+            var wi = 0;
+            for (var i = 0; i < 17; i++) {
+                ai = code[i];
+                wi = factor[i];
+                sum += ai * wi;
+            }
+            var last = parity[sum % 11];
+            if (parity[sum % 11] != code[17]) {
+                result = "校验位错误";
+            }
+        }
+    }
+    return result;
+}]]></onPageCreate>
+      <top>0</top>
+      <width>712</width>
+    </control>
+    <control type="Button" pathname="/divRoot/button1">
+      <backgroundSkin>button3</backgroundSkin>
+      <backgroundSkin1>skin1000</backgroundSkin1>
+      <backgroundSkin2>skin1001</backgroundSkin2>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontColor1>FFFFFF</fontColor1>
+      <fontColor2>FFFFFF</fontColor2>
+      <fontItalic>true</fontItalic>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>69</height>
+      <heightRatio>0.107981220657277</heightRatio>
+      <left>50</left>
+      <leftRatio>0.0702247191011236</leftRatio>
+      <onClick>testMd5();
+//window.location.href = ee.pageRoot + "/test";</onClick>
+      <sizeRatio>0.115384615384615</sizeRatio>
+      <text>测试按钮</text>
+      <top>40</top>
+      <topRatio>0.0625978090766823</topRatio>
+      <width>598</width>
+      <widthRatio>0.839887640449438</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/button2">
+      <backgroundSkin>button3</backgroundSkin>
+      <backgroundSkin1>skin1000</backgroundSkin1>
+      <backgroundSkin2>skin1001</backgroundSkin2>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontColor1>FFFFFF</fontColor1>
+      <fontColor2>FFFFFF</fontColor2>
+      <fontItalic>true</fontItalic>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>69</height>
+      <heightRatio>0.108669108669109</heightRatio>
+      <left>52</left>
+      <leftRatio>0.0724137931034483</leftRatio>
+      <onClick>idCodeValid ("310103198710027018");</onClick>
+      <sizeRatio>0.121751025991792</sizeRatio>
+      <text>测试按钮</text>
+      <top>144</top>
+      <topRatio>0.225885225885226</topRatio>
+      <width>598</width>
+      <widthRatio>0.840229885057471</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/button3">
+      <aniAutoShow>false</aniAutoShow>
+      <backgroundSkin>button3</backgroundSkin>
+      <backgroundSkin1>skin1000</backgroundSkin1>
+      <backgroundSkin2>skin1001</backgroundSkin2>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontColor1>FFFFFF</fontColor1>
+      <fontColor2>FFFFFF</fontColor2>
+      <fontItalic>true</fontItalic>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>69</height>
+      <heightRatio>0.108669108669109</heightRatio>
+      <left>52</left>
+      <leftRatio>0.0724137931034483</leftRatio>
+      <onClick>alert("1w");
+var c = ee.getControl("button2");
+ee.setText(c, ee.getText(c) + "z");</onClick>
+      <sizeRatio>0.121751025991792</sizeRatio>
+      <text>测试提现问题</text>
+      <top>255</top>
+      <topRatio>0.399267399267399</topRatio>
+      <width>598</width>
+      <widthRatio>0.840229885057471</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="2">
+    <taskSetItem name="getCash">
+      <script1><![CDATA[alert("1")
+//var c = ee.getControl("layoutyitem2");
+//ee.setText(c, ee.getText(c)+"Z");
+
+/*var money = ee.getEditText(ee.getControl("edit4"));
+money = parseFloat(money);
+if (isNaN(money)) {
+    alert("您输入的不是一个有效的金额");
+    return;
+}
+if (money<=0) {
+    alert("提现金额必须大于零");
+    return;
+} */
+eio.appendString8(eb.getCookie("pjToken"));
+/*eio.appendString8(money+"");
+eio.appendInt32(g5.deleteCardId); //当前操作的卡ID*/ 
+
+]]></script1>
+      <script2><![CDATA[var token = eio.readString8();
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id");
+
+/*var money = eio.readString8();
+var cardId = eio.readInt32();
+//合法性验证
+money = parseFloat(money);
+if (isNaN(money)) {
+    eio.appendString8("F");
+    eio.appendString8("提现金额不是一个有效的数字");
+    return;
+}
+if (money<=0) {
+    eio.appendString8("F");
+    eio.appendString8("提现金额必须大于零");
+    return;
+}
+//查询银行卡信息
+sql = "select * from bankCard where id = " + cardId;
+sqlResult = db.executeQuery("PJ", sql);
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("获取银行卡信息失败");
+    return;
+}
+var cardUserName = db.getString(sqlResult, "cardUserName");
+var cardNumber = db.getString(sqlResult, "cardNumber");
+var bankName = db.getString(sqlResult, "bankName"); 
+//查询费用并扣费
+sql =  "exec getCash '" + db.encode(userId) + "','" + db.encode(cardUserName) + "','" + db.encode(cardNumber) + "','" + db.encode(bankName) + "','" + db.encode(money) + "'";
+    
+   
+    
+    sqlResult = db.executeQuery("PJ", sql);
+    if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("信息错误，请稍后再试");
+    return;
+    }
+    if (db.getInt32(sqlResult, "errorCode") == '-1') {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+    }
+    if (db.getInt32(sqlResult, "errorCode") == '-2') {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    return;
+    }
+    
+if (!db.executeNoneQuery("PJ", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}  */
+eio.appendString8("T"); 
+
+
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("提现申请失败：" + eio.readString8());
+    return;
+}
+alert("您的提现申请已经提交，请耐心等待1-3个工作日。");
+//ee.setVisible(ee.getControl("panel29"), false);
+
+      
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="testMd5">
+      <script1 />
+      <script2>
+
+var tt = es.getMd5('111111');
+eio.appendString8(tt);</script2>
+      <script3>var getT = eio.readString8();
+alert(getT);</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

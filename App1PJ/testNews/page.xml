@@ -1,0 +1,521 @@
+<page>
+  <controls count="14">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>F7F7F7</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>819</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[ee.getControl("panel1").style.overflow="auto";     
+g5.reFlag=true;
+g5.delFlag=true; 
+g5.sendFlag=true;  
+g5.text="";
+newsList();    
+//setTimeout(function(){alert(g5.book.length)},200);;        
+var root; 
+
+g5.create = function (){   
+//var len=g5.book;    
+//alert(g5.count);
+for(var i=0;i<g5.count;i++){  
+var data=g5.book.getData(0,i);
+    data = data.split("`"); 
+   // alert(data);  
+var newsCon= data[1]; 
+var msgId= data[2];  
+var newsStutus=data[0];
+var a=i*0.15;
+c = createPanel($("ee_panel1"), "temp", "ffffff", 0, 89, 425, 113);
+eb.setDock(c,"ratio","ratio");  
+c.leftRatio=0;
+c.widthRatio=1;
+c.topRatio=a;
+c.heightRatio=0.137973137973138;    
+root=c;
+c = createPanel(root, "temp", "", 23, 0, 100, 31);
+addText(c,g5.book.getData(2,i), "left", "middle", "黑体", 9, "505050", "normal");
+eb.setFontSizeAuto(c, 25);
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.0541176470588235;
+c.widthRatio=0.535294117647059;
+c.topRatio=0;
+c.heightRatio=0.274336283185841;
+c = createPanel(root, "temp", "", 23, 39, 100, 31);
+addText(c,g5.book.getData(1,i), "left", "middle", "黑体", 9, "949494", "normal");
+eb.setFontSizeAuto(c, 25);
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.0541176470588235;
+c.widthRatio=0.235294117647059;
+c.topRatio=0.345132743362832;
+c.heightRatio=0.274336283185841;
+c = createPanel(root, "temp", "", 23, 79, 379, 31);
+addText(c,newsCon , "left", "middle", "黑体", 9, "505050", "normal"); //"尊敬的客户，感谢您对1陪驾的支持123456465789764654643213476456789445467894！"
+eb.setFontSizeAuto(c, 25);
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.0541176470588235;
+c.widthRatio=0.891764705882353;
+c.topRatio=0.699115044247788;
+c.heightRatio=0.274336283185841; 
+ 
+c = createPanel(root, "temp", "", 351, 44, 25, 25); 
+ee.setImage(c,"/App1PJ/testNews/choose1.png","fill","","")
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.873134328358209;
+c.widthRatio=0.0821890547263682;
+c.topRatio=0.389380530973451;
+c.heightRatio=0.221238938053097;
+//c.layerName="勾选";   
+c.style.visibility="hidden";  
+//ee.setVisible(c,false);     
+
+c = createPanel(root, "temp", "", 351, 48, 25, 25); 
+addText(c,msgId , "left", "middle", "黑体", 9, "505050", "normal");
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.873134328358209;
+c.widthRatio=0.0621890547263682;
+c.topRatio=0.489380530973451;
+c.heightRatio=0.221238938053097;  
+c.style.visibility="hidden";     
+
+c = createPanel(root, "temp", "", 351, 50, 25, 25); 
+addText(c,"0" , "left", "middle", "黑体", 9, "505050", "normal");
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.873134328358209;
+c.widthRatio=0.0621890547263682;
+c.topRatio=0.489380530973451;
+c.heightRatio=0.221238938053097;  
+c.style.visibility="hidden";        
+
+c = createPanel(root, "temp", "", 13, 6, 14, 12);
+ee.setImage(c,"/App1PJ/testNews/point.png","fill","","")
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.0262096774193548;
+c.widthRatio=0.0241935483870968;
+c.topRatio=0.0530973451327434;
+c.heightRatio=0.106194690265487; 
+
+if(newsStutus=="已读"){
+    c.style.visibility="hidden";  
+}
+
+ee.setOnClick(root, function(sender, event) {   
+    if(g5.delFlag==false){ //删除显示时 发送id  不跳转至详情
+        //alert(ee.getText(sender.eeChildren[4]));  
+        if(ee.getText(sender.eeChildren[5])=="0"){ 
+            g5.text+=ee.getText(sender.eeChildren[4])+"/"; 
+            ee.setImage(sender.eeChildren[3],"/App1PJ/testNews/choose2.png","fill","","") 
+            //alert(g5.text); 
+            ee.setText(sender.eeChildren[5],"1");
+        } 
+        else { 
+            var delText=ee.getText(sender.eeChildren[4])+"/";
+            g5.text=g5.text.replace(delText,"");  
+            ee.setImage(sender.eeChildren[3],"/App1PJ/testNews/choose1.png","fill","","") 
+            //alert(g5.text);
+            ee.setText(sender.eeChildren[5],"0");
+        }
+    } else {     
+        g5.reFlag=false;  
+        g5.text=ee.getText(sender.eeChildren[4])+"/"; 
+        //alert(g5.text);
+//ee.setVisible(sender.eeChildren[3],true); 
+        ee.setText(ee.getControl("panel9"),ee.getText(sender.eeChildren[0]));
+        ee.setText(ee.getControl("panel13"),ee.getText(sender.eeChildren[1]));
+        ee.setText(ee.getControl("panel14"),ee.getText(sender.eeChildren[2]));
+        updateStatus();
+        ee.setVisible(ee.getControl("panel6"),true); 
+    }
+});   
+
+} //for
+    eb.processDock();  
+} //create  
+
+setTimeout(function(){ g5.create(); },500);      
+
+ee.setOnClick(ee.getControl("panel11"), function(sender, event) {    
+    if(g5.delFlag==true){
+        ee.setVisible(ee.getControl("panel12"),true); 
+      
+        for(var j=0;j< g5.count;j++){ 
+        //alert("a"); 
+         ee.getControl("panel1").eeChildren[j].eeChildren[3].style.visibility="visible";  
+         //eb.processDock(); 
+        }               
+        eb.processDock(); 
+        //ee.setVisible(root.eeChildren[0],false);
+        g5.delFlag=false;
+    }   
+    else {
+        ee.setVisible(ee.getControl("panel12"),false); 
+        for(var j=0;j< g5.count;j++){  
+         ee.getControl("panel1").eeChildren[j].eeChildren[3].style.visibility="hidden";  
+         ee.setImage(ee.getControl("panel1").eeChildren[j].eeChildren[3],"/App1PJ/testNews/choose1.png","fill","","") 
+         eb.processDock(); 
+        }  
+        //ee.setVisible(root.eeChildren[2],false);  
+        g5.delFlag=true
+    }
+});   
+
+]]></onControlLoad>
+      <pageHead><![CDATA[<meta name="viewport" content="width=device-width, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">]]></pageHead>
+      <top>0</top>
+      <width>704</width>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>90</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.10989010989011</sizeRatio>
+      <top>0</top>
+      <width>704</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <backgroundColor>BFCEDF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>47</heavy>
+      <height>29</height>
+      <heightRatio>0.322222222222222</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0516934046345811</sizeRatio>
+      <top>0</top>
+      <width>704</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>0.677777777777778</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.10873440285205</sizeRatio>
+      <text>消息</text>
+      <top>29</top>
+      <topRatio>0.322222222222222</topRatio>
+      <width>704</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel8">
+      <backgroundImg>back.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>34</height>
+      <heightRatio>0.557377049180328</heightRatio>
+      <left>19</left>
+      <leftRatio>0.0274442538593482</leftRatio>
+      <sizeRatio>0.492753623188406</sizeRatio>
+      <top>13</top>
+      <topRatio>0.213114754098361</topRatio>
+      <width>83</width>
+      <widthRatio>0.118353344768439</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel10">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>57</height>
+      <heightRatio>0.934426229508197</heightRatio>
+      <left>3</left>
+      <leftRatio>0.00426136363636364</leftRatio>
+      <onClick><![CDATA[if(g5.reFlag==true){  
+    if (eb.getCookie("pjUserType")=="教练") {
+        window.location.href = ee.pageRoot + "/cMain";
+    } else {
+        window.location.href = ee.pageRoot + "/student/sMain";
+    }
+}  
+else {       
+    g5.text=""
+    g5.reFlag=true;
+    ee.setVisible(ee.getControl("panel6"),false);
+    newsList();  
+    for(var k=0;k< g5.count;k++){
+        ee.removeControl(ee.getControl("panel1").eeChildren[0]);        
+    }        
+    eb.processDock();  
+    setTimeout(function(){ g5.create(); },500);    
+}]]></onClick>
+      <sizeRatio>0.252212389380531</sizeRatio>
+      <top>1</top>
+      <topRatio>0.0163934426229508</topRatio>
+      <width>226</width>
+      <widthRatio>0.321022727272727</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel11">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>1</heightRatio>
+      <left>594</left>
+      <leftRatio>0.843283582089552</leftRatio>
+      <sizeRatio>0.968253968253968</sizeRatio>
+      <text>编辑</text>
+      <top>0</top>
+      <width>110</width>
+      <widthRatio>0.156716417910448</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel12">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>1</heightRatio>
+      <layerName>删除已读</layerName>
+      <left>481</left>
+      <leftRatio>0.683238636363636</leftRatio>
+      <onClick>
+var a = confirm("是否确认删除这条消息？");
+if(a==true){
+     delMessage();   
+     newsList(); 
+     setTimeout(function(){ g5.create(); },500); ; 
+     ee.setVisible(ee.getControl("panel6"),false);  
+     ee.setVisible(ee.getControl("panel12"),false); 
+     g5.delFlag=true
+     alert("333");
+     
+} 
+</onClick>
+      <sizeRatio>0.54954954954955</sizeRatio>
+      <text>删除</text>
+      <top>0</top>
+      <width>111</width>
+      <widthRatio>0.157670454545455</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>732</height>
+      <heightRatio>0.893772893772894</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.4758064516129</sizeRatio>
+      <top>90</top>
+      <topRatio>0.10989010989011</topRatio>
+      <width>704</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel6">
+      <backgroundColor>F7F7F7</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>730</height>
+      <heightRatio>0.891330891330891</heightRatio>
+      <layerName>详细信息</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick> ee.setVisible(ee.getControl("panel6"),false);</onClick>
+      <sizeRatio>1.81592039800995</sizeRatio>
+      <top>89</top>
+      <topRatio>0.108669108669109</topRatio>
+      <width>704</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel6/panel7">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>497</height>
+      <heightRatio>0.680821917808219</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.2363184079602</sizeRatio>
+      <top>0</top>
+      <width>704</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel6/panel7/panel13">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>949494</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>22</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>32</height>
+      <heightRatio>0.0643863179074447</heightRatio>
+      <left>37</left>
+      <leftRatio>0.0522388059701493</leftRatio>
+      <sizeRatio>0.146118721461187</sizeRatio>
+      <text>.</text>
+      <top>66</top>
+      <topRatio>0.132796780684105</topRatio>
+      <width>384</width>
+      <widthRatio>0.544776119402985</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel6/panel7/panel9">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>22</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>32</height>
+      <heightRatio>0.0643863179074447</heightRatio>
+      <left>37</left>
+      <leftRatio>0.0522388059701493</leftRatio>
+      <sizeRatio>0.125</sizeRatio>
+      <text>.</text>
+      <top>20</top>
+      <topRatio>0.0402414486921529</topRatio>
+      <width>448</width>
+      <widthRatio>0.63681592039801</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel6/panel7/panel14">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>22</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>353</height>
+      <heightRatio>0.710261569416499</heightRatio>
+      <left>37</left>
+      <leftRatio>0.0522388059701493</leftRatio>
+      <sizeRatio>0.977839335180055</sizeRatio>
+      <text>.</text>
+      <top>113</top>
+      <topRatio>0.227364185110664</topRatio>
+      <vAlign>top</vAlign>
+      <width>632</width>
+      <widthRatio>0.898009950248756</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="3">
+    <taskSetItem name="newsList">
+      <script1>
+eio.appendString8(eb.getCookie("pjToken"));
+//eio.appendInt32(g5.pageSize);
+//eio.appendInt32(g5.pageCurrent);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+//var pageSize = eio.readInt32();
+//var pageCurrent = eio.readInt32();
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id"); 
+es.logWarning(sql);
+es.logWarning(userId);
+sql = "select count(*) as c from sendNews where (status='已读' or status='未读') and userId="+userId;
+sqlResult = db.executeQuery("PJ", sql); 
+db.read(sqlResult)  
+var count = db.getInt32(sqlResult, "c");
+if(count<=0){               
+    eio.appendString8("F2");
+    return;
+}  
+es.logWarning(sql);  
+es.logWarning(count);
+sql="select ISNULL(status,'')+'`'+ISNULL(newsContent,'')+'`'+ISNULL(CAST (id AS nvarchar),'') as data,regDatetime,title from sendNews where userId="+userId+" and (status='已读' or status='未读') order by regDatetime desc";//(status='已读' or status='未读')
+//sql="select * from sendNews where userId="+userId+" order by regDatetime desc";//(status='已读' or status='未读')
+
+sqlResult = db.executeQuery("PJ", sql); 
+//db.read(sqlResult) 
+
+es.logWarning(sql);
+
+eio.appendString8("T");
+eio.appendDataSet(sqlResult,"data,regDatetime,title",0,9999);
+eio.appendInt32(count);
+]]></script2>
+      <script3>var result = eio.readString8();  
+if(result=="F"){
+   alert("系统繁忙，请稍候再试！");
+   return;
+}      
+//alert(result);
+if(result=="F2"){
+   ee.setVisible(ee.getControl("panel1"),false);
+   ee.setVisible(ee.getControl("panel19"),true);
+   //ee.setImage(ee.getControl("panel19"),"/App1PJ/sendNews/noNews.png","fill","","")
+   return;
+}
+//ee.setVisible(ee.getControl("panel19"),false;)
+//ee.setImage(ee.getControl("divRoot"),"","fill","","")
+g5.book = eio.readDataSet(); 
+g5.count = eio.readInt32(); 
+
+//var a=g5.dataset1;  
+//alert(g5.dataset1.getData(2,0));
+</script3>
+    </taskSetItem>
+    <taskSetItem name="delMessage">
+      <script1><![CDATA[//eio.appendString16(g5.text);
+alert(g5.text);  
+var arr=g5.text.split("/");  
+if(arr.length>1){
+    var con="id="+arr[0]; 
+    for(var k=1;k<arr.length-1;k++){
+         con+=" and id="+arr[k]+" ";
+    }
+}
+if(arr.length==1){
+    var con="id="+arr[0]; 
+}
+
+eio.appendString16(con);]]></script1>
+      <script2>var text=eio.readString16();    
+//var arr=text.split("/"); 
+
+
+var sql,sqlResult;
+sql="update sendNews set status='删除' where "+text;
+sqlResult = db.executeNoneQuery("PJ", sql);
+eio.appendString8("T");
+</script2>
+      <script3>var result = eio.readString8();
+if(result=="T"){
+    alert("消息删除成功！")  
+    g5.text=""
+    g5.reFlag=true;
+   // ee.setVisible(ee.getControl("panel6"),false);  
+   // newsList();
+}</script3>
+    </taskSetItem>
+    <taskSetItem name="updateStatus">
+      <script1>var arr=g5.text.split("/"); 
+var con="id="+arr[0];  
+eio.appendString16(con);
+</script1>
+      <script2>var msgId = eio.readString16();
+var sql,sqlResult;
+sql="update sendNews set status='已读' where "+msgId;
+sqlResult = db.executeNoneQuery("PJ", sql);
+
+</script2>
+      <script3 />
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

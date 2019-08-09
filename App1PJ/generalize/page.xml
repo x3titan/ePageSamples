@@ -1,0 +1,738 @@
+<page>
+  <controls count="22">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad> setTimeout(function(){
+    ee.autoResize = false;
+},1000);
+
+/*
+ee.setVisible(ee.getControl("panel3"),true); //获取验证码层  显示      
+
+var url = window.location.search;
+var index = url.indexOf("&amp;");
+if (index != -1){
+   var arr = url.split("&amp;");
+   console.log(arr);
+   g5.schoolId = arr[1]; 
+   getSchoolInfo(); //获取驾校信息
+} */ 
+
+
+ee.setVisible(ee.getControl("panel7"),true);  // “不能领取”  
+
+
+g5.check = 1; //默认勾选条款
+
+</onControlLoad>
+      <pageHead><![CDATA[<meta name="viewport" content="width=device-width, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+]]></pageHead>
+      <top>0</top>
+      <width>397</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <backgroundImg>background2.jpg</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.7855579868709</sizeRatio>
+      <top>0</top>
+      <width>397</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/edit1">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>9E9E9E</fontColor>
+      <fontFamily>Tahoma</fontFamily>
+      <fontSizeAuto>22</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>48</height>
+      <heightRatio>0.0588235294117647</heightRatio>
+      <inputFont>Arial</inputFont>
+      <inputFontSizeAuto>20</inputFontSizeAuto>
+      <left>20</left>
+      <leftRatio>0.0495689655172414</leftRatio>
+      <onChange>var m = ee.getEditText(ee.getControl("edit1"));  
+console.log("m::"+m.length);
+if (m.length == 11){
+    ee.setVisible(ee.getControl("panel3"),true);   
+}</onChange>
+      <sizeRatio>0.124675324675325</sizeRatio>
+      <text>请输入手机号</text>
+      <top>488</top>
+      <topRatio>0.598039215686274</topRatio>
+      <width>329</width>
+      <widthRatio>0.829741379310345</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel2">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>63</height>
+      <heightRatio>0.0772058823529412</heightRatio>
+      <left>80</left>
+      <leftRatio>0.202586206896552</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel19"),true); //条款
+ee.setVisible(ee.getControl("panel22"),true); //遮罩</onClick>
+      <sizeRatio>0.19811320754717</sizeRatio>
+      <top>693</top>
+      <topRatio>0.849264705882353</topRatio>
+      <width>272</width>
+      <widthRatio>0.685344827586207</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/edit2">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>9E9E9E</fontColor>
+      <fontFamily>Tahoma</fontFamily>
+      <fontSizeAuto>22</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>48</height>
+      <heightRatio>0.0588235294117647</heightRatio>
+      <inputFont>Arial</inputFont>
+      <inputFontSizeAuto>20</inputFontSizeAuto>
+      <left>20</left>
+      <leftRatio>0.0493273542600897</leftRatio>
+      <onChange>var m = ee.getEditText(ee.getControl("edit1"));  
+var code = ee.getEditText(ee.getControl("edit2"));  
+console.log("Mc::"+code.length)
+
+if (m != "" &amp;&amp; code.length == 4){
+    ee.setVisible(ee.getControl("panel5"),true);   
+    ee.setVisible(ee.getControl("panel7"),false);   //不能领取
+}</onChange>
+      <sizeRatio>0.188235294117647</sizeRatio>
+      <text>输入验证码</text>
+      <top>546</top>
+      <topRatio>0.669117647058823</topRatio>
+      <width>227</width>
+      <widthRatio>0.571748878923767</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3">
+      <backgroundImg>验证码--有效@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>48</height>
+      <heightRatio>0.0588235294117647</heightRatio>
+      <layerName>获取验证码</layerName>
+      <left>270</left>
+      <leftRatio>0.679328621908127</leftRatio>
+      <onClick>var flag=1;
+var wait=60;                               
+    function time(o) { 
+       var mobile = ee.getEditText(ee.getControl("edit1"));
+            //手机号码检测
+           if (mobile.length!=11) {
+               alert("对不起，您输入的不是一个有效的手机号码");
+               return;
+           }
+           if (!(/^\d+$/.test(mobile))) {
+               alert("对不起，您输入的不是一个有效的手机号码");
+               return;
+        }   
+        if (wait == 0) {  
+            ee.setVisible(ee.getControl("panel3"),true); //获取验证码层
+            ee.setVisible(ee.getControl("panel4"),false);  //读秒层  
+            /*           
+            ee.getControl(o).removeAttribute("disabled");           
+            ee.setText(ee.getControl(o),"获取验证码");  
+            ee.setTextColor(ee.getControl(o),"rgb(71, 169, 249)") 
+            */
+            wait = 60;  
+            flag=1;
+        } else {    
+            if(flag==1){
+               getSmsCode();; 
+               //console.log("发送短信");
+            }    
+            flag=0; 
+            ee.setVisible(ee.getControl("panel3"),false); //获取验证码层
+            ee.setVisible(ee.getControl("panel4"),true);  //读秒层
+            /*
+            ee.getControl(o).setAttribute("disabled", true);  
+            ee.setText(ee.getControl(o),"重新发送(" + wait + ")");   
+            ee.setTextColor(ee.getControl(o),"rgb(181, 181, 181)")   
+            */
+            ee.setText(ee.getControl("panel4"),wait+"s");
+            wait--;  
+            setTimeout(function() {  
+                time(o)  
+            },  
+            1000)  
+        }  
+    }  
+
+time(this);</onClick>
+      <sizeRatio>0.153846153846154</sizeRatio>
+      <top>544</top>
+      <topRatio>0.666666666666667</topRatio>
+      <width>109</width>
+      <widthRatio>0.275618374558304</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4">
+      <backgroundColor>C6C3C6</backgroundColor>
+      <backgroundImg>grey1.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>Arial</fontFamily>
+      <fontSizeAuto>18</fontSizeAuto>
+      <height>35</height>
+      <heightRatio>0.0428921568627451</heightRatio>
+      <layerName>读秒</layerName>
+      <layerVisible>false</layerVisible>
+      <left>284</left>
+      <leftRatio>0.7152466367713</leftRatio>
+      <sizeRatio>0.384615384615385</sizeRatio>
+      <text>.</text>
+      <top>552</top>
+      <topRatio>0.676470588235294</topRatio>
+      <width>81</width>
+      <widthRatio>0.204035874439462</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel5">
+      <backgroundImg>领取优惠-有效@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>53</height>
+      <heightRatio>0.0649509803921569</heightRatio>
+      <layerName>确认领取</layerName>
+      <layerVisible>false</layerVisible>
+      <left>63</left>
+      <leftRatio>0.159192825112108</leftRatio>
+      <onClick>checkSmsCode();</onClick>
+      <sizeRatio>0.176666666666667</sizeRatio>
+      <top>625</top>
+      <topRatio>0.76593137254902</topRatio>
+      <width>267</width>
+      <widthRatio>0.672645739910314</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6">
+      <backgroundImg>checkYes.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>23</height>
+      <heightRatio>0.0281862745098039</heightRatio>
+      <left>31</left>
+      <leftRatio>0.0775862068965517</leftRatio>
+      <onClick>if (g5.check == 1){
+    ee.setImage(this,"/App1PJ/generalize/checkNo.png","fill","","");
+    g5.check = 0;
+}else {
+    ee.setImage(this,"/App1PJ/generalize/checkYes.png","fill","","");  
+    g5.check = 1;
+}
+
+
+</onClick>
+      <sizeRatio>0.958333333333333</sizeRatio>
+      <top>703</top>
+      <topRatio>0.861519607843137</topRatio>
+      <width>21</width>
+      <widthRatio>0.0517241379310345</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>53</height>
+      <heightRatio>0.0649509803921569</heightRatio>
+      <layerName>不能领取</layerName>
+      <layerVisible>false</layerVisible>
+      <left>65</left>
+      <leftRatio>0.163677130044843</leftRatio>
+      <onClick>var mobile = ee.getEditText(ee.getControl("edit1"));
+var code = ee.getEditText(ee.getControl("edit2"));
+
+if (mobile == ""){
+    alert("请输入手机号，并获取验证码");
+    return;
+}   
+if (code == ""){
+    alert("请输入验证码");
+    return;
+}  
+
+if (g5.check != 1){
+    alert("请勾选协议");
+    return;
+}       
+
+</onClick>
+      <sizeRatio>0.176666666666667</sizeRatio>
+      <top>626</top>
+      <topRatio>0.767156862745098</topRatio>
+      <width>267</width>
+      <widthRatio>0.672645739910314</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel22">
+      <alpha>0.3</alpha>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>遮罩</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.7855579868709</sizeRatio>
+      <top>0</top>
+      <width>397</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundSkin>body5</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <height>693</height>
+      <heightRatio>0.849264705882353</heightRatio>
+      <layerName>条款内容</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.49353448275862</sizeRatio>
+      <top>61</top>
+      <topRatio>0.0747549019607843</topRatio>
+      <width>397</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel20">
+      <autoScroll>true</autoScroll>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>512</height>
+      <heightRatio>0.738816738816739</heightRatio>
+      <left>40</left>
+      <leftRatio>0.0330578512396694</leftRatio>
+      <outerBottom>40</outerBottom>
+      <outerLeft>40</outerLeft>
+      <outerRight>40</outerRight>
+      <outerTop>40</outerTop>
+      <sizeRatio>0.453097345132743</sizeRatio>
+      <text><![CDATA[　　为了提高乙方的机动车驾驶水平，减少交通事故的发生，经甲乙双方充分协商，并根据国家相关规定，双方自愿达成如下协议，望共同遵守，具体事项如下（乙方勾选同意后即刻生效）：
+
+<b>（一）陪驾要求</b>
+
+　　1、每次陪驾乙方均需持有本人真实、有效的C2及以上准驾车型的驾驶证件并在上车前主动向甲方陪练员出示。
+　　2、甲方陪练员在每次陪练开始前主动或在乙方要求时出示自己的《1陪驾驾驶陪练员证》。
+　　3、如在陪驾过程中乙方使用自备车辆，乙方须确保车辆具备安全使用条件，建议有购买保额在人民币100万元以上（含100万元）的第三者责任险。因乙方车况不好、车险保额不足、乙方驾驶技术不佳等导致的所有后果（包括但不限于交通违章、事故损害）由乙方自行承担，与甲方及陪练员无关。
+
+<b>（二）陪驾价格</b>
+
+　　1、陪练费用和套餐优惠情况以甲方实时公布的收费标准为准。
+　　2、乙方若更改、取消陪驾时间、地点，在下订单后半小时内取消或者提前24小时提出申请将不扣除金额，否则：
+　　① 提前12~24小时取消，扣除订单金额20元；
+　　② 提前3~12小时取消，扣除订单金额30元；
+　　③ 提前3小时以内取消，扣除订单金额50元；
+　　④ 无提前通知取消订单，扣除订单金额100元。
+　　3、如果甲方陪练员和乙方见面后，由于乙方未带驾照而必须中止订单，则需扣除乙方该订单费用100元，其余费用退还至乙方1陪驾账户。
+
+<b>（三）陪驾路线</b>
+
+　　1、甲方陪练员会根据乙方的驾驶基础为乙方制定具有针对性的陪驾计划，具体陪练路线由甲方陪练员指定，乙方行驶速度不得超过每小时60千米。乙方不得违反甲方陪练员的指令更改陪练路线，也不得单方要求甲方陪练员做出违反要求的陪驾计划，否则甲方陪练员有权结束本次陪驾，乙方仍应全额支付陪练费用。
+　　2、自备车陪驾学员，上下车地点要一致，并需给甲方陪练员提供免费停车位或停车费用。
+
+<b>（四）陪驾计时</b>
+
+　　1、如双方都准时到达约定地点，则从双方约定时间开始计时，到约定时间结束为止。
+　　2、如甲方陪练员因堵车等原因迟到，陪练员会提前电话通知学员，并在接到乙方后才开始计时。
+　　3、如乙方迟到，则从原约定时间开始计时。
+
+<b>（五）陪驾人数</b>
+
+　　为了乙方及他人安全，在陪驾过程中除乙方外，无关人等不能上车。若乙方因自身原因坚持让其他人等上车，乙方应自负责任。
+
+<b>（六）陪驾结束</b>
+
+　　1、陪驾到约定的时间即结束，陪驾开始后，如因乙方原因需提前终止本次陪驾，甲方全额收取本次陪驾费用。
+　　2、乙方需要索取发票，请拨打客服电话办理，如需快递，快递费由乙方承担。
+
+<b>（七）陪驾过程</b>
+
+　　1、陪驾过程中，如发生过路、过桥、停车等费用，由乙方自行承担。
+　　2、安全第一，甲方陪练员和乙方不得作任何影响安全的行为。
+
+<b>（八）责任划分</b>
+
+　　1、乙方在用甲方提供的陪驾车辆（含甲方陪练员车辆或乙方自带车辆）进行陪驾时，如在甲方陪练员陪同时出现车辆故障、追尾、刮蹭、人身损害等各种车辆事故，乙方应积极配合甲方负责报案理赔、人员救治、车辆维修等，乙方需配合、提供甲方在理赔中交通管理部门或保险公司所需要的证件、口述和笔录等；乙方承担驾照扣分责任及其他法律规定的应由驾驶员承担的责任。
+　　甲方车辆保险不能够覆盖本车及应对其负责任的车辆和人员的损失损害赔偿的，乙方承担保险之外的所有费用，并在损失损害赔偿金额确定后3天内付清。
+　　2、乙方在用甲方陪练员提供的陪驾车辆进行陪驾时，如甲方陪练员临时不在车上时，乙方不可私自开动陪驾车辆，否则因此造成的各种事故，乙方应对甲方陪练员的损失负全责，包括乙方应自行承担本车及应对其负责任的车辆和人员（含乙方及甲方陪练员等）的损失损害赔偿费用，并在损失损害赔偿金额确定后3天内付清。依据相关规定使用甲方陪驾车辆保险或甲方资金先行赔付的，乙方应予偿还。
+　　3、乙方在用自备车陪驾时，如发生交通事故，甲方不承担任何责任及赔偿，由乙方保险公司及乙方自行承担，甲方有责任协助乙方处理事故理赔。
+　　4、乙方在怀孕期间，不得进行陪驾，如隐瞒事实进行陪驾，发生交通事故而产生任何方面的损失及赔偿，甲方不承担任何责任。
+　　5、乙方在驾驶过程中，有故意违反交通法规，经劝阻无效的，陪练员有权终止其课程并收取全部费用。
+　　6、甲方为乙方购买有陪驾过程中的保险，如因乙方不愿提供真实的身份证信息等原因导致保险未能生效，则甲方对陪练过程中的相应的责任事故不承担任何责任。
+
+<b>（九）后续陪驾预约</b>
+
+　　1、乙方当次陪驾结束后，如需预约后续或延长陪驾时间，乙方可登录“1陪驾”平台或拨打客服电话，进行陪驾预约。若擅自与甲方陪练员增加陪练时间，此增加时段内发生的一切交通事故及索赔等事宜，甲方概不负责，且乙方应承担甲方陪练员的一切损失，参照前述第（八）条第2项约定处理。
+　　2、如乙方对本次甲方陪练员不满意，可登录“1陪驾”平台或拨打客服电话中止陪驾，及时向甲方提出更换陪练员要求并说明原因，甲方将根据查明情况与乙方协商解决。
+
+<b>（十）本协议自乙方确认同意之时起生效，确认方式包括在“1陪驾”平台勾选同意等方式。</b>
+]]></text>
+      <top>110</top>
+      <topRatio>0.158730158730159</topRatio>
+      <vAlign>top</vAlign>
+      <width>317</width>
+      <widthRatio>0.933884297520661</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel21">
+      <backgroundSkin>App1PJ006</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>47</height>
+      <heightRatio>0.0678210678210678</heightRatio>
+      <left>91</left>
+      <leftRatio>0.228448275862069</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel19"),false); //条款
+ee.setVisible(ee.getControl("panel22"),false); //遮罩
+
+ </onClick>
+      <sizeRatio>0.185770750988142</sizeRatio>
+      <text>确定</text>
+      <top>632</top>
+      <topRatio>0.911976911976912</topRatio>
+      <width>216</width>
+      <widthRatio>0.545258620689655</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel23">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <heightRatio>0.144300144300144</heightRatio>
+      <left>33</left>
+      <leftRatio>0.0826086956521739</leftRatio>
+      <sizeRatio>0.261096605744125</sizeRatio>
+      <top>16</top>
+      <topRatio>0.0230880230880231</topRatio>
+      <width>331</width>
+      <widthRatio>0.832608695652174</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel23/panel64">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>40</height>
+      <heightRatio>0.4</heightRatio>
+      <left>13</left>
+      <leftRatio>0.038860103626943</leftRatio>
+      <sizeRatio>0.112676056338028</sizeRatio>
+      <top>16</top>
+      <topRatio>0.16</topRatio>
+      <width>304</width>
+      <widthRatio>0.919689119170985</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel23/panel64/panel70">
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.701754385964912</sizeRatio>
+      <text>甲方：</text>
+      <top>0</top>
+      <width>57</width>
+      <widthRatio>0.16056338028169</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel23/panel64/panel71">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>43</left>
+      <leftRatio>0.140845070422535</leftRatio>
+      <sizeRatio>0.138888888888889</sizeRatio>
+      <text>上海云培信息技术有限公司</text>
+      <top>0</top>
+      <width>247</width>
+      <widthRatio>0.811267605633803</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel23/panel66">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>40</height>
+      <heightRatio>0.4</heightRatio>
+      <left>13</left>
+      <leftRatio>0.038860103626943</leftRatio>
+      <sizeRatio>0.112676056338028</sizeRatio>
+      <top>52</top>
+      <topRatio>0.52</topRatio>
+      <width>304</width>
+      <widthRatio>0.919689119170985</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel23/panel66/panel67">
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.701754385964912</sizeRatio>
+      <text>乙方：</text>
+      <top>0</top>
+      <width>57</width>
+      <widthRatio>0.16056338028169</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel23/panel66/panel68">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>43</left>
+      <leftRatio>0.140845070422535</leftRatio>
+      <sizeRatio>0.138888888888889</sizeRatio>
+      <text>学员</text>
+      <top>0</top>
+      <width>247</width>
+      <widthRatio>0.811267605633803</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel19/panel23/panel66/panel68/panel69">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>2</height>
+      <heightRatio>0.05</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00888888888888889</sizeRatio>
+      <top>33</top>
+      <topRatio>0.825</topRatio>
+      <width>193</width>
+      <widthRatio>0.78125</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="3">
+    <taskSetItem name="getSmsCode">
+      <script1>var mobile = ee.getEditText(ee.getControl("edit1"));
+//手机号码检测
+if (mobile.length!=11) {
+    alert("对不起，您输入的不是一个有效的手机号码");
+    return;
+}
+if (!(/^\d+$/.test(mobile))) {
+    alert("对不起，您输入的不是一个有效的手机号码");
+    return;
+} 
+
+eio.appendString8(mobile); 
+
+</script1>
+      <script2><![CDATA[var mobile = eio.readString8();
+
+session.set("codeFlag11",0);//使用于checkSmsCode
+while (true) { 
+    /*
+    var sql = "select * from userInfo where mobile='" + mobile + "' and enabled='T'";
+    var sqlResult = db.executeQuery("PJ", sql);  
+   
+    if (db.read(sqlResult)) {
+        eio.appendString8("F");
+        var userType = db.getString(sqlResult,"userType");
+        if(userType =="教练" || chooseType=="0"){
+            eio.appendString8("您输入的手机号码已经被注册使用过，请通过登录页面“忘记密码”功能来登录"); 
+        } else if(userType == "学员") {
+            eio.appendString8("applyCoaches")
+        } else {
+            eio.appendString8("判断失败");
+        }
+        return;
+    }
+    */
+    
+    //后台手机号验证
+    if (mobile.length!=11) {
+        eio.appendString8("F");
+        eio.appendString8("手机号非法");
+        break;
+    }
+    if (!(/^1[3|4|5|7|8][0-9]\d{4,8}$/.test(mobile))) {
+        eio.appendString8("F");
+        eio.appendString8("手机号非法");
+        break;
+    }
+    //产生验证码
+    var code = 0;
+    var seed = (new Date()).getTime();
+    while (code<1000) {
+        seed = ( seed * 9301 + 49297 ) % 233280;
+        var rand = seed / 233280.0;
+        code = Math.floor(rand * 10000);
+    }
+    //存储验证码和手机号
+    session.set("mobileCode", code + "");
+    session.set("mobile", mobile);  
+    
+    //发送验证码
+    var sql = "insert into sms (mobile, message) values (" +
+        "'" + db.encode(mobile) + "'," +
+        "'您的验证码是：" + code + "')";
+    if (!db.executeNoneQuery("PJ", sql)) {
+        eio.appendString8("F");
+        eio.appendString8("系统繁忙请稍后再试");
+        break;
+    } 
+    eio.appendString8("T"); 
+    break;
+}     
+
+              ]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    var code = eio.readString8();
+    console.log("code="+code);    
+    alert("发送验证码失败：" + code);    
+    return;
+}   
+
+alert("验证码已经以短信的形式发送到您的手机上，请注意查收。验证码是一个4位的数字，请将它填写在下面的栏目中");
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="checkSmsCode">
+      <script1>var mobileCode = ee.getEditText(ee.getControl("edit2")); 
+ 
+eio.appendString8(mobileCode);  
+
+</script1>
+      <script2><![CDATA[var mobileCode = eio.readString8();  
+
+while (true) {
+    var mobileCodeS = session.get("mobileCode");
+    if (mobileCodeS.length<=0) {      
+        eio.appendString8("F");
+        eio.appendString8("请点击“获取验证码”，收到短信后填写验证码");
+        break;
+    } 
+
+    
+    if(mobileCodeS!=mobileCode){
+        var flag = session.get("codeFlag11"); 
+       //  eio.appendString8("flag::"+flag);
+        flag = parseInt(flag)+1;
+       // flag +=1;  
+       //  eio.appendString8("flag++::"+flag);
+        session.set("codeFlag11",flag);
+        eio.appendString8("F");
+        if(flag ==1){
+           eio.appendString8("输入的验证码不正确，您还有 2 次机会重新输入验证码");
+        }else if(flag ==2){
+           eio.appendString8("输入的验证码不正确，您还有 1 次机会重新输入验证码");
+        }else if(flag ==3){
+            session.set("codeFlag11",0);           
+            session.set("mobileCode",""); 
+            eio.appendString8("您输入的验证码不正确，请重新获取并输入验证码");
+        }
+        break;
+        
+    } 
+   
+    session.set("codeFlag11",0);
+    eio.appendString8("T");
+    session.set("mobileCheck", "true"); 
+    session.set("mobileCode","");
+    break;
+} 
+
+
+]]></script2>
+      <script3>
+if (eio.readString8()!="T") {
+    alert("验证失败：" + eio.readString8());     
+    //alert(session.get("userType"))
+    ee.setEditText(ee.getControl("Edit2"),"");
+    return;
+}   
+    
+doMain(); 
+
+
+ 
+</script3>
+    </taskSetItem>
+    <taskSetItem name="doMain">
+      <script1>var mobile = ee.getEditText(ee.getControl("edit1"));
+//手机号码检测
+if (mobile.length!=11) {
+    alert("对不起，您输入的不是一个有效的手机号码");
+    return;
+}
+if (!(/^\d+$/.test(mobile))) {
+    alert("对不起，您输入的不是一个有效的手机号码");
+    return;
+} 
+                                  
+var money = "20"; //给用户余额中充值的金额
+var moneyFree = "0";
+var flagIndex = "3";
+eio.appendString8(mobile);      
+eio.appendString8(money);
+eio.appendString8(moneyFree);
+eio.appendString8(flagIndex);
+</script1>
+      <script2>var mobile = eio.readString8();     
+var money = eio.readString8();
+var moneyFree = eio.readString8();
+var flagIndex = eio.readString8();
+
+var mobile_session = session.get("mobile");
+if (mobile_session != mobile){
+    eio.appendString8("F");
+    eio.appendString8("您输入的手机号与验证的手机号不一致，请重新输入");
+    return;
+}          
+
+var sql,sqlResult;
+sql = "exec generalize '"+db.encode(mobile)+"','"+db.encode(money)+"','"+db.encode(moneyFree)+"','"+db.encode(flagIndex)+"'";
+sqlResult = db.executeQuery("PJ",sql);
+db.read(sqlResult);
+if (db.getString(sqlResult,"errorCode") == -1){
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult,"errorString"));
+    return;
+}
+                       
+
+
+eio.appendString8("T");
+</script2>
+      <script3>var c = eio.readString8();
+if (c != "T"){
+    alert(eio.readString8());
+    return;
+}   
+
+alert("获取优惠成功！账户和密码将通过短信发送给您,请注意查收！");</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

@@ -1,0 +1,1312 @@
+<page>
+  <controls count="18">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+if (!isIOS) {
+    ee.getControl("layoutyitem1").heavy = 0;
+}
+setTimeout(function(){
+    ee.autoResize = false;
+},1000);
+
+//var addHtml="<div class='demo_main'><fieldset class='demo_content'> <div id='map' style='width:100%;height:400px'></div></fieldset></div> ";    
+//$("#ee_divRoot").append(addHtml);
+//g5.p1=0;
+//g5.p2=0;   
+var flagOne=true; //是否第一次执行
+
+document.addEventListener("deviceready", onDeviceReady, false); 
+         /*var load = document.createElement("script");  
+                load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_c";   
+                document.body.appendChild(load);
+                alert("3232");*/
+    var watchID = null;
+    
+    // PhoneGap加载完毕
+    function onDeviceReady() { 
+    
+    setTimeout( function(){
+    try 
+    {   
+    var load = document.createElement("script");  
+                //load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_c";
+                load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_init2";    
+                document.body.appendChild(load);
+               
+      watchID = navigator.geolocation.watchPosition(onSuccess,onError);  
+     /*alert("123456789");     
+     alert(navigator);
+     alert(navigator.geolocation);
+     alert(navigator.geolocation.watchPosition);*/
+     //alert(watchID);
+      
+                
+     //alert(watchID);
+     /*if(watchID==1){
+         //alert("kong");
+        // navigator.geolocation.watchPosition(onSuccess,onError); 
+        alert("当前设备暂不支持此功能");
+        window.location.href=ee.pageRoot + "/student/sMain";
+     }*/    
+        ///new Error(10,"asdasdasd") 
+    } 
+    catch (e) 
+    {     
+        var load = document.createElement("script");  
+                //load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_c";
+                load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_init2";    
+                document.body.appendChild(load);
+        //alert("捕捉到错误");  
+
+    }
+    },100);    
+    //var map = new BMap.Map("ee_panel1");
+   // var map = new BMap.Map("ee_panel1"); // 创建Map实例 
+        // 每隔3秒钟更新一次
+        //var options = { frequency: 10000 };
+        //watchID = navigator.geolocation.watchPosition(onSuccess,onError);//,function(){ maximumAge: 10000, timeout: 200000, enableHighAccuracy: false });           //options 
+         
+//navigator.geolocation.getCurrentPosition(onSuccess);
+    }
+      //var map = new BMap.Map("ee_panel1");
+    // 获取位置信息成功时调用的回调函数
+    var onSuccess = function(position) { 
+    //alert("sucess");  
+    //g5.flag=true;
+    //alert(position.coords.latitude);    
+   //var map = new BMap.Map("ee_panel1"); // 创建Map实例  
+                    //var point = new BMap.Point(position.coords.latitude,position.coords.longitude); //地图中心点，广州市  
+                if(flagOne==true){    
+                    g5.point1= position.coords.latitude;
+                    g5.point2= position.coords.longitude; 
+                          
+      var load = document.createElement("script");  
+                load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_init"; 
+                /* var point = new BMap.Point(g5.point2,g5.point1); //地图中心点，广州市  
+                   //var point = new BMap.Point(121.312213, 31.347267); 
+                    //alert(position.coords.latitude,);
+                    g5.map.centerAndZoom(point,13); // 初始化地图,设置中心点坐标和地图级别。  */
+                 //load.src = "baidumap://map/geocoder?location=39.990912172420714,116.32715863448607&amp;coord_type=gcj02&amp;src=webapp.rgeo.yourCompanyName.yourAppName""; 
+                document.body.appendChild(load);     
+      //setTimeout(function(){},10000);  
+      flagOne=false;                                        
+        }   
+       else{
+                return;
+       } 
+                
+};
+    
+    // onError回调函数接收一个PositionError对象
+    function onError(error) {       
+        alert("未在设置中允许本应用使用定位服务或获取不到当前所在位置");   
+        var load = document.createElement("script");  
+                //load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_c";
+                load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_init2";    
+                document.body.appendChild(load);
+        //window.location.href=ee.pageRoot + "/student/sMain";
+       // alert('code: '    + error.code    + '\n' +
+        //    'message: ' + error.message + '\n');
+    } 
+
+
+ g5.map_c=function map_c(){
+          g5.map = new BMap.Map("ee_panel1"); // 创建Map实例 
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+g5.map_init2 = function map_init2() { 
+     
+                     g5.map2 = new BMap.Map("ee_panel1"); // 创建Map实例 
+                                            
+                     var point = new BMap.Point(121.4811390000,31.2353010000); //地图中心点，广州市  
+                   //var point = new BMap.Point(121.312213, 31.347267); 
+                    //alert(position.coords.latitude,);
+                    g5.map2.centerAndZoom(point,13);
+      g5.map2.enableScrollWheelZoom(true); //启用滚轮放大缩小  
+                    //向地图中添加缩放控件  
+                    var ctrlNav = new window.BMap.NavigationControl({  
+                        anchor: BMAP_ANCHOR_TOP_LEFT,  
+                        type: BMAP_NAVIGATION_CONTROL_LARGE  
+                    });  
+                    g5.map2.addControl(ctrlNav);  
+                     var ctrlOve = new window.BMap.OverviewMapControl({  
+                        anchor: BMAP_ANCHOR_BOTTOM_RIGHT,  
+                        isOpen: 1  
+                    });  
+                    g5.map2.addControl(ctrlOve);  
+                    //向地图中添加比例尺控件  
+                    var ctrlSca = new window.BMap.ScaleControl({  
+                        anchor: BMAP_ANCHOR_BOTTOM_LEFT  
+                    });  
+                    g5.map2.addControl(ctrlSca);  
+  
+                    var point = new Array(); //存放标注点经纬信息的数组  
+                    var marker = new Array(); //存放标注点对象的数组  
+                    var info = new Array(); //存放提示信息窗口对象的数组  
+                    for (var i = 0; i < markerArr.length; i++) {  
+                        var p0 = markerArr[i].point.split(",")[0]; //  
+                        var p1 = markerArr[i].point.split(",")[1]; //按照原数组的point格式将地图点坐标的经纬度分别提出来  
+                        point[i] = new window.BMap.Point(p0, p1); //循环生成新的地图点  
+                        marker[i] = new window.BMap.Marker(point[i]); //按照地图点坐标生成标记  
+                        g5.map2.addOverlay(marker[i]);  
+                        marker[i].setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画  
+                        var label = new window.BMap.Label(markerArr[i].title, { offset: new window.BMap.Size(20, -10) });  
+                        label.setStyle({"border":"none"});
+                        marker[i].setLabel(label);  
+                        info[i] = new window.BMap.InfoWindow("<p style=’font-size:12px;lineheight:1.8em;’>" + markerArr[i].title + "</br>地址：" + markerArr[i].address + "</br> 参考价：" + markerArr[i].money + "起</br></p>"); // 创建信息窗口对象   
+                       /* marker[i].addEventListener("click", function () {  //红色标记点击到显示详情  
+                            alert("1234");
+                            this.openInfoWindow(info["\""+i+"\""]);   //只能写死变量不执行
+                            alert(i);  
+                            //alert(markerArr[0].title);  
+                            ee.setText(ee.getControl("panel7"),markerArr[i].title);
+                        });*/  
+                    }  
+                    marker[0].addEventListener("click", function () {  //红色标记点击到显示详情
+                        this.openInfoWindow(info[0]);  
+                        //alert(markerArr[0].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[0].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[0].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[0].money);
+                    });  
+                    marker[1].addEventListener("click", function () {  
+                        this.openInfoWindow(info[1]);  
+                        //alert(markerArr[1].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[1].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[1].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[1].money);
+                    });  
+                    marker[2].addEventListener("click", function () {  
+                        this.openInfoWindow(info[2]);  
+                        //alert(markerArr[2].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[2].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[2].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[2].money);
+                    });  
+                    marker[3].addEventListener("click", function () {  
+                        this.openInfoWindow(info[3]); 
+                        //alert(markerArr[3].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[3].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[3].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[3].money);
+                    }); 
+                    marker[4].addEventListener("click", function () {  
+                        this.openInfoWindow(info[4]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[4].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[4].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[4].money);
+                    });     
+                    marker[5].addEventListener("click", function () {  
+                        this.openInfoWindow(info[5]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[5].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[5].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[5].money);
+                    }); 
+                    marker[6].addEventListener("click", function () {  
+                        this.openInfoWindow(info[6]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[6].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[6].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[6].money);
+                    }); 
+                    marker[7].addEventListener("click", function () {  
+                        this.openInfoWindow(info[7]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[7].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[7].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[7].money);
+                    }); 
+                    marker[8].addEventListener("click", function () {  
+                        this.openInfoWindow(info[8]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[8].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[8].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[8].money);
+                    }); 
+                    marker[9].addEventListener("click", function () {  
+                        this.openInfoWindow(info[9]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[9].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[9].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[9].money);
+                    }); 
+                    marker[10].addEventListener("click", function () {  
+                        this.openInfoWindow(info[10]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[10].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[10].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[10].money);
+                    });  
+                    marker[11].addEventListener("click", function () {  
+                        this.openInfoWindow(info[11]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[11].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[11].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[11].money);
+                    }); 
+                    marker[12].addEventListener("click", function () {  
+                        this.openInfoWindow(info[12]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[12].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[12].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[12].money);
+                    }); 
+                    marker[13].addEventListener("click", function () {  
+                        this.openInfoWindow(info[13]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[13].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[13].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[13].money);
+                    }); 
+                    marker[14].addEventListener("click", function () {  
+                        this.openInfoWindow(info[14]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[14].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[14].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[14].money);
+                    }); 
+                    marker[15].addEventListener("click", function () {  
+                        this.openInfoWindow(info[15]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[15].title);  
+                        ee.setText(ee.getControl("panel9"),markerArr[15].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[15].money);
+                    }); 
+                    marker[16].addEventListener("click", function () {  
+                        this.openInfoWindow(info[16]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[16].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[16].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[16].money);
+                    }); 
+                    marker[17].addEventListener("click", function () {  
+                        this.openInfoWindow(info[17]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[17].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[17].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[17].money);
+                    }); 
+                    marker[18].addEventListener("click", function () {  
+                        this.openInfoWindow(info[18]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[18].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[18].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[18].money);
+                    }); 
+                    marker[19].addEventListener("click", function () {  
+                        this.openInfoWindow(info[19]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[19].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[19].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[19].money);
+                    }); 
+                    marker[20].addEventListener("click", function () {  
+                        this.openInfoWindow(info[20]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[20].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[20].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[20].money);
+                    });  
+                    marker[21].addEventListener("click", function () {  
+                        this.openInfoWindow(info[21]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[21].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[21].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[21].money);
+                    }); 
+                    marker[22].addEventListener("click", function () {  
+                        this.openInfoWindow(info[22]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[22].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[22].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[22].money);
+                    }); 
+                    marker[23].addEventListener("click", function () {  
+                        this.openInfoWindow(info[23]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[23].title);
+                        ee.setText(ee.getControl("panel9"),markerArr[23].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[23].money);
+                    }); 
+                    marker[24].addEventListener("click", function () {  
+                        this.openInfoWindow(info[24]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[24].title);
+                        ee.setText(ee.getControl("panel9"),markerArr[24].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[24].money);
+                    }); 
+                    marker[25].addEventListener("click", function () {  
+                        this.openInfoWindow(info[25]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[25].title);
+                        ee.setText(ee.getControl("panel9"),markerArr[25].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[25].money);
+                    }); 
+                    marker[26].addEventListener("click", function () {  
+                        this.openInfoWindow(info[26]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[26].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[26].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[26].money);
+                    }); 
+                    marker[27].addEventListener("click", function () {  
+                        this.openInfoWindow(info[27]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[27].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[27].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[27].money);
+                    }); 
+                    marker[28].addEventListener("click", function () {  
+                        this.openInfoWindow(info[28]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[28].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[28].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[28].money);
+                    }); 
+                    marker[29].addEventListener("click", function () {  
+                        this.openInfoWindow(info[29]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[29].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[29].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[29].money);
+                    });   
+                    marker[30].addEventListener("click", function () {  
+                        this.openInfoWindow(info[30]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[30].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[30].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[30].money);
+                    });
+                    marker[31].addEventListener("click", function () {  
+                        this.openInfoWindow(info[31]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[31].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[31].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[31].money);
+                    });               
+}    
+
+
+g5.map_init = function map_init() {     
+//alert("map");                
+                    //g5.map.removeOverlay(markerCenter);  
+                    //alert(g5.point1);
+                    //alert(g5.point2);
+                    //alert(point);    
+                    if(!g5.map){
+                        g5.map = new BMap.Map("ee_panel1"); // 创建Map实例 
+                     } 
+                    /*else{   //时时监控位置，删除上一个标注（有点问题）
+                        // if(g5.p1!=g5.point1||(g5.p2!=g5.point2)){
+                             g5.map.removeOverlay(g5.markerCenter);   
+                         //}
+                     }*/       
+                    // marker.remove();
+                    var point = new BMap.Point(g5.point2,g5.point1); //地图中心点，广州市  
+                   //var point = new BMap.Point(121.312213, 31.347267); 
+                    //alert(position.coords.latitude,);
+                    g5.map.centerAndZoom(point,13); // 初始化地图,设置中心点坐标和地图级别。 
+                    //new window.BMap.Marker(point);   
+                    //此处显示的就是纠偏后的经纬度
+                       //真实经纬度转成百度坐标
+                    g5.map.enableScrollWheelZoom(true); //启用滚轮放大缩小  
+                    //向地图中添加缩放控件  
+                    var ctrlNav = new window.BMap.NavigationControl({  
+                        anchor: BMAP_ANCHOR_TOP_LEFT,  
+                        type: BMAP_NAVIGATION_CONTROL_LARGE  
+                    });  
+                    g5.map.addControl(ctrlNav); 
+                      
+                    //添加单个标记
+                    g5.markerCenter = new window.BMap.Marker(point);
+                    g5.map.addOverlay(g5.markerCenter);  
+                    //添加标记注释/名
+                    var labelCenter = new window.BMap.Label("当前位置", { offset: new window.BMap.Size(20, -10) });  
+                    labelCenter.setStyle({"color":"#3180ee","border":"none"});//设置label的样式
+                    g5.markerCenter.setLabel(labelCenter); 
+
+                    //向地图中添加缩略图控件  
+                    var ctrlOve = new window.BMap.OverviewMapControl({  
+                        anchor: BMAP_ANCHOR_BOTTOM_RIGHT,  
+                        isOpen: 1  
+                    });  
+                    g5.map.addControl(ctrlOve);  
+                    //向地图中添加比例尺控件  
+                    var ctrlSca = new window.BMap.ScaleControl({  
+                        anchor: BMAP_ANCHOR_BOTTOM_LEFT  
+                    });  
+                    g5.map.addControl(ctrlSca);  
+  
+                    var point = new Array(); //存放标注点经纬信息的数组  
+                    var marker = new Array(); //存放标注点对象的数组  
+                    var info = new Array(); //存放提示信息窗口对象的数组  
+                    for (var i = 0; i < markerArr.length; i++) {  
+                        var p0 = markerArr[i].point.split(",")[0]; //  
+                        var p1 = markerArr[i].point.split(",")[1]; //按照原数组的point格式将地图点坐标的经纬度分别提出来  
+                        point[i] = new window.BMap.Point(p0, p1); //循环生成新的地图点  
+                        marker[i] = new window.BMap.Marker(point[i]); //按照地图点坐标生成标记  
+                        g5.map.addOverlay(marker[i]);  
+                        marker[i].setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画  
+                        var label = new window.BMap.Label(markerArr[i].title, { offset: new window.BMap.Size(20, -10) });  
+                        label.setStyle({"border":"none"});
+                        marker[i].setLabel(label);  
+                        info[i] = new window.BMap.InfoWindow("<p style=’font-size:12px;lineheight:1.8em;’>" + markerArr[i].title + "</br>地址：" + markerArr[i].address + "</br> 参考价：" + markerArr[i].money + "起</br></p>"); // 创建信息窗口对象   
+                       /* marker[i].addEventListener("click", function () {  //红色标记点击到显示详情  
+                            alert("1234");
+                            this.openInfoWindow(info["\""+i+"\""]);   //只能写死变量不执行
+                            alert(i);  
+                            //alert(markerArr[0].title);  
+                            ee.setText(ee.getControl("panel7"),markerArr[i].title);
+                        });*/  
+                    }  
+                    /*marker.addEventListener("click", function () {
+                        alert("1111");
+                    }) */
+                    /*for(var k=0;k<29;k++){
+                         marker[k].addEventListener("click", function () {  //红色标记点击到显示详情
+                            this.openInfoWindow(info[k]);  
+                            //alert(markerArr[0].title);  
+                            ee.setText(ee.getControl("panel7"),markerArr[k].title);
+                        });          
+                        alert(k);
+                    } */
+                    /*markers(0);
+                    markers(1); 
+                    markers(2);
+                    markers(3);
+                    markers(4);*/ 
+                    marker[0].addEventListener("click", function () {  //红色标记点击到显示详情
+                        this.openInfoWindow(info[0]);  
+                        //alert(markerArr[0].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[0].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[0].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[0].money);
+                    });  
+                    marker[1].addEventListener("click", function () {  
+                        this.openInfoWindow(info[1]);  
+                        //alert(markerArr[1].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[1].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[1].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[1].money);
+                    });  
+                    marker[2].addEventListener("click", function () {  
+                        this.openInfoWindow(info[2]);  
+                        //alert(markerArr[2].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[2].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[2].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[2].money);
+                    });  
+                    marker[3].addEventListener("click", function () {  
+                        this.openInfoWindow(info[3]); 
+                        //alert(markerArr[3].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[3].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[3].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[3].money);
+                    }); 
+                    marker[4].addEventListener("click", function () {  
+                        this.openInfoWindow(info[4]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[4].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[4].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[4].money);
+                    });     
+                    marker[5].addEventListener("click", function () {  
+                        this.openInfoWindow(info[5]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[5].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[5].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[5].money);
+                    }); 
+                    marker[6].addEventListener("click", function () {  
+                        this.openInfoWindow(info[6]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[6].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[6].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[6].money);
+                    }); 
+                    marker[7].addEventListener("click", function () {  
+                        this.openInfoWindow(info[7]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[7].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[7].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[7].money);
+                    }); 
+                    marker[8].addEventListener("click", function () {  
+                        this.openInfoWindow(info[8]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[8].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[8].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[8].money);
+                    }); 
+                    marker[9].addEventListener("click", function () {  
+                        this.openInfoWindow(info[9]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[9].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[9].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[9].money);
+                    }); 
+                    marker[10].addEventListener("click", function () {  
+                        this.openInfoWindow(info[10]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[10].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[10].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[10].money);
+                    });  
+                    marker[11].addEventListener("click", function () {  
+                        this.openInfoWindow(info[11]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[11].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[11].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[11].money);
+                    }); 
+                    marker[12].addEventListener("click", function () {  
+                        this.openInfoWindow(info[12]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[12].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[12].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[12].money);
+                    }); 
+                    marker[13].addEventListener("click", function () {  
+                        this.openInfoWindow(info[13]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[13].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[13].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[13].money);
+                    }); 
+                    marker[14].addEventListener("click", function () {  
+                        this.openInfoWindow(info[14]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[14].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[14].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[14].money);
+                    }); 
+                    marker[15].addEventListener("click", function () {  
+                        this.openInfoWindow(info[15]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[15].title);  
+                        ee.setText(ee.getControl("panel9"),markerArr[15].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[15].money);
+                    }); 
+                    marker[16].addEventListener("click", function () {  
+                        this.openInfoWindow(info[16]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[16].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[16].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[16].money);
+                    }); 
+                    marker[17].addEventListener("click", function () {  
+                        this.openInfoWindow(info[17]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[17].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[17].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[17].money);
+                    }); 
+                    marker[18].addEventListener("click", function () {  
+                        this.openInfoWindow(info[18]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[18].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[18].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[18].money);
+                    }); 
+                    marker[19].addEventListener("click", function () {  
+                        this.openInfoWindow(info[19]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[19].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[19].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[19].money);
+                    }); 
+                    marker[20].addEventListener("click", function () {  
+                        this.openInfoWindow(info[20]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[20].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[20].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[20].money);
+                    });  
+                    marker[21].addEventListener("click", function () {  
+                        this.openInfoWindow(info[21]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[21].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[21].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[21].money);
+                    }); 
+                    marker[22].addEventListener("click", function () {  
+                        this.openInfoWindow(info[22]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[22].title);     
+                        ee.setText(ee.getControl("panel9"),markerArr[22].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[22].money);
+                    }); 
+                    marker[23].addEventListener("click", function () {  
+                        this.openInfoWindow(info[23]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[23].title);
+                        ee.setText(ee.getControl("panel9"),markerArr[23].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[23].money);
+                    }); 
+                    marker[24].addEventListener("click", function () {  
+                        this.openInfoWindow(info[24]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[24].title);
+                        ee.setText(ee.getControl("panel9"),markerArr[24].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[24].money);
+                    }); 
+                    marker[25].addEventListener("click", function () {  
+                        this.openInfoWindow(info[25]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[25].title);
+                        ee.setText(ee.getControl("panel9"),markerArr[25].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[25].money);
+                    }); 
+                    marker[26].addEventListener("click", function () {  
+                        this.openInfoWindow(info[26]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[26].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[26].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[26].money);
+                    }); 
+                    marker[27].addEventListener("click", function () {  
+                        this.openInfoWindow(info[27]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[27].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[27].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[27].money);
+                    }); 
+                    marker[28].addEventListener("click", function () {  
+                        this.openInfoWindow(info[28]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[28].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[28].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[28].money);
+                    }); 
+                    marker[29].addEventListener("click", function () {  
+                        this.openInfoWindow(info[29]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[29].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[29].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[29].money);
+                    });   
+                    marker[30].addEventListener("click", function () {  
+                        this.openInfoWindow(info[30]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[30].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[30].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[30].money);
+                    });
+                    marker[31].addEventListener("click", function () {  
+                        this.openInfoWindow(info[31]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[31].title); 
+                        ee.setText(ee.getControl("panel9"),markerArr[31].address);
+                        ee.setText(ee.getControl("panel12"),markerArr[31].money);
+                    });
+                  // g5.p1=g5.point1;
+                  // g5.p2=g5.point2; 
+                }  
+                //异步调用百度js  
+               // var load = document.createElement("script");  
+               // load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_init";  
+               // document.body.appendChild(load);  
+  /*function markers(p){     
+  alert(p);
+          marker[p].addEventListener("click", function () {  //红色标记点击到显示详情   
+              alert(p)
+                        this.openInfoWindow(info[p]);  
+                        //alert(markerArr[0].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[p].title);
+                    }); 
+  } */]]></onControlLoad>
+      <onPageCreate>var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+var oHead = document.getElementsByTagName("HEAD").item(0);   
+var oScript
+/*
+var oScript
+if (isIOS) {
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova.js"; 
+    oHead.appendChild( oScript); 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova_plugins.js"; 
+    oHead.appendChild(oScript); 
+} else {
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova5/cordova.js"; 
+    oHead.appendChild( oScript); 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova5/cordova_plugins.js"; 
+    oHead.appendChild(oScript); 
+}         
+
+ */
+ 
+var url = window.location.search;
+var index = url.indexOf("&amp;");
+if (index != -1){ 
+ 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova.js"; 
+    oHead.appendChild( oScript); 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova_plugins.js"; 
+    oHead.appendChild(oScript); 
+}else {
+    if (isIOS) {
+        oScript = document.createElement("script"); 
+        oScript.type = "text/javascript"; 
+        oScript.src="cordova4/cordova.js"; 
+        oHead.appendChild( oScript); 
+        oScript = document.createElement("script"); 
+        oScript.type = "text/javascript"; 
+        oScript.src="cordova4/cordova_plugins.js"; 
+        oHead.appendChild(oScript); 
+    } else {
+        oScript = document.createElement("script"); 
+        oScript.type = "text/javascript"; 
+        oScript.src="cordova5/cordova.js"; 
+        oHead.appendChild( oScript); 
+        oScript = document.createElement("script"); 
+        oScript.type = "text/javascript"; 
+        oScript.src="cordova5/cordova_plugins.js"; 
+        oHead.appendChild(oScript); 
+    } 
+    
+}
+
+
+</onPageCreate>
+      <onPageLoad>var markerArr = [  
+                { title: "宝山锦隆基地", point: "121.4317440,31.4064250000", address: "宝山区富锦路富锦路2028号", money: "自动挡  8000元" },  
+                { title: "奉贤星火基地", point: "121.5993900,30.8683370000", address: "奉贤区海湾镇中心路民乐路（星火公路1052号）", money: "7000元" },  
+                { title: "凤溪大众基地", point: "121.2453220,31.2062890000", address: "青浦区华新镇北青公路4149号", money: "7500元" },  
+                { title: "宝山刘行基地", point: "121.3624780,31.3578940000", address: "宝山区刘行宝安公路2009号", money: "手动挡  6000元   自动挡  6500元" }, 
+                { title: "浦东联农安技基地", point: "121.7203660,31.0284960000", address: "浦东新区浦东新区南芦公路158号", money: "7500元" },
+                { title: "浦东光明基地", point: "121.6059820,31.1072720000", address: "浦东新区周浦周祝公路158号", money: "手动挡  7500元   自动挡  8500元" }, 
+                { title: "宝山顾村公交基地", point: "121.3572730000,31.0743120000", address: "宝山区顾村沪太路顾陈路388号", money: "手动挡  6500元   自动挡  8000元" },
+                { title: "闵行旗忠基地", point: "121.3645110000,31.0656780000", address: "闵行区莘庄工业区光华路2118号", money: "7500元" },
+                { title: "松江小昆山基地", point: "121.1552950,31.0345840000", address: "松江区小昆山镇青云街398号", money: "手动挡  7020元   自动挡  7820元" },//无
+                { title: "和悦基地", point: "121.5588840,30.8467070000", address: "奉贤区海湾镇人民塘东路", money: "手动挡  6825元" },
+                { title: "浦东万国基地", point: "121.7143280,30.8797260000", address: "奉贤区海湾镇五四公路2761号", money: "7500元" },
+                { title: "嘉定马陆基地", point: "121.2972720,31.3683880000", address: "嘉定区横仓公路2588号", money: "手动挡  5500元   自动挡  7500元" },
+                { title: "嘉定龙泉基地 ", point: "121.2468410,31.2734720000", address: "嘉定区黄渡镇联群路88号", money: "手动挡 5700元    自动挡6500元" },
+                { title: "闵行春申基地", point: "121.3551810,31.1309230000", address: "闵行区古美顾戴路3288号", money: "7500元" },
+                { title: "浦东邮佳基地", point: "121.7312770,31.0986290000", address: "浦东新区六灶会龙镇会龙村会龙路606号", money: "7500元" },
+                { title: "沪南驾校考场", point: "121.7088530,31.1204170000", address: "浦东新区浦东新区南六公路1388号", money: "7500元" },
+                { title: "金山亭林基地", point: "121.3108280,30.8945520000", address: "金山区亭枫公路767号（亭林镇西首320国道旁）", money: "7500元" },
+                { title: "银都训练场", point: "121.3572730,31.0743120000", address: "松江区申港路298号", money: "手动挡  6500    自动挡  7500" },
+                { title: "嘉定恒通基地", point: "121.3273900,31.4407620000", address: "嘉定区曹新公路800号", money: "手动挡  6500元    自动挡  7500元" },
+                { title: "闵行远达基地", point: "121.4446500,31.0761740000", address: "闵行区梅陇莲花南路梅莲路1号", money: "7500元" },
+                { title: "宝山长安基地", point: "121.3631050,31.4480610000", address: "宝山区罗泾镇潘泾路2988号", money: "7000元" },
+                { title: "虹口军体基地", point: "121.4779590,31.2848440000", address: "虹口区广中路444号", money: "10500元" }, 
+                { title: "晟豪基地", point: "121.7301840,31.0116740000", address: "浦东新区大团汇技路258号", money: "手动挡  6000元    自动挡  7500元" },
+                { title: "崇明新河基地", point: "121.5519140,31.6793030000", address: "崇明县长江农场北新公路", money: "9500元" },
+                { title: "申诚基地", point: "121.3816700,30.9762770000", address: "奉贤区庄行镇邬桥吴家阁", money: "手动挡  6500元    自动挡  7500元" },
+                { title: "荣安朱泾校区基地", point: "121.2247090,30.8868980000", address: "金山区朱泾镇慧农村9128号", money: "8500元" },
+                { title: "上海通略阳浦机动车驾驶员培训部", point: "121.5572190000,31.2745310000", address: "隆昌路55号", money: "8000元" },
+                { title: "上海锦江机动车驾驶员培训有限公司", point: "121.4207280000,31.1946680000", address: "吴中路100号1幢101室", money: "7500元" }, //无
+                { title: "上海兴创实业有限公司机动车驾驶员培训部", point: "121.4850820000,31.3002270000", address: "车站南路237号", money: "7500元" },//无
+                { title: "上海荣臣机动车驾驶员培训有限公司虹口分公司", point: "121.4956010000,31.2881690000", address: "赤峰路384号", money: "9000元" },//无
+                { title: "上海荣安机动车驾驶员培训有限公司", point: "121.3573810000,31.3655580000", address: "潘广路2218号", money: "7800元" },
+                { title: "上海通联机动车驾驶员培训有限公司", point: "121.4866120000,31.3429610000", address: "长江南路688号", money: "7500元" }//无
+            ]; 
+/*onDeviceReady: function() {
+        app.receivedEvent('deviceready');
+
+        //通过百度sdk来获取经纬度,并且alert出经纬度信息
+        var noop = function(){}
+        window.locationService.getCurrentPosition(function(pos){
+            alert(JSON.stringify(pos))
+            window.locationService.stop(noop,noop)
+        },function(e){
+            alert(JSON.stringify(e))
+            window.locationService.stop(noop,noop)
+        });
+    } */
+    
+/*function onSuccess(position) {   
+alert("1");
+alert(position.coords.latitude); 
+alert(position.coords.longitude);
+}
+
+// onError回调函数接收一个PositionError对象
+function onError(error) {
+alert('code: '    + error.code    + '\n' +'message: ' + error.message + '\n');
+}
+
+
+if (navigator.geolocation) {
+            alert( ' 浏览器支持 geolocation ' );
+}else{
+            alert( ' 浏览器不支持 geolocation ' );
+}
+
+var options = {maximumAge: 0, timeout: 20000, enableHighAccuracy:true};
+navigator.geolocation.getCurrentPosition(onSuccess, onError, options); */ 
+
+/*navigator.geolocation.getCurrentPosition(onSuccess, onError, { maximumAge: 3000, timeout: 20000, enableHighAccuracy: true });
+alert(11)
+
+navigator.geolocation.getCurrentPosition(function(pos){
+               alert(JSON.stringify(pos))
+        },function(err){
+               alert(JSON.stringify(err))
+          }, {
+    enableHighAccuracy: false,
+    timeout: 60*1000,
+    maximumAge: 1000*60*10
+});  ;*/  
+ 
+
+/*document.addEventListener("deviceready", onDeviceReady, false); 
+   alert("1") 
+    var watchID = null;
+    
+    // PhoneGap加载完毕
+    function onDeviceReady() {
+        // 每隔3秒钟更新一次
+        var options = { frequency: 3000 };
+        watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+    }
+    
+    // 获取位置信息成功时调用的回调函数
+    var onSuccess = function(position) {
+    alert('Latitude: '  + position.coords.latitude             + '\n' +
+        'Longitude: ' + position.coords.longitude            + '\n' +
+        'Timestamp: ' + new Date(position.timestamp * 1000)  + '\n');
+};
+    
+    // onError回调函数接收一个PositionError对象
+    function onError(error) {
+        alert('code: '    + error.code    + '\n' +
+            'message: ' + error.message + '\n');
+    }   */
+  
+  //alert(12);</onPageLoad>
+      <pageHead><![CDATA[<meta name="format-detection" content="telephone=no"/>
+  
+ 
+<script type="text/javascript"src="http://api.map.baidu.com/api?v=2.0&amp;ak=0OyGvMvG4gbXyIDkK7Cc2XSMUUviVwIo"></script>
+<script type="text/javascript"src="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.js"></script>
+<link rel="stylesheet"href="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.css"/> ]]></pageHead>
+      <top>0</top>
+      <width>413</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>731</height>
+      <heightRatio>0.895833333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.568669527897</sizeRatio>
+      <text>加载中...</text>
+      <top>90</top>
+      <topRatio>0.110294117647059</topRatio>
+      <width>413</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>90</height>
+      <heightRatio>0.110294117647059</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.203619909502262</sizeRatio>
+      <top>0</top>
+      <width>413</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <backgroundColor>BFCEDF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>47</heavy>
+      <height>29</height>
+      <heightRatio>0.322222222222222</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0256183745583039</sizeRatio>
+      <top>0</top>
+      <width>413</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>0.677777777777778</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.053886925795053</sizeRatio>
+      <text>学驾</text>
+      <top>29</top>
+      <topRatio>0.322222222222222</topRatio>
+      <width>413</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel10">
+      <backgroundImg>back.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>34</height>
+      <heightRatio>0.557377049180328</heightRatio>
+      <left>11</left>
+      <leftRatio>0.0274442538593482</leftRatio>
+      <sizeRatio>0.492753623188406</sizeRatio>
+      <top>13</top>
+      <topRatio>0.213114754098361</topRatio>
+      <width>49</width>
+      <widthRatio>0.118353344768439</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel11">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>57</height>
+      <heightRatio>0.934426229508197</heightRatio>
+      <left>1</left>
+      <leftRatio>0.00211416490486258</leftRatio>
+      <onClick>window.location.href = ee.pageRoot + "/student/sMain";
+//history.go(-1) 
+</onClick>
+      <sizeRatio>0.619565217391304</sizeRatio>
+      <top>1</top>
+      <topRatio>0.0163934426229508</topRatio>
+      <width>80</width>
+      <widthRatio>0.194503171247357</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>56</height>
+      <heightRatio>0.0686274509803922</heightRatio>
+      <left>18</left>
+      <leftRatio>0.0429184549356223</leftRatio>
+      <onClick>if(ee.getText(ee.getControl("panel7"))==""||ee.getText(ee.getControl("panel7"))=="　"){
+    alert("请选择驾校");  
+    return;
+}        
+schoolName();
+//window.location.href = ee.pageRoot + "/test/driveSchoolNext";
+//history.go(-1) 
+
+//ee.getControl("panel8").style.zIndex=99;    
+//ee.setVisible(ee.getControl("panel8"),true);   
+//document.getElementByClassName("BMap_stdMpZoom").style.display="none";
+//apply();
+//alert("感谢您对我们工作的信任和支持，我们的后台工作人员会在1-3个工作日内为您处理。");</onClick>
+      <sizeRatio>0.275862068965517</sizeRatio>
+      <text>确认报名</text>
+      <top>695</top>
+      <topRatio>0.85171568627451</topRatio>
+      <width>180</width>
+      <widthRatio>0.435622317596567</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>729</height>
+      <heightRatio>0.893382352941177</heightRatio>
+      <layerName>弹框</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.3450184501845</sizeRatio>
+      <top>90</top>
+      <topRatio>0.110294117647059</topRatio>
+      <width>413</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel7">
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>AFAEAE</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>0.0548696844993141</heightRatio>
+      <left>35</left>
+      <leftRatio>0.0858369098712446</leftRatio>
+      <sizeRatio>0.103896103896104</sizeRatio>
+      <text>　</text>
+      <top>181</top>
+      <topRatio>0.248285322359396</topRatio>
+      <width>341</width>
+      <widthRatio>0.82618025751073</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel2">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>4C4C4C</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>0.0552486187845304</heightRatio>
+      <left>65</left>
+      <leftRatio>0.156652360515021</leftRatio>
+      <sizeRatio>0.396039603960396</sizeRatio>
+      <text>驾校名称：</text>
+      <top>140</top>
+      <topRatio>0.191988950276243</topRatio>
+      <width>90</width>
+      <widthRatio>0.216738197424893</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel4">
+      <backgroundImg>iconImg.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>30</height>
+      <heightRatio>0.0414364640883978</heightRatio>
+      <left>32</left>
+      <leftRatio>0.0772532188841202</leftRatio>
+      <sizeRatio>1.03448275862069</sizeRatio>
+      <top>145</top>
+      <topRatio>0.198895027624309</topRatio>
+      <width>26</width>
+      <widthRatio>0.0622317596566524</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel6">
+      <backgroundColor>DCDCDC</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>2</height>
+      <heightRatio>0.00276243093922652</heightRatio>
+      <left>34</left>
+      <leftRatio>0.0815450643776824</leftRatio>
+      <sizeRatio>0.00518134715025907</sizeRatio>
+      <top>135</top>
+      <topRatio>0.185082872928177</topRatio>
+      <width>342</width>
+      <widthRatio>0.828326180257511</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel5">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>4C4C4C</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>34</height>
+      <heightRatio>0.0469613259668508</heightRatio>
+      <left>27</left>
+      <leftRatio>0.0665236051502146</leftRatio>
+      <sizeRatio>0.350515463917526</sizeRatio>
+      <text>地点查询</text>
+      <top>101</top>
+      <topRatio>0.138121546961326</topRatio>
+      <width>86</width>
+      <widthRatio>0.208154506437768</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel9">
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>AFAEAE</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>0.0548696844993141</heightRatio>
+      <left>36</left>
+      <leftRatio>0.0873563218390805</leftRatio>
+      <sizeRatio>0.11142061281337</sizeRatio>
+      <text>　</text>
+      <top>238</top>
+      <topRatio>0.326474622770919</topRatio>
+      <width>341</width>
+      <widthRatio>0.825287356321839</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel12">
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>AFAEAE</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>0.0548696844993141</heightRatio>
+      <left>36</left>
+      <leftRatio>0.0873563218390805</leftRatio>
+      <sizeRatio>0.11142061281337</sizeRatio>
+      <text>　</text>
+      <top>293</top>
+      <topRatio>0.401920438957476</topRatio>
+      <width>341</width>
+      <widthRatio>0.825287356321839</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>56</height>
+      <heightRatio>0.0686274509803922</heightRatio>
+      <left>216</left>
+      <leftRatio>0.52183908045977</leftRatio>
+      <onClick>
+//alert("感谢您对我们工作的信任和支持，我们的后台工作人员会在1-3个工作日内为您处理。");</onClick>
+      <sizeRatio>0.296296296296296</sizeRatio>
+      <text>拨打咨询电话</text>
+      <top>695</top>
+      <topRatio>0.85171568627451</topRatio>
+      <width>179</width>
+      <widthRatio>0.43448275862069</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15/panel16">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>3</fontSizeAuto>
+      <height>56</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.113821138211382</sizeRatio>
+      <text><![CDATA[<a href='tel:400-026-9090' trget='_blank'>　　　　　</a>]]></text>
+      <top>0</top>
+      <width>179</width>
+      <widthRatio>1</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="2">
+    <taskSetItem name="apply">
+      <script1>eio.appendString8(eb.getCookie("pjToken")); 
+eio.appendString8(ee.getText(ee.getControl("panel7")));   
+var applyName=ee.getEditText(ee.getControl("edit1")); 
+var tel=ee.getEditText(ee.getControl("edit2"));    
+if(applyName==""){
+    alert("姓名不能为空");  
+    return;
+}
+if(tel==""){
+    alert("电话不能为空"); 
+    return;
+}
+eio.appendString8(applyName);
+eio.appendString8(tel);</script1>
+      <script2><![CDATA[var token = eio.readString8(); 
+var schoolName= eio.readString8();  
+var applyName= eio.readString8(); 
+var tel= eio.readString8(); 
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id"); 
+
+sql="insert into learnDrive(uid,schoolName,applyName,tel,status) values("+userId+",'"+schoolName+"','"+applyName+"','"+tel+"','未付款')";  
+es.logWarning(sql);
+sqlResult = db.executeQuery("PJ", sql);
+eio.appendString8("T");  
+
+
+//发送短信 给客服
+var mobile = "15726816163"; 
+var message = "有一个新的学驾申请，请及时处理";
+
+sql = "exec sendSms '"+db.encode(mobile)+"','"+db.encode(message)+"'";
+db.executeNoneQuery("PJ",sql);
+
+mobile = "15216714722"; 
+sql = "exec sendSms '"+db.encode(mobile)+"','"+db.encode(message)+"'";
+db.executeNoneQuery("PJ",sql);
+
+mobile = "15710108326";
+sql = "exec sendSms '"+db.encode(mobile)+"','"+db.encode(message)+"'";
+db.executeNoneQuery("PJ",sql);
+
+
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("系统繁忙，请稍后再试"); 
+    return;
+}
+alert("感谢您对我们工作的信任和支持，我们的工作人员会尽快为您处理。");  
+//window.location.href = ee.pageRoot + "/test";
+//history.go(-1) 
+</script3>
+    </taskSetItem>
+    <taskSetItem name="schoolName">
+      <script1>var schoolName=ee.getText(ee.getControl("panel7"));
+eio.appendString16(schoolName);
+var schoolAddress=ee.getText(ee.getControl("panel9"));
+eio.appendString16(schoolAddress);
+var schoolMoney=ee.getText(ee.getControl("panel12"));
+eio.appendString16(schoolMoney);</script1>
+      <script2>var schoolName=eio.readString16();
+session.set("schoolName", schoolName); 
+var schoolAddress=eio.readString16();
+session.set("schoolAddress", schoolAddress);
+var schoolMoney=eio.readString16();
+session.set("schoolMoney", schoolMoney);</script2>
+      <script3>window.location.href = ee.pageRoot + "/driveSchoolNext";</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

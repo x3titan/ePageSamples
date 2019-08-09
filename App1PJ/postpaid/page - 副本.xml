@@ -1,0 +1,3850 @@
+<page>
+  <controls count="195">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[setTimeout(function(){
+    ee.autoResize = false;
+},1000);
+  
+ee.setText(ee.getControl("panel63"),"");
+
+//日期选择 相关函数  g5.rollY  
+
+var now = new Date();
+var year = now.getFullYear();
+var month =(now.getMonth() + 1)         
+//var month =2; //debug
+var day = (now.getDate())  
+//var day =1;   //debug
+
+var hour = now.getHours().toString();       //获取当前小时数(0-23)
+var minutes = now.getMinutes().toString();     //获取当前分钟数(0-59)
+var seconds = now.getSeconds().toString();     //获取当前秒数(0-59)
+
+var strY =[];
+var strM =[];
+var strD =[];
+var tmp =0;
+for(var i=0;i<10;i++){
+    //tmp = year+i;
+    tmp = year; 
+    strY.push(tmp);
+}
+strY.unshift(strY[strY.length-1]);
+strY.pop();
+
+for(var i=1;i<13;i++){    
+    strM.push(i);
+}
+for(var i=0;i<month-2;i++){
+    strM.push(strM[0]);
+    strM.shift();
+} 
+if(month ==1){
+    strM.unshift(strM[strM.length-1]);
+    strM.pop();
+}
+
+for(var i=1;i<=31;i++){
+    strD.push(i);
+} 
+ var days; 
+ var tmp=month;
+        if(tmp==1||tmp==3||tmp==5||tmp==7||tmp==8||tmp==10||tmp==12){  
+            days=31
+        }else if(tmp==2){
+            if((year%4==0&amp;&amp;year%100!=0)||(year%400==0)){//闰年
+               days=29
+            }else {
+               days=28;
+            }
+        }else {                
+           days=30;
+        } 
+        var dd =[];
+        for(var i=1;i<=days;i++){
+            dd.push(i);
+        }
+        for(var i=0;i<day-2;i++){  
+            
+            dd.push(dd[0]);
+            dd.shift();    
+            
+        }  
+        if(day ==1){
+            dd.unshift(dd[dd.length-1])
+            dd.pop();
+        }    
+        dd.push(dd[0]);
+            dd.shift(); 
+        var d= myArrToStr(dd);
+
+
+
+
+function myArrToStr(arr){
+    var str="";
+    var tmp="";
+    for(var i=0;i<arr.length;i++){
+        if(i!=0){
+            tmp =",";
+        }else{
+            tmp='';
+        }
+        if(arr[i]<10){
+            tmp += "0"+arr[i];
+            
+        }else {
+            tmp +=arr[i];
+        }
+        
+        str+=tmp;
+    }
+    return str;
+
+}
+var Y = strY.toString();
+var M = myArrToStr(strM);
+var D = myArrToStr(strD);
+ 
+g5.onStop = function(){
+     
+        var tmp = g5.r1.getSelectText();
+        var year = g5.r.getSelectText();  
+        var day = g5.r2.getSelectText();
+       // alert(tmp);alert(year); alert(g5.r3.getSelectText()); 
+       //alert(g5.r2.getSelectText());
+        
+       var days;
+        if(tmp==1||tmp==3||tmp==5||tmp==7||tmp==8||tmp==10||tmp==12){  
+            days=31
+        }else if(tmp==2){
+            if((year%4==0&amp;&amp;year%100!=0)||(year%400==0)){//闰年
+               days=29
+            }else {
+               days=28;
+            }
+        }else {                
+           days=30;
+        } 
+        var dd =[];
+        for(var i=1;i<=days;i++){
+            dd.push(i);
+        }
+        for(var i=0;i<day-2;i++){  
+            
+            dd.push(dd[0]);
+            dd.shift();    
+            
+        }  
+        if(day ==1){
+            dd.unshift(dd[dd.length-1])
+            dd.pop();
+        }
+        var d= myArrToStr(dd);
+
+        g5.r2 = new g5.rollY(ee.getControl("panel151"), d,false);
+             
+}
+
+g5.log = function(value) {
+    var c = ee.getControl("divRoot");
+    ee.setText(c, ee.getText(c) + value + "</br>");
+}  
+
+
+                 
+
+
+
+//滚动数字选择
+g5.rollY = function(div, text, flag) {
+    this.div = div;
+    this.speed = 0;
+    this.lastTick = 0;
+    this.currentPos = 0;
+    this.mouseDown = false;
+    this.text = text.split(",");
+    this.lastX = 0;
+    this.lastY = 0;
+    this.lastTime = 0;
+    var timerSender = this;
+    this.timer = null;  
+    this.onStop = null;
+    this.startAni = function() {
+        var h = parseInt(eb.getDivRect(div).h / (div.eeChildren.length - 1));
+        this.sy = this.currentPos;
+        this.dy = this.speed*500 + this.currentPos;
+        var adj = (this.dy+10000*h)%h;
+        if (adj>=h/2) {
+            this.dy += h - adj;
+        } else {
+            this.dy += - adj;
+        }    
+        this.T = 1000;
+        this.startTime = (new Date()).getTime(); 
+        if (this.timer==null) {
+            this.timer = setInterval(function(){
+                var time = (new Date()).getTime() - timerSender.startTime;
+                timerSender.currentPos = eb.getInterpolation("slowDown", time/timerSender.T);
+                timerSender.currentPos = (timerSender.dy-timerSender.sy)*timerSender.currentPos + timerSender.sy; 
+                if (time>=timerSender.T) {
+                    timerSender.stopAni();
+                    timerSender.currentPos = timerSender.dy;
+                    if(flag){  
+                        g5.onStop();
+                        console.log(flag) ;
+                    }
+                    
+                } 
+                timerSender.refresh();
+            },1);
+        }    
+    }
+    this.stopAni = function() {
+        if (this.timer==null) return;
+        clearInterval(this.timer);
+        this.timer = null;
+    }
+    div.rollY = this;
+    this.refresh = function() {
+        var dt = new Date();
+        var time = dt.getTime() - this.lastTick;
+        this.lastTick = dt.getTime();
+        if (this.mouseDown) {
+        
+        }
+        var h = parseInt(eb.getDivRect(div).h / (div.eeChildren.length - 1));
+        var w = eb.getDivRect(div).w;
+        var count = div.eeChildren.length - 1;
+        while (this.currentPos<0) this.currentPos += this.text.length * h;
+        this.currentPos = this.currentPos % (this.text.length * h);
+        this.currentPos = parseInt(this.currentPos);
+        var startIndex = (this.text.length - parseInt(this.currentPos/h)) - 1;
+        for (var i=0; i<=count; i++) {
+            ee.setRect(div.eeChildren[i], 0, (this.currentPos % h - h) + i * h, w, h + 1);
+            ee.setText(div.eeChildren[i], this.text[(startIndex+i)%this.text.length]);
+        }
+    }
+    this.getSelectIndex = function() {
+        this.refresh();
+        var h = parseInt(eb.getDivRect(div).h / (div.eeChildren.length - 1));
+        return (this.text.length*2-parseInt(this.currentPos/h+0.5)+parseInt((this.div.eeChildren.length-1)/2))%this.text.length;
+    }
+    this.getSelectText = function() {
+        return this.text[this.getSelectIndex()];
+    }    
+    div.eeMouseDown = function(sender, event, x, y) {
+        var r = sender.rollY;
+        r.stopAni();
+        r.mouseDown = true;
+        r.lastTime = new Date();
+        r.lastX = x;
+        r.lastY = y;
+        r.mousePos = new Array();
+        r.mouseTime = new Array();
+        r.mousePos.push(y);
+        r.mouseTime.push((new Date()).getTime());   
+        event.preventDefault(); 
+    }
+    div.eeMouseUp = function(sender, event, x, y) {
+        var r = sender.rollY;
+        r.mouseDown = false;
+        for (var i=r.mousePos.length-1; i>=0; i--) {
+            var time = (new Date()).getTime() - r.mouseTime[i];
+            if ((time>=100)||(i==0)) {
+                r.speed = (y-r.mousePos[i])/time;
+                break;
+            }
+        }
+        if (isNaN(r.speed)) r.speed = 0;
+        r.startAni();     
+        event.preventDefault();
+        
+        
+    }
+    div.eeMouseMove = function(sender, event, x, y) {
+        var r = sender.rollY;
+        if (!r.mouseDown) return;
+        r.currentPos += y - r.lastY;
+        r.lastTime = new Date();
+        r.lastY = y;
+        r.lastX = x;
+        r.mousePos.push(y);
+        r.mouseTime.push((new Date()).getTime());  
+        r.refresh(); 
+        event.preventDefault();
+    }
+    for (var i=0; i<div.eeChildren.length; i++) {
+        div.eeChildren[i].rollY = this;
+        div.eeChildren[i].eeMouseDown = div.eeMouseDown;
+        div.eeChildren[i].eeMouseUp = div.eeMouseUp;
+        div.eeChildren[i].eeMouseMove = div.eeMouseMove;
+        eb.initMouseEvent(div.eeChildren[i]);
+    }
+    eb.initMouseEvent(div);
+    setTimeout(function() {timerSender.refresh()}, 300);
+} 
+
+
+g5.r = new g5.rollY(ee.getControl("panel137"),Y ,true)
+g5.r1 = new g5.rollY(ee.getControl("panel144"), M ,true);
+g5.r2 = new g5.rollY(ee.getControl("panel151"), d ,false);
+
+g5.rc = new g5.rollY(ee.getControl("panel127"),"07:00,08:00,09:00,10:00,11:00,12:00,13:00,14:00,15:00,16:00,17:00,18:00,19:00,20:00",false);
+]]></onControlLoad>
+      <pageHead><![CDATA[<script src="Scripts/laydate.js"></script> 
+]]></pageHead>
+      <top>0</top>
+      <width>461</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel2">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>238</height>
+      <heightRatio>0.291666666666667</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.593516209476309</sizeRatio>
+      <text>轮播图广告</text>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>60</height>
+      <heightRatio>0.0735294117647059</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.130151843817787</sizeRatio>
+      <top>253</top>
+      <topRatio>0.310049019607843</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel14">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.416666666666667</heightRatio>
+      <left>8</left>
+      <leftRatio>0.0174563591022444</leftRatio>
+      <sizeRatio>1.08695652173913</sizeRatio>
+      <top>18</top>
+      <topRatio>0.3</topRatio>
+      <width>26</width>
+      <widthRatio>0.057356608478803</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel24">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.416666666666667</heightRatio>
+      <left>201</left>
+      <leftRatio>0.43640897755611</leftRatio>
+      <sizeRatio>1.08695652173913</sizeRatio>
+      <top>18</top>
+      <topRatio>0.3</topRatio>
+      <width>26</width>
+      <widthRatio>0.057356608478803</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel19">
+      <bindControl>panel14</bindControl>
+      <bindLeft>right</bindLeft>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>44</left>
+      <leftRatio>0.0976138828633406</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel31"),true);</onClick>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.491803278688525</sizeRatio>
+      <top>0</top>
+      <topRatio>-0.0166666666666667</topRatio>
+      <width>122</width>
+      <widthRatio>0.264642082429501</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel19/panel42">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0163934426229508</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>122</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel19/panel55">
+      <bindLeft>right</bindLeft>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>20</left>
+      <leftRatio>0.163934426229508</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel31"),true);</onClick>
+      <outerLeft>20</outerLeft>
+      <sizeRatio>0.588235294117647</sizeRatio>
+      <text>城市</text>
+      <top>0</top>
+      <width>102</width>
+      <widthRatio>0.836065573770492</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel19/panel55/panel56">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0196078431372549</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>102</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel23">
+      <bindControl>panel24</bindControl>
+      <bindLeft>right</bindLeft>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>237</left>
+      <leftRatio>0.515657620041754</leftRatio>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.27906976744186</sizeRatio>
+      <top>0</top>
+      <width>207</width>
+      <widthRatio>0.448851774530271</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel23/panel45">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <hAlign>left</hAlign>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00966183574879227</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>207</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel23/panel47">
+      <bindLeft>right</bindLeft>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.289855072463768</sizeRatio>
+      <top>0</top>
+      <width>207</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel23/panel47/panel57">
+      <bindLeft>right</bindLeft>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>20</left>
+      <leftRatio>0.0966183574879227</leftRatio>
+      <onClick>ee.setImage(ee.getControl("panel130"),"/App1PJ/student/newTask/yuan2.png","fill","","");
+ee.setImage(ee.getControl("panel132"),"/App1PJ/student/newTask/yuan1.png","fill","","");
+ee.setImage(ee.getControl("panel134"),"/App1PJ/student/newTask/yuan1.png","fill","",""); 
+g5.classHour=2;  
+ee.setVisible(ee.getControl("panel76"),true);</onClick>
+      <outerLeft>20</outerLeft>
+      <sizeRatio>0.320855614973262</sizeRatio>
+      <text>预约时间</text>
+      <top>0</top>
+      <width>187</width>
+      <widthRatio>0.903381642512077</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3/panel23/panel47/panel57/panel58">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0106951871657754</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>187</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>60</height>
+      <heightRatio>0.0735294117647059</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.130151843817787</sizeRatio>
+      <top>316</top>
+      <topRatio>0.387254901960784</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel15">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.416666666666667</heightRatio>
+      <left>8</left>
+      <leftRatio>0.0174563591022444</leftRatio>
+      <sizeRatio>1.08695652173913</sizeRatio>
+      <top>18</top>
+      <topRatio>0.3</topRatio>
+      <width>26</width>
+      <widthRatio>0.057356608478803</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel26">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.416666666666667</heightRatio>
+      <left>256</left>
+      <leftRatio>0.556109725685786</leftRatio>
+      <sizeRatio>1.08695652173913</sizeRatio>
+      <top>18</top>
+      <topRatio>0.3</topRatio>
+      <width>26</width>
+      <widthRatio>0.057356608478803</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel20">
+      <bindControl>panel15</bindControl>
+      <bindLeft>right</bindLeft>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>44</left>
+      <leftRatio>0.0911062906724512</leftRatio>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.338983050847458</sizeRatio>
+      <top>0</top>
+      <topRatio>-0.0166666666666667</topRatio>
+      <width>177</width>
+      <widthRatio>0.383947939262473</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel20/panel43">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0112994350282486</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>177</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel20/panel59">
+      <bindLeft>right</bindLeft>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>20</left>
+      <leftRatio>0.112994350282486</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel90"),true);</onClick>
+      <outerLeft>20</outerLeft>
+      <sizeRatio>0.382165605095541</sizeRatio>
+      <text>车辆</text>
+      <top>0</top>
+      <width>157</width>
+      <widthRatio>0.887005649717514</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel20/panel59/panel60">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0127388535031847</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>157</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel25">
+      <bindControl>panel26</bindControl>
+      <bindLeft>right</bindLeft>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>292</left>
+      <leftRatio>0.633405639913232</leftRatio>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.387096774193548</sizeRatio>
+      <top>0</top>
+      <width>155</width>
+      <widthRatio>0.336225596529284</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel25/panel44">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0129032258064516</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>155</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel25/panel61">
+      <bindLeft>right</bindLeft>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>20</left>
+      <leftRatio>0.129032258064516</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel65"),true);</onClick>
+      <outerLeft>20</outerLeft>
+      <sizeRatio>0.444444444444444</sizeRatio>
+      <text>手机号</text>
+      <top>0</top>
+      <width>135</width>
+      <widthRatio>0.870967741935484</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel25/panel61/panel62">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0148148148148148</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>135</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel5">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <heightRatio>0.122549019607843</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.216919739696312</sizeRatio>
+      <top>379</top>
+      <topRatio>0.464460784313726</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel5/panel16">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.25</heightRatio>
+      <left>8</left>
+      <leftRatio>0.017353579175705</leftRatio>
+      <sizeRatio>0.961538461538462</sizeRatio>
+      <top>30</top>
+      <topRatio>0.3</topRatio>
+      <width>26</width>
+      <widthRatio>0.0563991323210412</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/panel5/edit3">
+      <backgroundSkin>empty</backgroundSkin>
+      <bindControl>panel16</bindControl>
+      <bindLeft>right</bindLeft>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontSize>12</fontSize>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>73</height>
+      <heightRatio>0.73</heightRatio>
+      <inputFontSizeAuto>20</inputFontSizeAuto>
+      <left>44</left>
+      <leftRatio>0.0954446854663774</leftRatio>
+      <multiLine>true</multiLine>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.182044887780549</sizeRatio>
+      <text>  上车地点（具体到十字路口或小区）</text>
+      <top>13</top>
+      <topRatio>0.13</topRatio>
+      <width>401</width>
+      <widthRatio>0.869848156182213</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel5/edit3/panel21">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0273972602739726</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00498753117206983</sizeRatio>
+      <top>71</top>
+      <topRatio>0.972602739726027</topRatio>
+      <width>401</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <heightRatio>0.122549019607843</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.216919739696312</sizeRatio>
+      <top>482</top>
+      <topRatio>0.590686274509804</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6/panel17">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.25</heightRatio>
+      <left>8</left>
+      <leftRatio>0.017353579175705</leftRatio>
+      <sizeRatio>0.961538461538462</sizeRatio>
+      <top>30</top>
+      <topRatio>0.3</topRatio>
+      <width>26</width>
+      <widthRatio>0.0563991323210412</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/panel6/edit4">
+      <backgroundSkin>empty</backgroundSkin>
+      <bindControl>panel17</bindControl>
+      <bindLeft>right</bindLeft>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontSize>12</fontSize>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>73</height>
+      <heightRatio>0.73</heightRatio>
+      <inputFontSizeAuto>20</inputFontSizeAuto>
+      <left>44</left>
+      <leftRatio>0.0954446854663774</leftRatio>
+      <multiLine>true</multiLine>
+      <outerLeft>10</outerLeft>
+      <sizeRatio>0.182044887780549</sizeRatio>
+      <text>  备注</text>
+      <top>13</top>
+      <topRatio>0.13</topRatio>
+      <width>401</width>
+      <widthRatio>0.869848156182213</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6/edit4/panel22">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0273972602739726</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00498753117206983</sizeRatio>
+      <top>71</top>
+      <topRatio>0.972602739726027</topRatio>
+      <width>401</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontSize>12</fontSize>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>60</height>
+      <heightRatio>0.0735294117647059</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.130151843817787</sizeRatio>
+      <top>585</top>
+      <topRatio>0.716911764705882</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7/panel18">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.416666666666667</heightRatio>
+      <left>8</left>
+      <leftRatio>0.0174563591022444</leftRatio>
+      <sizeRatio>1.08695652173913</sizeRatio>
+      <top>18</top>
+      <topRatio>0.3</topRatio>
+      <width>26</width>
+      <widthRatio>0.057356608478803</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7/panel27">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>46</left>
+      <leftRatio>0.0997830802603037</leftRatio>
+      <sizeRatio>0.377358490566038</sizeRatio>
+      <text>  先练后付</text>
+      <top>0</top>
+      <width>159</width>
+      <widthRatio>0.344902386117137</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7/panel29">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>294</left>
+      <leftRatio>0.637744034707158</leftRatio>
+      <sizeRatio>0.397350993377483</sizeRatio>
+      <top>0</top>
+      <width>151</width>
+      <widthRatio>0.327548806941432</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7/panel29/panel30">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0132450331125828</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>151</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7/panel29/panel63">
+      <bindLeft>right</bindLeft>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>20</left>
+      <leftRatio>0.132450331125828</leftRatio>
+      <outerLeft>20</outerLeft>
+      <sizeRatio>0.458015267175573</sizeRatio>
+      <text>.</text>
+      <top>0</top>
+      <width>131</width>
+      <widthRatio>0.867549668874172</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7/panel29/panel63/panel64">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0333333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0152671755725191</sizeRatio>
+      <top>58</top>
+      <topRatio>0.966666666666667</topRatio>
+      <width>131</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7/panel28">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>right</hAlign>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <left>211</left>
+      <leftRatio>0.457700650759219</leftRatio>
+      <sizeRatio>0.731707317073171</sizeRatio>
+      <text>费用：</text>
+      <top>0</top>
+      <width>82</width>
+      <widthRatio>0.177874186550976</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel8">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>61</height>
+      <heightRatio>0.0747549019607843</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.132321041214751</sizeRatio>
+      <top>661</top>
+      <topRatio>0.810049019607843</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel8/panel11">
+      <backgroundColor>FF8000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>16</fontSize>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.704918032786885</heightRatio>
+      <left>8</left>
+      <leftRatio>0.017353579175705</leftRatio>
+      <onClick>if(ee.getText(ee.getControl("panel55")) == "城市"){ 
+    alert("请选择城市");
+    return;
+}         
+if(ee.getText(ee.getControl("panel57")) == "预约时间"){
+    alert("请选择预约时间");
+    return;
+} 
+if(ee.getText(ee.getControl("panel59")) == "车辆"){
+    alert("请选择车辆");
+    return;
+} 
+if(ee.getText(ee.getControl("panel61")) == "手机号"){
+    alert("请填写手机号");
+    return;
+} 
+ee.setVisible(ee.getControl("panel107"),true);</onClick>
+      <sizeRatio>0.0970654627539503</sizeRatio>
+      <text>自助提交订单</text>
+      <top>9</top>
+      <topRatio>0.147540983606557</topRatio>
+      <width>443</width>
+      <widthRatio>0.960954446854664</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel9">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>61</height>
+      <heightRatio>0.0747549019607843</heightRatio>
+      <layerName>预约</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.132321041214751</sizeRatio>
+      <top>671</top>
+      <topRatio>0.822303921568627</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel9/panel12">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.704918032786885</heightRatio>
+      <left>9</left>
+      <leftRatio>0.0195227765726681</leftRatio>
+      <sizeRatio>0.19815668202765</sizeRatio>
+      <text>一键预约</text>
+      <top>3</top>
+      <topRatio>0.0491803278688525</topRatio>
+      <width>217</width>
+      <widthRatio>0.470715835140998</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel9/panel12/panel52">
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>3</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.19815668202765</sizeRatio>
+      <text><![CDATA[<a href='tel:400-606-6178' trget='_blank'>　　　　　</a>]]></text>
+      <top>0</top>
+      <width>217</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel9/panel13">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.704918032786885</heightRatio>
+      <left>233</left>
+      <leftRatio>0.505422993492408</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel48"),true);</onClick>
+      <sizeRatio>0.19815668202765</sizeRatio>
+      <text>预约须知</text>
+      <top>3</top>
+      <topRatio>0.0491803278688525</topRatio>
+      <width>217</width>
+      <widthRatio>0.470715835140998</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel10">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontSize>16</fontSize>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>0.0747549019607843</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.132321041214751</sizeRatio>
+      <text><![CDATA[ 上海云培信息技术有限公司 沪ICP备15011892号-1<br><a href = "http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31011402002013" style="text-decoration:none;color:#000;"><img src="cache/App1PJ/postpaid/beian.png" style="width:35px;height:35px;margin-right:20px;">沪公网安备 31011402002013号</a>]]></text>
+      <top>755</top>
+      <topRatio>0.925245098039216</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel102">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>404040</fontColor>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>26</height>
+      <heightRatio>0.0318627450980392</heightRatio>
+      <left>343</left>
+      <leftRatio>0.744034707158351</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel48"),true);</onClick>
+      <sizeRatio>0.247619047619048</sizeRatio>
+      <text>陪驾须知</text>
+      <top>732</top>
+      <topRatio>0.897058823529412</topRatio>
+      <width>105</width>
+      <widthRatio>0.227765726681128</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel102/panel103">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>4</height>
+      <heightRatio>0.153846153846154</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0380952380952381</sizeRatio>
+      <top>22</top>
+      <topRatio>0.846153846153846</topRatio>
+      <width>105</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel102/panel104">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>4</height>
+      <heightRatio>0.153846153846154</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0380952380952381</sizeRatio>
+      <top>0</top>
+      <width>105</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel102/panel105">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>left</dockX>
+      <dockY>fill</dockY>
+      <height>26</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>6.5</sizeRatio>
+      <top>0</top>
+      <width>4</width>
+      <widthRatio>0.0380952380952381</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel102/panel106">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <height>26</height>
+      <heightRatio>1</heightRatio>
+      <left>101</left>
+      <leftRatio>0.961904761904762</leftRatio>
+      <sizeRatio>6.5</sizeRatio>
+      <top>0</top>
+      <width>4</width>
+      <widthRatio>0.0380952380952381</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>城市</layerName>
+      <left>0</left>
+      <onClick>ee.setVisible(this,false);pay();</onClick>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31/panel46">
+      <alpha>0.5</alpha>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31/panel32">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>322</height>
+      <heightRatio>0.394607843137255</heightRatio>
+      <left>0</left>
+      <leftRatio>0.00433839479392625</leftRatio>
+      <sizeRatio>0.698481561822126</sizeRatio>
+      <top>570</top>
+      <topRatio>0.698529411764706</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31/panel32/panel34">
+      <backgroundColor>47A9F9</backgroundColor>
+      <backgroundSkin>line1000</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>52</height>
+      <heightRatio>0.161490683229814</heightRatio>
+      <left>58</left>
+      <leftRatio>0.125813449023861</leftRatio>
+      <onClick>ee.setText(ee.getControl("panel55"),ee.getText(this));
+ee.setTextColor(ee.getControl("panel55"),"#000");</onClick>
+      <sizeRatio>0.468468468468468</sizeRatio>
+      <text>上海</text>
+      <top>91</top>
+      <topRatio>0.282608695652174</topRatio>
+      <width>111</width>
+      <widthRatio>0.240780911062907</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31/panel32/panel35">
+      <backgroundColor>47A9F9</backgroundColor>
+      <backgroundSkin>line1000</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>52</height>
+      <heightRatio>0.161490683229814</heightRatio>
+      <left>184</left>
+      <leftRatio>0.399132321041215</leftRatio>
+      <onClick>ee.setText(ee.getControl("panel55"),ee.getText(this));ee.setTextColor(ee.getControl("panel55"),"#000");</onClick>
+      <sizeRatio>0.468468468468468</sizeRatio>
+      <text>深圳</text>
+      <top>93</top>
+      <topRatio>0.288819875776398</topRatio>
+      <width>111</width>
+      <widthRatio>0.240780911062907</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31/panel32/panel36">
+      <backgroundColor>47A9F9</backgroundColor>
+      <backgroundSkin>line1000</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>52</height>
+      <heightRatio>0.161490683229814</heightRatio>
+      <left>310</left>
+      <leftRatio>0.672451193058568</leftRatio>
+      <onClick>ee.setText(ee.getControl("panel55"),ee.getText(this));ee.setTextColor(ee.getControl("panel55"),"#000");</onClick>
+      <sizeRatio>0.468468468468468</sizeRatio>
+      <text>福州</text>
+      <top>92</top>
+      <topRatio>0.285714285714286</topRatio>
+      <width>111</width>
+      <widthRatio>0.240780911062907</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31/panel32/panel39">
+      <backgroundColor>FF8000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>53</height>
+      <heightRatio>0.164596273291925</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.114967462039046</sizeRatio>
+      <text>请选择城市</text>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31/panel32/panel41">
+      <backgroundColor>47A9F9</backgroundColor>
+      <backgroundSkin>line1000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>53</height>
+      <heightRatio>0.164596273291925</heightRatio>
+      <left>58</left>
+      <leftRatio>0.125813449023861</leftRatio>
+      <sizeRatio>0.146005509641873</sizeRatio>
+      <text>更多城市尽请期待...</text>
+      <top>159</top>
+      <topRatio>0.493788819875776</topRatio>
+      <width>363</width>
+      <widthRatio>0.787418655097614</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48">
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>提示</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel51">
+      <alpha>0.5</alpha>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setVisible(ee.getControl("panel48"),false);</onClick>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel49">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundSkin>App1PJ009</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>610</height>
+      <heightRatio>0.747549019607843</heightRatio>
+      <left>21</left>
+      <leftRatio>0.0455531453362256</leftRatio>
+      <sizeRatio>1.45584725536993</sizeRatio>
+      <top>103</top>
+      <topRatio>0.126225490196078</topRatio>
+      <width>419</width>
+      <widthRatio>0.908893709327549</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel49/panel150">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>536</height>
+      <heightRatio>0.879406307977737</heightRatio>
+      <left>16</left>
+      <leftRatio>0.038560411311054</leftRatio>
+      <sizeRatio>1.32033426183844</sizeRatio>
+      <top>35</top>
+      <topRatio>0.0575139146567718</topRatio>
+      <width>387</width>
+      <widthRatio>0.922879177377892</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel49/panel150/panel156">
+      <backgroundColor>C0FFFF</backgroundColor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>536</height>
+      <heightRatio>1</heightRatio>
+      <left>-1</left>
+      <leftRatio>-0.00278551532033426</leftRatio>
+      <sizeRatio>1.31666666666667</sizeRatio>
+      <top>0</top>
+      <width>388</width>
+      <widthRatio>1.00278551532033</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel49/panel150/panel156/panel157">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>63</height>
+      <heightRatio>0.118143459915612</heightRatio>
+      <left>8</left>
+      <leftRatio>0.0206185567010309</leftRatio>
+      <sizeRatio>0.150134048257373</sizeRatio>
+      <text>预约须知</text>
+      <top>-8</top>
+      <topRatio>-0.0147679324894515</topRatio>
+      <width>373</width>
+      <widthRatio>0.961340206185567</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel49/panel150/panel156/panel157/panel171">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>3</height>
+      <heightRatio>0.0476190476190476</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00804289544235925</sizeRatio>
+      <top>60</top>
+      <topRatio>0.952380952380952</topRatio>
+      <width>373</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel49/panel150/panel156/panel160">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>28</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>202</height>
+      <heightRatio>0.376865671641791</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.520618556701031</sizeRatio>
+      <text>【对象】已持有驾照，但不能独立驾驶
+【范围】上海、深圳、福州
+【提示】请务必携带本人有效驾照
+        训练前一天请勿大量饮酒
+【陪驾时段】7：00~22：00（国定假日不休）
+【人工座席】工作日 9:00~18:00
+*其他时间请添加客服微信号 15710108326</text>
+      <top>63</top>
+      <topRatio>0.117537313432836</topRatio>
+      <vAlign>top</vAlign>
+      <width>388</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel49/panel150/panel156/panel167">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>28</fontSizeAuto>
+      <height>270</height>
+      <heightRatio>0.503731343283582</heightRatio>
+      <left>51</left>
+      <leftRatio>0.131443298969072</leftRatio>
+      <sizeRatio>0.947368421052632</sizeRatio>
+      <text>【9大优势， 9是放心】
+1、现练后付，放心首选
+2、优质陪驾，三证上岗
+3、课程严谨，复旦认证
+4、上门接送，1对1陪驾
+5、包教包会，违约退款
+6、时间可选，随叫随到
+7、收费合理，低价透明
+8、通过 APP，获安心险
+9、配副刹车，影像监控</text>
+      <top>266</top>
+      <topRatio>0.496268656716418</topRatio>
+      <vAlign>top</vAlign>
+      <width>285</width>
+      <widthRatio>0.734536082474227</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel50">
+      <backgroundImg>圆.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>47</height>
+      <heightRatio>0.0575980392156863</heightRatio>
+      <left>411</left>
+      <leftRatio>0.891540130151844</leftRatio>
+      <sizeRatio>1</sizeRatio>
+      <top>80</top>
+      <topRatio>0.0980392156862745</topRatio>
+      <width>47</width>
+      <widthRatio>0.101952277657267</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel50/panel53">
+      <backgroundImg>圆 (1).png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.914893617021277</heightRatio>
+      <left>2</left>
+      <leftRatio>0.0425531914893617</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel48"),false);</onClick>
+      <outerBottom>2</outerBottom>
+      <outerLeft>2</outerLeft>
+      <outerRight>2</outerRight>
+      <outerTop>2</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0425531914893617</topRatio>
+      <width>43</width>
+      <widthRatio>0.914893617021277</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel48/panel50/panel53/panel54">
+      <backgroundImg>叉 (1).png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>23</height>
+      <heightRatio>0.534883720930233</heightRatio>
+      <left>10</left>
+      <leftRatio>0.232558139534884</leftRatio>
+      <outerBottom>10</outerBottom>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>10</top>
+      <topRatio>0.232558139534884</topRatio>
+      <width>23</width>
+      <widthRatio>0.534883720930233</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel65">
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>手机号</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel65/panel66">
+      <alpha>0.5</alpha>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setVisible(ee.getControl("panel65"),false);</onClick>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel65/panel67">
+      <backgroundSkin>button3a000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>237</height>
+      <heightRatio>0.290441176470588</heightRatio>
+      <left>36</left>
+      <leftRatio>0.0780911062906725</leftRatio>
+      <sizeRatio>0.609254498714653</sizeRatio>
+      <top>289</top>
+      <topRatio>0.354166666666667</topRatio>
+      <width>389</width>
+      <widthRatio>0.843817787418655</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel65/panel67/panel71">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>237</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.609254498714653</sizeRatio>
+      <top>0</top>
+      <width>389</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel65/panel67/panel71/panel74">
+      <backgroundColor>47A9F9</backgroundColor>
+      <backgroundSkin>App1PJ007</backgroundSkin>
+      <dockX>center</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.168776371308017</heightRatio>
+      <left>104</left>
+      <leftRatio>0.267352185089974</leftRatio>
+      <onClick>g5.phone=ee.getEditText(ee.getControl("edit1"));
+if(g5.phone==""){
+    alert("您必须填写联系电话以方便教练联系您");
+    return;
+}  
+
+if(isNaN(g5.phone)){
+    alert("您必须填写正确的联系电话以方便教练联系您");
+    return;
+}
+if(g5.phone.toString().length != 11){
+    alert("您必须填写正确的联系电话以方便教练联系您");
+    return;
+}          
+if(ee.getEditText(ee.getControl("edit2")) == ""){
+    alert("为了您的财产安全以及方便教练联系您请填写验证码");
+    return;
+}
+checkSmsCode();
+
+</onClick>
+      <sizeRatio>0.220994475138122</sizeRatio>
+      <top>174</top>
+      <topRatio>0.734177215189873</topRatio>
+      <width>181</width>
+      <widthRatio>0.465295629820051</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel65/panel67/panel71/panel74/panel72">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>g5.phone=ee.getEditText(ee.getControl("edit1"));
+if(g5.phone==""){
+    alert("您必须填写联系电话以方便教练联系您");
+    return;
+}  
+
+if(isNaN(g5.phone)){
+    alert("您必须填写正确的联系电话以方便教练联系您");
+    return;
+}
+if(g5.phone.toString().length != 11){
+    alert("您必须填写正确的联系电话以方便教练联系您");
+    return;
+}          
+if(ee.getEditText(ee.getControl("edit2")) == ""){
+    alert("为了您的财产安全以及方便教练联系您请填写验证码");
+    return;
+}
+checkSmsCode();</onClick>
+      <sizeRatio>0.220994475138122</sizeRatio>
+      <text>确定</text>
+      <top>0</top>
+      <width>181</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel65/panel67/panel71/edit1">
+      <backgroundColor>000000</backgroundColor>
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>0.168776371308017</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>20</inputFontSizeAuto>
+      <left>30</left>
+      <leftRatio>0.077120822622108</leftRatio>
+      <sizeRatio>0.123456790123457</sizeRatio>
+      <text>手机号</text>
+      <top>40</top>
+      <topRatio>0.168776371308017</topRatio>
+      <width>324</width>
+      <widthRatio>0.832904884318766</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel65/panel67/panel71/layoutx1">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>40</height>
+      <heightRatio>0.168776371308017</heightRatio>
+      <left>33</left>
+      <leftRatio>0.0848329048843188</leftRatio>
+      <sizeRatio>0.125391849529781</sizeRatio>
+      <top>97</top>
+      <topRatio>0.409282700421941</topRatio>
+      <width>319</width>
+      <widthRatio>0.820051413881748</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel65/panel67/panel71/layoutx1/layoutxitem1">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.25</sizeRatio>
+      <top>0</top>
+      <width>160</width>
+      <widthRatio>0.501567398119122</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel65/panel67/panel71/layoutx1/layoutxitem1/edit2">
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>20</inputFontSizeAuto>
+      <left>0</left>
+      <sizeRatio>0.258064516129032</sizeRatio>
+      <text>验证号</text>
+      <top>0</top>
+      <width>147</width>
+      <widthRatio>0.917159763313609</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel65/panel67/panel71/layoutx1/layoutxitem2">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <backgroundSkin>App1PJ008</backgroundSkin>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>12</fontSize>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>1</heightRatio>
+      <left>160</left>
+      <leftRatio>0.501567398119122</leftRatio>
+      <onClick>var text = ee.getText(this);
+
+if(text == "获取短信验证码"){
+     getSmsCode();  
+    
+}
+</onClick>
+      <sizeRatio>0.251572327044025</sizeRatio>
+      <text>获取短信验证码</text>
+      <top>0</top>
+      <width>159</width>
+      <widthRatio>0.498432601880878</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel65/panel68">
+      <backgroundImg>圆.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>47</height>
+      <heightRatio>0.0575980392156863</heightRatio>
+      <left>398</left>
+      <leftRatio>0.863340563991323</leftRatio>
+      <sizeRatio>1</sizeRatio>
+      <top>265</top>
+      <topRatio>0.324754901960784</topRatio>
+      <width>47</width>
+      <widthRatio>0.101952277657267</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel65/panel68/panel69">
+      <backgroundImg>圆 (1).png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.914893617021277</heightRatio>
+      <left>2</left>
+      <leftRatio>0.0425531914893617</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel65"),false);</onClick>
+      <outerBottom>2</outerBottom>
+      <outerLeft>2</outerLeft>
+      <outerRight>2</outerRight>
+      <outerTop>2</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0425531914893617</topRatio>
+      <width>43</width>
+      <widthRatio>0.914893617021277</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel65/panel68/panel69/panel70">
+      <backgroundImg>叉 (1).png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>23</height>
+      <heightRatio>0.534883720930233</heightRatio>
+      <left>10</left>
+      <leftRatio>0.232558139534884</leftRatio>
+      <outerBottom>10</outerBottom>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>10</top>
+      <topRatio>0.232558139534884</topRatio>
+      <width>23</width>
+      <widthRatio>0.534883720930233</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>日期选择</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel77">
+      <alpha>0.5</alpha>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setVisible(ee.getControl("panel76"),false);</onClick>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126">
+      <aniPos>bottomFlyIn:底部飞入</aniPos>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>441</height>
+      <heightRatio>0.540441176470588</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.956616052060738</sizeRatio>
+      <top>375</top>
+      <topRatio>0.459558823529412</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel76/panel126/layoutx15">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>5</fieldCount>
+      <height>75</height>
+      <heightRatio>0.170491803278689</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.112798264642082</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem41">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>9A9A9A</fontColor>
+      <fontFamily>Tahoma</fontFamily>
+      <fontSizeAuto>28</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>8</heavy>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>7.5</sizeRatio>
+      <top>0</top>
+      <width>10</width>
+      <widthRatio>0.0216919739696312</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem42">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <fontColor>9A9A9A</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>28</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>80</heavy>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0216919739696312</leftRatio>
+      <sizeRatio>0.789473684210526</sizeRatio>
+      <text>陪练课时：</text>
+      <top>0</top>
+      <width>95</width>
+      <widthRatio>0.206073752711497</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem43">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>105</left>
+      <leftRatio>0.227765726681128</leftRatio>
+      <sizeRatio>0.635593220338983</sizeRatio>
+      <top>0</top>
+      <width>118</width>
+      <widthRatio>0.255965292841649</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem43/panel130">
+      <backgroundImg>yuan1.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>58</height>
+      <heightRatio>0.777777777777778</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.756756756756757</sizeRatio>
+      <top>10</top>
+      <topRatio>0.138888888888889</topRatio>
+      <width>20</width>
+      <widthRatio>0.172093023255814</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem43/panel131">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>28</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>31</left>
+      <leftRatio>0.260869565217391</leftRatio>
+      <sizeRatio>0.780821917808219</sizeRatio>
+      <text>2 小时</text>
+      <top>0</top>
+      <width>75</width>
+      <widthRatio>0.634782608695652</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem43/panel142">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setImage(ee.getControl("panel130"),"/App1PJ/student/newTask/yuan2.png","fill","","");
+ee.setImage(ee.getControl("panel132"),"/App1PJ/student/newTask/yuan1.png","fill","","");
+ee.setImage(ee.getControl("panel134"),"/App1PJ/student/newTask/yuan1.png","fill","",""); 
+g5.classHour=2;        
+//changeChooseM();</onClick>
+      <sizeRatio>0.635593220338983</sizeRatio>
+      <top>0</top>
+      <width>118</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem44">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>223</left>
+      <leftRatio>0.483731019522777</leftRatio>
+      <sizeRatio>0.630252100840336</sizeRatio>
+      <top>0</top>
+      <width>119</width>
+      <widthRatio>0.258134490238612</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem44/panel132">
+      <backgroundImg>yuan1.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>58</height>
+      <heightRatio>0.777777777777778</heightRatio>
+      <left>6</left>
+      <leftRatio>0.0467289719626168</leftRatio>
+      <sizeRatio>0.756756756756757</sizeRatio>
+      <top>10</top>
+      <topRatio>0.138888888888889</topRatio>
+      <width>21</width>
+      <widthRatio>0.172897196261682</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem44/panel133">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>28</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>41</left>
+      <leftRatio>0.342105263157895</leftRatio>
+      <sizeRatio>0.814285714285714</sizeRatio>
+      <text>3 小时</text>
+      <top>0</top>
+      <width>73</width>
+      <widthRatio>0.614035087719298</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem44/panel78">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setImage(ee.getControl("panel132"),"/App1PJ/student/newTask/yuan2.png","fill","","");
+ee.setImage(ee.getControl("panel130"),"/App1PJ/student/newTask/yuan1.png","fill","","");
+ee.setImage(ee.getControl("panel134"),"/App1PJ/student/newTask/yuan1.png","fill","",""); 
+g5.classHour=3;            
+//changeChooseM();</onClick>
+      <sizeRatio>0.630252100840336</sizeRatio>
+      <top>0</top>
+      <width>119</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem45">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>342</left>
+      <leftRatio>0.741865509761388</leftRatio>
+      <sizeRatio>0.630252100840336</sizeRatio>
+      <top>0</top>
+      <width>119</width>
+      <widthRatio>0.258134490238612</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem45/panel134">
+      <backgroundImg>yuan1.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>58</height>
+      <heightRatio>0.777777777777778</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.756756756756757</sizeRatio>
+      <top>8</top>
+      <topRatio>0.111111111111111</topRatio>
+      <width>20</width>
+      <widthRatio>0.172093023255814</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem45/panel135">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>28</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>32</left>
+      <leftRatio>0.271929824561404</leftRatio>
+      <sizeRatio>0.791666666666667</sizeRatio>
+      <text>4 小时</text>
+      <top>0</top>
+      <width>75</width>
+      <widthRatio>0.631578947368421</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/layoutx15/layoutxitem45/panel143">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>75</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setImage(ee.getControl("panel134"),"/App1PJ/student/newTask/yuan2.png","fill","","");
+ee.setImage(ee.getControl("panel132"),"/App1PJ/student/newTask/yuan1.png","fill","","");
+ee.setImage(ee.getControl("panel130"),"/App1PJ/student/newTask/yuan1.png","fill","",""); 
+g5.classHour=4;      
+//changeChooseM();</onClick>
+      <sizeRatio>0.630252100840336</sizeRatio>
+      <top>0</top>
+      <width>119</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <bindControl>panel119</bindControl>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>203</height>
+      <heightRatio>0.46031746031746</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.440347071583514</sizeRatio>
+      <top>146</top>
+      <topRatio>0.331065759637188</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel76/panel126/panel136/layoutx16">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>54</height>
+      <heightRatio>0.264285714285714</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0824053452115813</sizeRatio>
+      <top>-3</top>
+      <topRatio>-0.0142857142857143</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel76/panel126/panel136/layoutx16/layoutxitem46">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavy>8</heavy>
+      <height>54</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>6.75</sizeRatio>
+      <top>0</top>
+      <width>8</width>
+      <widthRatio>0.017353579175705</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel76/panel126/panel136/layoutx16/layoutxitem48">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavy>300</heavy>
+      <height>54</height>
+      <heightRatio>1</heightRatio>
+      <left>8</left>
+      <leftRatio>0.017353579175705</leftRatio>
+      <sizeRatio>0.180602006688963</sizeRatio>
+      <top>0</top>
+      <width>299</width>
+      <widthRatio>0.648590021691974</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel76/panel126/panel136/layoutx16/layoutxitem3">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavy>154</heavy>
+      <height>54</height>
+      <heightRatio>1</heightRatio>
+      <left>307</left>
+      <leftRatio>0.665943600867679</leftRatio>
+      <sizeRatio>0.350649350649351</sizeRatio>
+      <top>0</top>
+      <width>154</width>
+      <widthRatio>0.334056399132321</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel79">
+      <backgroundColor>DBDBDB</backgroundColor>
+      <dockX>fill</dockX>
+      <height>2</height>
+      <heightRatio>0.00985221674876847</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00433839479392625</sizeRatio>
+      <top>31</top>
+      <topRatio>0.152709359605911</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel165">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>3</height>
+      <heightRatio>0.0147783251231527</heightRatio>
+      <left>301</left>
+      <leftRatio>0.6529284164859</leftRatio>
+      <sizeRatio>0.024390243902439</sizeRatio>
+      <top>66</top>
+      <topRatio>0.32512315270936</topRatio>
+      <width>123</width>
+      <widthRatio>0.266811279826464</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel166">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>3</height>
+      <heightRatio>0.0147783251231527</heightRatio>
+      <left>301</left>
+      <leftRatio>0.6529284164859</leftRatio>
+      <sizeRatio>0.024390243902439</sizeRatio>
+      <top>124</top>
+      <topRatio>0.610837438423645</topRatio>
+      <width>123</width>
+      <widthRatio>0.266811279826464</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel172">
+      <alpha>0.5</alpha>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>3</fontSizeAuto>
+      <height>64</height>
+      <heightRatio>0.315270935960591</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.13882863340564</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel173">
+      <alpha>0.5</alpha>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>74</height>
+      <heightRatio>0.364532019704434</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.160520607375271</sizeRatio>
+      <top>128</top>
+      <topRatio>0.630541871921182</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel127">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>198</height>
+      <heightRatio>0.975369458128079</heightRatio>
+      <left>288</left>
+      <leftRatio>0.62472885032538</leftRatio>
+      <sizeRatio>1.53488372093023</sizeRatio>
+      <top>2</top>
+      <topRatio>0.00985221674876847</topRatio>
+      <width>129</width>
+      <widthRatio>0.279826464208243</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel127/panel161">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>30</height>
+      <heightRatio>0.151515151515152</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.232558139534884</sizeRatio>
+      <text>07:00</text>
+      <top>0</top>
+      <width>129</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel127/panel162">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>30</height>
+      <heightRatio>0.151515151515152</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.232558139534884</sizeRatio>
+      <text>07:00</text>
+      <top>35</top>
+      <topRatio>0.176767676767677</topRatio>
+      <width>129</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel127/panel163">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>30</height>
+      <heightRatio>0.151515151515152</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.232558139534884</sizeRatio>
+      <text>07:00</text>
+      <top>69</top>
+      <topRatio>0.348484848484849</topRatio>
+      <width>129</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel127/panel164">
+      <dockX>fill</dockX>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>30</height>
+      <heightRatio>0.151515151515152</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.232558139534884</sizeRatio>
+      <text>07:00</text>
+      <top>104</top>
+      <topRatio>0.525252525252525</topRatio>
+      <width>129</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75">
+      <backgroundColor>C0FFC0</backgroundColor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>193</height>
+      <heightRatio>0.950738916256158</heightRatio>
+      <left>52</left>
+      <leftRatio>0.112798264642082</leftRatio>
+      <sizeRatio>0.824786324786325</sizeRatio>
+      <top>2</top>
+      <topRatio>0.00985221674876847</topRatio>
+      <width>234</width>
+      <widthRatio>0.507592190889371</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel137">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>193</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>2.25882352941176</sizeRatio>
+      <top>0</top>
+      <width>85</width>
+      <widthRatio>0.363247863247863</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel137/panel138">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>DBDBDB</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.470588235294118</sizeRatio>
+      <text>2016</text>
+      <top>15</top>
+      <topRatio>0.078125</topRatio>
+      <width>85</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel137/panel139">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.470588235294118</sizeRatio>
+      <text>2016</text>
+      <top>66</top>
+      <topRatio>0.34375</topRatio>
+      <width>85</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel137/panel140">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.470588235294118</sizeRatio>
+      <text>3</text>
+      <top>121</top>
+      <topRatio>0.625</topRatio>
+      <width>85</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel137/panel141">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.470588235294118</sizeRatio>
+      <text>3</text>
+      <top>162</top>
+      <topRatio>0.838541666666667</topRatio>
+      <width>85</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel144">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>193</height>
+      <heightRatio>1</heightRatio>
+      <left>106</left>
+      <leftRatio>0.452991452991453</leftRatio>
+      <sizeRatio>4.17391304347826</sizeRatio>
+      <top>0</top>
+      <width>46</width>
+      <widthRatio>0.196581196581197</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel144/panel145">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>DBDBDB</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>22</height>
+      <heightRatio>0.114583333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.478260869565217</sizeRatio>
+      <text>3</text>
+      <top>24</top>
+      <topRatio>0.125</topRatio>
+      <width>46</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel144/panel146">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>22</height>
+      <heightRatio>0.114583333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.478260869565217</sizeRatio>
+      <text>3</text>
+      <top>75</top>
+      <topRatio>0.390625</topRatio>
+      <width>46</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel144/panel147">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>22</height>
+      <heightRatio>0.114583333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.478260869565217</sizeRatio>
+      <text>3</text>
+      <top>124</top>
+      <topRatio>0.640625</topRatio>
+      <width>46</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel144/panel148">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>22</height>
+      <heightRatio>0.114583333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.478260869565217</sizeRatio>
+      <text>3</text>
+      <top>165</top>
+      <topRatio>0.854166666666667</topRatio>
+      <width>46</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel151">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>193</height>
+      <heightRatio>1</heightRatio>
+      <left>177</left>
+      <leftRatio>0.756410256410256</leftRatio>
+      <sizeRatio>3.7843137254902</sizeRatio>
+      <top>0</top>
+      <width>51</width>
+      <widthRatio>0.217948717948718</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel151/panel152">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>DBDBDB</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>22</height>
+      <heightRatio>0.114583333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.431372549019608</sizeRatio>
+      <text>3</text>
+      <top>25</top>
+      <topRatio>0.130208333333333</topRatio>
+      <width>51</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel151/panel153">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>22</height>
+      <heightRatio>0.114583333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.431372549019608</sizeRatio>
+      <text>3</text>
+      <top>76</top>
+      <topRatio>0.395833333333333</topRatio>
+      <width>51</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel151/panel154">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>22</height>
+      <heightRatio>0.114583333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.431372549019608</sizeRatio>
+      <text>3</text>
+      <top>124</top>
+      <topRatio>0.640625</topRatio>
+      <width>51</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel151/panel155">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>22</height>
+      <heightRatio>0.114583333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.431372549019608</sizeRatio>
+      <text>3</text>
+      <top>165</top>
+      <topRatio>0.854166666666667</topRatio>
+      <width>51</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel158">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>3</height>
+      <heightRatio>0.0178571428571429</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0128205128205128</sizeRatio>
+      <top>67</top>
+      <topRatio>0.345238095238095</topRatio>
+      <width>234</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel159">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>3</height>
+      <heightRatio>0.0178571428571429</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0128205128205128</sizeRatio>
+      <top>125</top>
+      <topRatio>0.648809523809524</topRatio>
+      <width>234</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel73">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>193</height>
+      <heightRatio>1</heightRatio>
+      <left>85</left>
+      <leftRatio>0.363247863247863</leftRatio>
+      <sizeRatio>8.72727272727273</sizeRatio>
+      <top>0</top>
+      <width>22</width>
+      <widthRatio>0.094017094017094</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel73/panel80">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>DBDBDB</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.81818181818182</sizeRatio>
+      <text>-</text>
+      <top>15</top>
+      <topRatio>0.078125</topRatio>
+      <width>22</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel73/panel81">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.81818181818182</sizeRatio>
+      <text>-</text>
+      <top>77</top>
+      <topRatio>0.401041666666667</topRatio>
+      <width>22</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel73/panel82">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.81818181818182</sizeRatio>
+      <text>-</text>
+      <top>143</top>
+      <topRatio>0.739583333333333</topRatio>
+      <width>22</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel84">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>193</height>
+      <heightRatio>1</heightRatio>
+      <left>155</left>
+      <leftRatio>0.662393162393162</leftRatio>
+      <sizeRatio>8.72727272727273</sizeRatio>
+      <top>0</top>
+      <width>22</width>
+      <widthRatio>0.094017094017094</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel84/panel85">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>DBDBDB</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.81818181818182</sizeRatio>
+      <text>-</text>
+      <top>15</top>
+      <topRatio>0.078125</topRatio>
+      <width>22</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel84/panel86">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.81818181818182</sizeRatio>
+      <text>-</text>
+      <top>77</top>
+      <topRatio>0.401041666666667</topRatio>
+      <width>22</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel136/panel75/panel84/panel87">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FFFFC0</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>808080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.81818181818182</sizeRatio>
+      <text>-</text>
+      <top>143</top>
+      <topRatio>0.739583333333333</topRatio>
+      <width>22</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel83">
+      <bgColorEnabled>true</bgColorEnabled>
+      <bindControl>layoutx15</bindControl>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>4</height>
+      <heightRatio>0.00983606557377049</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00650759219088937</sizeRatio>
+      <top>75</top>
+      <topRatio>0.170491803278689</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel88">
+      <bgColorEnabled>true</bgColorEnabled>
+      <bindControl>panel136</bindControl>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>4</height>
+      <heightRatio>0.00983606557377049</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00650759219088937</sizeRatio>
+      <top>349</top>
+      <topRatio>0.842622950819672</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel89">
+      <backgroundColor>FF8000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>center</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>59</height>
+      <heightRatio>0.133786848072562</heightRatio>
+      <left>138</left>
+      <leftRatio>0.299349240780911</leftRatio>
+      <onClick> 
+time1();</onClick>
+      <sizeRatio>0.320652173913043</sizeRatio>
+      <text>确定</text>
+      <top>367</top>
+      <topRatio>0.832199546485261</topRatio>
+      <width>184</width>
+      <widthRatio>0.399132321041215</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel119">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <bindControl>panel83</bindControl>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>67</height>
+      <heightRatio>0.151515151515152</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.119305856832972</sizeRatio>
+      <top>79</top>
+      <topRatio>0.181818181818182</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel119/panel120">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>67</height>
+      <heightRatio>1</heightRatio>
+      <left>74</left>
+      <leftRatio>0.160520607375271</leftRatio>
+      <sizeRatio>0.295698924731183</sizeRatio>
+      <text>预约日期</text>
+      <top>0</top>
+      <width>186</width>
+      <widthRatio>0.403470715835141</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel76/panel126/panel119/panel121">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>67</height>
+      <heightRatio>1</heightRatio>
+      <left>293</left>
+      <leftRatio>0.635574837310195</leftRatio>
+      <sizeRatio>0.478260869565217</sizeRatio>
+      <text>开始</text>
+      <top>0</top>
+      <width>115</width>
+      <widthRatio>0.249457700650759</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>车辆</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel91">
+      <alpha>0.5</alpha>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setVisible(ee.getControl("panel90"),false);</onClick>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>251</height>
+      <heightRatio>0.307598039215686</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.544468546637744</sizeRatio>
+      <top>565</top>
+      <topRatio>0.692401960784314</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/panel90/panel92/layouty1">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>251</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.544468546637744</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem1">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>72</height>
+      <heightRatio>0.286852589641434</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.156182212581345</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem1/panel33">
+      <backgroundImg>yuan1.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>72</height>
+      <heightRatio>1</heightRatio>
+      <left>147</left>
+      <leftRatio>0.318872017353579</leftRatio>
+      <sizeRatio>4.28</sizeRatio>
+      <top>0</top>
+      <topRatio>0.00934579439252336</topRatio>
+      <width>25</width>
+      <widthRatio>0.0542299349240781</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem1/panel38">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>72</height>
+      <heightRatio>1</heightRatio>
+      <left>185</left>
+      <leftRatio>0.401301518438178</leftRatio>
+      <sizeRatio>0.694805194805195</sizeRatio>
+      <text>学员自带车</text>
+      <top>0</top>
+      <width>154</width>
+      <widthRatio>0.334056399132321</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem1/panel37">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>72</height>
+      <heightRatio>1</heightRatio>
+      <left>127</left>
+      <leftRatio>0.275488069414317</leftRatio>
+      <onClick>ee.setImage(ee.getControl("panel33"),"/App1PJ/student/newTask/yuan2.png","fill","","");
+ee.setImage(ee.getControl("panel97"),"/App1PJ/student/newTask/yuan1.png","fill","","");
+ee.setImage(ee.getControl("panel96"),"/App1PJ/student/newTask/yuan1.png","fill","",""); 
+
+                
+//changeChooseM();  
+g5.provide = 1;</onClick>
+      <sizeRatio>0.516908212560386</sizeRatio>
+      <top>0</top>
+      <width>207</width>
+      <widthRatio>0.449023861171367</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem1/panel169">
+      <bgColorEnabled>true</bgColorEnabled>
+      <bindTop>bottom</bindTop>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>4</height>
+      <heightRatio>0.0555555555555556</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00867678958785249</sizeRatio>
+      <top>68</top>
+      <topRatio>0.944444444444444</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem2">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>71</height>
+      <heightRatio>0.282868525896414</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.154013015184382</sizeRatio>
+      <top>72</top>
+      <topRatio>0.286852589641434</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem2/panel93">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>71</height>
+      <heightRatio>1</heightRatio>
+      <left>6</left>
+      <leftRatio>0.0130151843817787</leftRatio>
+      <sizeRatio>0.5</sizeRatio>
+      <text>陪练员供车</text>
+      <top>0</top>
+      <width>142</width>
+      <widthRatio>0.308026030368764</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem2/panel96">
+      <backgroundImg>yuan1.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>71</height>
+      <heightRatio>1</heightRatio>
+      <left>173</left>
+      <leftRatio>0.37527114967462</leftRatio>
+      <sizeRatio>4.32</sizeRatio>
+      <top>0</top>
+      <width>25</width>
+      <widthRatio>0.0542299349240781</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem2/panel97">
+      <backgroundImg>yuan1.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>71</height>
+      <heightRatio>1</heightRatio>
+      <left>341</left>
+      <leftRatio>0.739696312364425</leftRatio>
+      <sizeRatio>4.32</sizeRatio>
+      <top>0</top>
+      <width>25</width>
+      <widthRatio>0.0542299349240781</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem2/panel98">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>71</height>
+      <heightRatio>1</heightRatio>
+      <left>199</left>
+      <leftRatio>0.431670281995662</leftRatio>
+      <sizeRatio>1.24137931034483</sizeRatio>
+      <text>自动挡</text>
+      <top>0</top>
+      <width>87</width>
+      <widthRatio>0.188720173535792</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem2/panel99">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>71</height>
+      <heightRatio>1</heightRatio>
+      <left>369</left>
+      <leftRatio>0.800433839479393</leftRatio>
+      <sizeRatio>1.24137931034483</sizeRatio>
+      <text>手动挡</text>
+      <top>0</top>
+      <width>87</width>
+      <widthRatio>0.188720173535792</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem2/panel94">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>71</height>
+      <heightRatio>1</heightRatio>
+      <left>159</left>
+      <leftRatio>0.344902386117137</leftRatio>
+      <onClick>ee.setImage(ee.getControl("panel33"),"/App1PJ/student/newTask/yuan1.png","fill","","");
+ee.setImage(ee.getControl("panel97"),"/App1PJ/student/newTask/yuan1.png","fill","","");
+ee.setImage(ee.getControl("panel96"),"/App1PJ/student/newTask/yuan2.png","fill","",""); 
+
+
+                
+//changeChooseM();
+ g5.provide = 2;</onClick>
+      <sizeRatio>0.782608695652174</sizeRatio>
+      <top>0</top>
+      <width>138</width>
+      <widthRatio>0.299349240780911</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem2/panel95">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <height>71</height>
+      <heightRatio>1</heightRatio>
+      <left>321</left>
+      <leftRatio>0.696312364425163</leftRatio>
+      <onClick>ee.setImage(ee.getControl("panel33"),"/App1PJ/student/newTask/yuan1.png","fill","","");
+ee.setImage(ee.getControl("panel97"),"/App1PJ/student/newTask/yuan2.png","fill","","");
+ee.setImage(ee.getControl("panel96"),"/App1PJ/student/newTask/yuan1.png","fill","",""); 
+
+                
+//changeChooseM();      
+g5.provide = 3;</onClick>
+      <sizeRatio>0.782608695652174</sizeRatio>
+      <top>0</top>
+      <width>138</width>
+      <widthRatio>0.299349240780911</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem3">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavy>150</heavy>
+      <height>108</height>
+      <heightRatio>0.430278884462151</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.234273318872017</sizeRatio>
+      <top>143</top>
+      <topRatio>0.569721115537849</topRatio>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel90/panel92/layouty1/layoutyitem3/panel100">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>59</height>
+      <heightRatio>0.546296296296296</heightRatio>
+      <left>127</left>
+      <leftRatio>0.275488069414317</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel90"),false);  
+if(g5.provide == 1){
+     ee.setText(ee.getControl("panel59"),"学员自带车");
+}else if(g5.provide ==2){
+     ee.setText(ee.getControl("panel59"),"陪练供车-自动");
+}else if(g5.provide == 3){
+     ee.setText(ee.getControl("panel59"),"陪练供车-手动");
+}else {
+     ee.setText(ee.getControl("panel59"),"车辆");
+}    
+ee.setTextColor(ee.getControl("panel59"),"#000");
+pay();</onClick>
+      <sizeRatio>0.286407766990291</sizeRatio>
+      <text>确定</text>
+      <top>25</top>
+      <topRatio>0.231481481481481</topRatio>
+      <width>206</width>
+      <widthRatio>0.446854663774403</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel107">
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>是否有驾照</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel107/panel108">
+      <alpha>0.5</alpha>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setVisible(ee.getControl("panel107"),false);</onClick>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel107/panel109">
+      <backgroundSkin>button3a000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>163</height>
+      <heightRatio>0.199754901960784</heightRatio>
+      <left>36</left>
+      <leftRatio>0.0780911062906725</leftRatio>
+      <sizeRatio>0.419023136246787</sizeRatio>
+      <top>326</top>
+      <topRatio>0.399509803921569</topRatio>
+      <width>389</width>
+      <widthRatio>0.843817787418655</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel107/panel109/panel101">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>3</height>
+      <heightRatio>0.0184049079754601</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0077120822622108</sizeRatio>
+      <top>80</top>
+      <topRatio>0.49079754601227</topRatio>
+      <width>389</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel107/panel109/panel110">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>center</dockX>
+      <dockY>ratio</dockY>
+      <heightRatio>0.613496932515337</heightRatio>
+      <left>193</left>
+      <leftRatio>0.496143958868895</leftRatio>
+      <sizeRatio>33.3333333333333</sizeRatio>
+      <top>82</top>
+      <topRatio>0.503067484662577</topRatio>
+      <width>3</width>
+      <widthRatio>0.0077120822622108</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel107/panel109/panel111">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>73</height>
+      <heightRatio>0.447852760736196</heightRatio>
+      <left>2</left>
+      <leftRatio>0.0051413881748072</leftRatio>
+      <sizeRatio>0.191601049868766</sizeRatio>
+      <text>是否持有驾照?</text>
+      <top>2</top>
+      <topRatio>0.0122699386503067</topRatio>
+      <width>381</width>
+      <widthRatio>0.979434447300771</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel107/panel109/panel112">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>65</height>
+      <heightRatio>0.398773006134969</heightRatio>
+      <left>8</left>
+      <leftRatio>0.0205655526992288</leftRatio>
+      <onClick>g5.status = 5;
+
+insert();
+ee.setVisible(ee.getControl("panel107"),false);</onClick>
+      <sizeRatio>0.361111111111111</sizeRatio>
+      <text>没有</text>
+      <top>88</top>
+      <topRatio>0.539877300613497</topRatio>
+      <width>180</width>
+      <widthRatio>0.462724935732648</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel107/panel109/panel122">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>65</height>
+      <heightRatio>0.398773006134969</heightRatio>
+      <left>201</left>
+      <leftRatio>0.516709511568123</leftRatio>
+      <onClick>g5.status = 0;
+insert();ee.setVisible(ee.getControl("panel107"),false);</onClick>
+      <sizeRatio>0.361111111111111</sizeRatio>
+      <text>已持有</text>
+      <top>88</top>
+      <topRatio>0.539877300613497</topRatio>
+      <width>180</width>
+      <widthRatio>0.462724935732648</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel113">
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>没有驾照</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel113/panel114">
+      <alpha>0.5</alpha>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setVisible(ee.getControl("panel113"),false);window.location.href = ee.pageRoot + "/postpaid/main";</onClick>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel113/panel115">
+      <backgroundSkin>button3a000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>226</height>
+      <heightRatio>0.276960784313726</heightRatio>
+      <left>36</left>
+      <leftRatio>0.0780911062906725</leftRatio>
+      <sizeRatio>0.580976863753213</sizeRatio>
+      <text>对不起，我们目前不支持没有驾照的用户（语言自定义，我不会说）</text>
+      <top>295</top>
+      <topRatio>0.361519607843137</topRatio>
+      <width>389</width>
+      <widthRatio>0.843817787418655</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel113/panel116">
+      <backgroundImg>圆.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>47</height>
+      <heightRatio>0.0575980392156863</heightRatio>
+      <left>393</left>
+      <leftRatio>0.852494577006508</leftRatio>
+      <sizeRatio>1</sizeRatio>
+      <top>272</top>
+      <topRatio>0.333333333333333</topRatio>
+      <width>47</width>
+      <widthRatio>0.101952277657267</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel113/panel116/panel117">
+      <backgroundImg>圆 (1).png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.914893617021277</heightRatio>
+      <left>2</left>
+      <leftRatio>0.0425531914893617</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel113"),false);window.location.href = ee.pageRoot + "/postpaid/main";</onClick>
+      <outerBottom>2</outerBottom>
+      <outerLeft>2</outerLeft>
+      <outerRight>2</outerRight>
+      <outerTop>2</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0425531914893617</topRatio>
+      <width>43</width>
+      <widthRatio>0.914893617021277</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel113/panel116/panel117/panel118">
+      <backgroundImg>叉 (1).png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>23</height>
+      <heightRatio>0.534883720930233</heightRatio>
+      <left>10</left>
+      <leftRatio>0.232558139534884</leftRatio>
+      <outerBottom>10</outerBottom>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>10</top>
+      <topRatio>0.232558139534884</topRatio>
+      <width>23</width>
+      <widthRatio>0.534883720930233</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel123">
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>有驾照</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel123/panel124">
+      <alpha>0.5</alpha>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>ee.setVisible(ee.getControl("panel123"),false);window.location.href = ee.pageRoot + "/postpaid/main";</onClick>
+      <sizeRatio>1.77006507592191</sizeRatio>
+      <top>0</top>
+      <width>461</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel123/panel125">
+      <backgroundSkin>button3a000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>214</height>
+      <heightRatio>0.262254901960784</heightRatio>
+      <left>36</left>
+      <leftRatio>0.0780911062906725</leftRatio>
+      <sizeRatio>0.55012853470437</sizeRatio>
+      <top>301</top>
+      <topRatio>0.368872549019608</topRatio>
+      <width>389</width>
+      <widthRatio>0.843817787418655</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel123/panel125/panel168">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>68</height>
+      <heightRatio>0.317757009345794</heightRatio>
+      <left>39</left>
+      <leftRatio>0.10025706940874</leftRatio>
+      <sizeRatio>0.219354838709677</sizeRatio>
+      <text>订单已提交</text>
+      <top>13</top>
+      <topRatio>0.0607476635514019</topRatio>
+      <width>310</width>
+      <widthRatio>0.796915167095116</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel123/panel125/panel168/panel40">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>3</height>
+      <heightRatio>0.0441176470588235</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00967741935483871</sizeRatio>
+      <top>65</top>
+      <topRatio>0.955882352941177</topRatio>
+      <width>310</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel123/panel125/panel170">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>104</height>
+      <heightRatio>0.485981308411215</heightRatio>
+      <left>29</left>
+      <leftRatio>0.0745501285347044</leftRatio>
+      <sizeRatio>0.314199395770393</sizeRatio>
+      <text>保持电话通畅，客服稍后联系您
+请务必携带本人有效证件</text>
+      <top>86</top>
+      <topRatio>0.401869158878505</topRatio>
+      <width>331</width>
+      <widthRatio>0.850899742930591</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel123/panel128">
+      <backgroundImg>圆.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>47</height>
+      <heightRatio>0.0575980392156863</heightRatio>
+      <left>394</left>
+      <leftRatio>0.854663774403471</leftRatio>
+      <sizeRatio>1</sizeRatio>
+      <top>282</top>
+      <topRatio>0.345588235294118</topRatio>
+      <width>47</width>
+      <widthRatio>0.101952277657267</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel123/panel128/panel129">
+      <backgroundImg>圆 (1).png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.914893617021277</heightRatio>
+      <left>2</left>
+      <leftRatio>0.0425531914893617</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel123"),false);window.location.href = ee.pageRoot + "/postpaid/main";</onClick>
+      <outerBottom>2</outerBottom>
+      <outerLeft>2</outerLeft>
+      <outerRight>2</outerRight>
+      <outerTop>2</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0425531914893617</topRatio>
+      <width>43</width>
+      <widthRatio>0.914893617021277</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel123/panel128/panel129/panel149">
+      <backgroundImg>叉 (1).png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>16</fontSizeAuto>
+      <height>23</height>
+      <heightRatio>0.534883720930233</heightRatio>
+      <left>10</left>
+      <leftRatio>0.232558139534884</leftRatio>
+      <outerBottom>10</outerBottom>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <sizeRatio>1</sizeRatio>
+      <top>10</top>
+      <topRatio>0.232558139534884</topRatio>
+      <width>23</width>
+      <widthRatio>0.534883720930233</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="6">
+    <taskSetItem name="time1">
+      <script1 />
+      <script2>var date = new Date();
+var time1 = Date.parse(date);
+var time = time1/1000;
+eio.appendInt32(time);</script2>
+      <script3><![CDATA[var time1 =eio.readInt32();
+ console.log(time1);
+//var stringTime = "2014-07-10 10:21:12";
+//var timestamp2 = Date.parse(new Date(stringTime));
+//timestamp2 = timestamp2 / 1000;
+//2014-07-10 10:21:12的时间戳为：1404958872 
+//console.log(stringTime + "的时间戳为：" + timestamp2);
+//str.substring(2,0)   
+
+var Y = ee.getText(ee.getControl("panel140"));
+var M = ee.getText(ee.getControl("panel147"));
+var D = ee.getText(ee.getControl("panel154"));
+var H = ee.getText(ee.getControl("panel163")).substring(2,0);
+var Hg = Number(H) + g5.classHour;
+if(Hg<10){       
+    Hg = String(Hg);
+    Hg = "0"+Hg;
+}
+var starttime = Y +"-"+ M +"-"+D+ " " +H+":00:00";
+var timestamp2 = Date.parse(new Date(starttime));
+timestamp2 = timestamp2 / 1000;     
+if(time1 > timestamp2){
+    alert("对不起您选择的日期已过，请重新选择");
+    return;
+}            
+
+
+var timestamp3 = Y +"-"+ M +"-"+D+ " 00:00:00";  
+timestamp3 = Date.parse(new Date(timestamp3));
+timestamp3 = timestamp3 / 1000;
+if(time1 > timestamp3){
+    alert("对不起您选择的日期，工作人员不能及时安排陪练，请重新选择");
+    return;
+}
+var time =  M +"/"+D+ "-" +H+":00~"+Hg+":00";
+ee.setText(ee.getControl("panel57"),time);    
+ee.setTextColor(ee.getControl("panel57"),"#000");
+ee.setVisible(ee.getControl("panel76"),false);     
+g5.starttime = starttime;
+pay();]]></script3>
+    </taskSetItem>
+    <taskSetItem name="insert">
+      <script1>
+var hour = g5.classHour;  
+var starttime = g5.starttime
+    var feeRate  = 110;
+
+if(hour == ""){
+    return;
+}
+if(starttime == ""){
+    return;
+}
+if(ee.getText(ee.getControl("panel55")) == "城市"){
+    return;
+}         
+if(ee.getText(ee.getControl("panel59")) == "车辆"){
+    return;
+} 
+if(ee.getText(ee.getControl("panel61")) == "手机号"){
+    return;
+} 
+if(g5.provide == 1){
+    feeRate  = 100;
+}
+if(g5.provide == 2 || g5.provide == 3){
+    feeRate  = 150;
+}
+  //console.log("tongguo");
+if(ee.getText(ee.getControl("panel55")) == "上海"){
+     feeRate = 110;        
+}
+if(ee.getText(ee.getControl("panel55")) == "深圳"){
+     feeRate = 100;        
+}
+g5.paymoney = hour*feeRate; 
+ee.setText(ee.getControl("panel63"),g5.paymoney+"元");
+
+eio.appendString8(ee.getText(ee.getControl("panel55"))); //城市  
+eio.appendString8(hour+"");//小时                 
+//console.log(hour);
+eio.appendString8(starttime+"");//开始时间    
+//console.log(starttime);
+eio.appendString8(g5.provide+"");//自不自带车，自动挡 手动挡  
+//console.log(g5.provide);
+eio.appendString8(ee.getText(ee.getControl("panel61")));//手机号  
+//console.log(ee.getText(ee.getControl("panel61")));
+eio.appendString8(ee.getEditText(ee.getControl("edit3")))//地点  
+//console.log(ee.getEditText(ee.getControl("edit3")));
+eio.appendString8(ee.getEditText(ee.getControl("edit4"))+"")//备注 
+//console.log(ee.getEditText(ee.getControl("edit4")));
+eio.appendString8(g5.paymoney+"");//金额              
+//console.log(g5.paymoney);
+eio.appendString8(g5.status+"");//是否持有驾照
+//console.log(g5.status);
+
+</script1>
+      <script2><![CDATA[var city = eio.readString8(); //城市    
+//es.logWarning(city);
+var classhour = eio.readString8();//小时
+//es.logWarning(classhour);
+var starttime = eio.readString8();//开始时间
+//es.logWarning(starttime);
+var type1 = eio.readString8();//自不自带车，自动挡 手动挡
+//es.logWarning(type1);
+var s_tel = eio.readString8();//手机号
+//es.logWarning(s_tel);
+var address = eio.readString8()//地点
+//es.logWarning(address);
+var s_remarks = eio.readString8()//备注
+//es.logWarning(s_remarks);
+var totalamount = eio.readString8();//金额
+//es.logWarning(totalamount);
+var status = eio.readString8();//是否持有驾照
+//es.logWarning(status);
+var provide = "";
+var type = ""; 
+var sql, sqlResult;
+if(type1 ==1 ){ 
+    provide = 0;
+    type = "";
+   //0-教练供车 1-学员供车 ）'
+//0-手动 1-自动 ）'
+}         
+if(type1 == 2){
+    provide  = 1;
+    type = 1;
+    
+}   
+if(type1 == 3){
+    provide = 1;
+    type = 0;
+}
+
+var starttime4 = starttime.substring(0,11);
+
+sql = "SELECT count(*) as c from pretask where s_tel = '"+db.encode(s_tel)+"' and starttime between '"+db.encode(starttime4)+" 06:00' and  '"+db.encode(starttime4)+" 21:00'" 
+sqlResult=db.executeQuery("PJ", sql);   
+db.read(sqlResult);    
+var c = db.getString(sqlResult,"c");
+if(c >= 3){
+    eio.appendString8("F");
+    return;
+}  
+eio.appendString8("T");
+    
+sql =  "INSERT INTO pretask (s_tel,address,city,starttime,classhour,provide,type,s_remarks,status,createtime,updatetime,totalamount) VALUES ( '"+
+        db.encode(s_tel)+"','"+
+        db.encode(address)+"','"+
+        db.encode(city)+"','"+
+        db.encode(starttime)+"','"+
+        db.encode(classhour)+"','"+
+       db.encode(provide)+"','"+
+       db.encode(type)+"','"+
+       db.encode(s_remarks)+"','"+
+       db.encode(status)+
+       "',getdate(),getdate(),'"+
+       db.encode(totalamount)+"')";
+
+
+sqlResult=db.executeQuery("PJ", sql);                      
+es.logWarning(sql);  
+                
+  
+eio.appendString8("T");  
+if(status == 0){        
+    if(type1==3){
+        sql = "insert into sms (mobile, message) values (" +
+            "'" + db.encode(s_tel) + "'," +
+            "'尊敬的客户，订单已生成，陪驾地址：" + db.encode(city) +db.encode(address) +  
+            "，汽车档位：手动挡，开始时间"+db.encode(starttime)+",课时：" +db.encode(classhour)+"小时，你的留言是:"+
+            db.encode(s_remarks)                
+            +",请耐心等待教练接单。如果您需要修改或者取消订单，请拨打客服热线：400-606-6178')";
+    }
+    if(type1==1){
+        sql = "insert into sms (mobile, message) values (" +
+            "'" + db.encode(s_tel) + "'," +
+            "'尊敬的客户，订单已生成，陪驾地址：" + db.encode(city)+db.encode(address) + 
+            "，您是自带车，开始时间"+db.encode(starttime)+",课时：" +db.encode(classhour)+"小时，你的留言是:"+
+            db.encode(s_remarks)                
+            +",请耐心等待教练接单。如果您需要修改或者取消订单，请拨打客服热线：400-606-6178')";
+    } 
+    if(type1==2){
+        sql = "insert into sms (mobile, message) values (" +
+            "'" + db.encode(s_tel) + "'," +
+            "'尊敬的客户，订单已生成，陪驾地址：" + db.encode(city) + db.encode(address) + 
+            "，汽车档位：自动挡，开始时间"+db.encode(starttime)+",课时：" +db.encode(classhour)+"小时，你的留言是:"+
+            db.encode(s_remarks)                
+            +",请耐心等待教练接单。如果您需要修改或者取消订单，请拨打客服热线：400-606-6178')";
+    }                            
+    sqlResult=db.executeQuery("PJ", sql); 
+    
+}     
+var k_tel = "15710108326"; //客服电话
+//var k_tel = "17317123658";
+if(status == 0){        
+    if(type1==3){
+        sql = "insert into sms (mobile, message) values ('"+db.encode(k_tel)+"','后付费，新下单提醒, 电话: "+db.encode(s_tel)+"，陪驾地址：" + db.encode(city) +db.encode(address) +  
+            "，汽车档位：手动挡，开始时间"+db.encode(starttime)+",课时：" +db.encode(classhour)+"小时，学员填写备注:"+
+            db.encode(s_remarks)                
+            +",有驾照')";
+    }
+    if(type1==1){
+        sql = "insert into sms (mobile, message) values ('"+db.encode(k_tel)+"','后付费，新下单提醒, 电话: "+db.encode(s_tel)+"，陪驾地址：" + db.encode(city) +db.encode(address) +  
+            "，自带车，开始时间"+db.encode(starttime)+",课时：" +db.encode(classhour)+"小时，学员填写备注:"+
+            db.encode(s_remarks)                
+            +",有驾照')";
+    } 
+    if(type1==2){
+        sql = "insert into sms (mobile, message) values ('"+db.encode(k_tel)+"','后付费，新下单提醒, 电话: "+db.encode(s_tel)+"，陪驾地址：" + db.encode(city) +db.encode(address) +  
+            "，汽车档位：自动挡，开始时间"+db.encode(starttime)+",课时：" +db.encode(classhour)+"小时，学员填写备注:"+
+            db.encode(s_remarks)                
+            +",有驾照')";
+    }                            
+    sqlResult=db.executeQuery("PJ", sql); 
+    
+}
+if(status == 5){        
+    if(type1==3){
+        sql = "insert into sms (mobile, message) values ('"+db.encode(k_tel)+"','后付费，新下单提醒, 电话: "+db.encode(s_tel)+"，陪驾地址：" + db.encode(city) +db.encode(address) +  
+            "，汽车档位：手动挡，开始时间"+db.encode(starttime)+",课时：" +db.encode(classhour)+"小时，学员填写备注:"+
+            db.encode(s_remarks)                
+            +",没有驾照')";
+    }
+    if(type1==1){
+        sql = "insert into sms (mobile, message) values ('"+db.encode(k_tel)+"','后付费，新下单提醒, 电话: "+db.encode(s_tel)+"，陪驾地址：" + db.encode(city) +db.encode(address) +  
+            "，自带车，开始时间"+db.encode(starttime)+",课时：" +db.encode(classhour)+"小时，学员填写备注:"+
+            db.encode(s_remarks)                
+            +",没有驾照')";
+    } 
+    if(type1==2){
+        sql = "insert into sms (mobile, message) values ('"+db.encode(k_tel)+"','后付费，新下单提醒, 电话: "+db.encode(s_tel)+"，陪驾地址：" + db.encode(city) +db.encode(address) +  
+            "，汽车档位：自动挡，开始时间"+db.encode(starttime)+",课时：" +db.encode(classhour)+"小时，学员填写备注:"+
+            db.encode(s_remarks)                
+            +",没有驾照')";
+    }                             
+    sqlResult=db.executeQuery("PJ", sql); 
+    
+}
+]]></script2>
+      <script3>var dd = eio.readString8();
+if(dd == "F"){
+    alert("对不起，预约日最多下三个订单"); 
+    return;
+}
+var gg = eio.readString8();
+if(gg != "T"){
+     alert("订单生成失败");
+}
+ if(g5.status == 0){
+       ee.setVisible(ee.getControl("panel123"),true);
+ }
+ if(g5.status == 5){
+       ee.setVisible(ee.getControl("panel113"),true);
+ }
+
+
+ 
+</script3>
+    </taskSetItem>
+    <taskSetItem name="pay">
+      <script1>var hour = g5.classHour;  
+var starttime = g5.starttime
+    var feeRate  = 110;
+
+if(hour == ""){
+    return;
+}
+if(starttime == ""){
+    return;
+}
+if(ee.getText(ee.getControl("panel55")) == "城市"){
+    return;
+}         
+if(ee.getText(ee.getControl("panel59")) == "车辆"){
+    return;
+} 
+
+if(g5.provide == 1){
+    feeRate  = 100;
+}
+if(g5.provide == 2 || g5.provide == 3){
+    feeRate  = 150;
+}
+  //console.log("tongguo");
+if(ee.getText(ee.getControl("panel55")) == "上海"){
+     feeRate = 110;        
+}
+if(ee.getText(ee.getControl("panel55")) == "深圳"){
+     feeRate = 100;        
+}
+g5.paymoney = hour*feeRate; 
+ee.setText(ee.getControl("panel63"),g5.paymoney+"元");
+</script1>
+      <script2 />
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="getSmsCode">
+      <script1>var mobile = ee.getEditText(ee.getControl("edit1"));
+//手机号码检测
+if (mobile.length!=11) {
+    alert("对不起，您输入的不是一个有效的手机号码");
+    return;
+}
+if (!(/^\d+$/.test(mobile))) {
+    alert("对不起，您输入的不是一个有效的手机号码");
+    return;
+} 
+
+eio.appendString8(mobile);
+</script1>
+      <script2><![CDATA[var mobile = eio.readString8();
+while (true) { 
+    
+    //后台手机号验证
+    if (mobile.length!=11) {
+        eio.appendString8("F");
+        eio.appendString8("手机号非法");
+        break;
+    }
+    if (!(/^\d+$/.test(mobile))) {
+        eio.appendString8("F");
+        eio.appendString8("手机号非法");
+        break;
+    }
+    //产生验证码
+    var code = 0;
+    var seed = (new Date()).getTime();
+    while (code<1000) {
+        seed = ( seed * 9301 + 49297 ) % 233280;
+        var rand = seed / 233280.0;
+        code = Math.floor(rand * 10000);
+    }
+     //存储验证码和手机号
+    session.set("mobileCode", code + "");
+    session.set("mobile", mobile);
+    //发送验证码
+    var sql = "insert into sms (mobile, message) values (" +
+        "'" + db.encode(mobile) + "'," +
+        "'您的验证码是：" + code + "')";
+    if (!db.executeNoneQuery("PJ", sql)) {
+        eio.appendString8("F");
+        eio.appendString8("系统繁忙请稍后再试");
+        break;
+    } 
+    eio.appendString8("T");
+    break;
+}
+              ]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("发送验证码失败：" + eio.readString8());
+    return;
+}
+alert("验证码已经以短信的形式发送到您的手机上，请注意查收。验证码是一个4位的数字，请将它填写在下面的栏目中"); 
+ 
+ee.setText(ee.getControl("layoutxitem2"),"60秒后获取");
+smstime(); 
+</script3>
+    </taskSetItem>
+    <taskSetItem name="smstime">
+      <script1><![CDATA[var smstt = setInterval(smstext,1000);  
+var tt = parseInt(ee.getText(ee.getControl("layoutxitem2")));   
+              //tt == 60
+function smstext(){     
+    if(tt == 0){
+        clearInterval(smstt);  
+        console.log("tt=0");
+        ee.setText(ee.getControl("layoutxitem2"),"获取短信验证码"); 
+        return;
+    }else if (tt>0) {  
+        tt--;            
+        console.log(tt);
+        ee.setText(ee.getControl("layoutxitem2"),tt+"秒后获取");
+    }else {           
+        console.log("错误"+tt);   
+        clearInterval(smstt);
+        ee.setText(ee.getControl("layoutxitem2"),"获取短信验证码"); 
+    } 
+    
+}]]></script1>
+      <script2 />
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="checkSmsCode">
+      <script1>var mobileCode = ee.getEditText(ee.getControl("edit2"));
+eio.appendString8(mobileCode);
+</script1>
+      <script2><![CDATA[var mobileCode = eio.readString8();
+while (true) {
+    var mobileCodeS = session.get("mobileCode");
+    if (mobileCodeS.length<=0) {
+        eio.appendString8("F");
+        eio.appendString8("请点击发送按钮，收到短信后填写验证码");
+        break;
+    }
+    if (mobileCodeS!=mobileCode) {
+        //session.set("mobileCode", "");
+        eio.appendString8("F");
+        eio.appendString8("您输入的验证码不正确，请重新发送并输入一次验证码");
+        break;
+    }    
+    eio.appendString8("T");
+    session.set("mobileCheck", "true");
+    break;
+}
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("验证失败：" + eio.readString8());
+    return;
+}   
+ee.setText(ee.getControl("panel61"),ee.getEditText(ee.getControl("edit1"))); 
+ee.setVisible(ee.getControl("panel65"),false);
+ee.setTextColor(ee.getControl("panel61"),"#000");
+
+ 
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

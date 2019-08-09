@@ -1,20 +1,23 @@
 <page>
-  <controls count="36">
+  <controls count="42">
     <control type="DivRoot" pathname="/divRoot">
-      <left>0</left>
-      <top>0</top>
-      <width>827</width>
-      <height>819</height>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <backgroundColor>F3F3F3</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
+      <height>816</height>
+      <left>0</left>
       <onControlLoad><![CDATA[var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
 if (!isIOS) {
     ee.getControl("layoutyitem8").heavy = 0;
 }
+setTimeout(function(){
+    ee.autoResize = false;
+},1000);
 
-g5.root = ee.getControl("layouty1");
+g5.current=-1;
+
+/*g5.root = ee.getControl("layouty1");
 g5.click = function (sender) {
     var i;
     for (i=0; i<g5.root.eeChildren.length; i++) {
@@ -38,39 +41,557 @@ g5.click(ee.getControl("layoutyitem4"));
 g5.onDeviceReady = function () {
        
         alert("success");
-    }
+    }*/
 
 
 //document.addEventListener("deviceready", g5.onDeviceReady, false);
+function setPanel(c){
+    ee.setImage(ee.getControl("panel"+c),"/App1PJ/pay/btn1@2x.png","fill","","");  
+    ee.setTextColor(ee.getControl("panel"+(c+1)),"#fff");
+    ee.setTextColor(ee.getControl("panel"+(c+2)),"#fff"); 
+    ee.setImage(ee.getControl("panel10"),"/App1PJ/pay/btn@2x.png","fill","","");  
+    ee.setTextColor(ee.getControl("panel18"),"#1dadf4");
+    ee.setTextColor(ee.getControl("panel19"),"#7b7b7b");
+    ee.setImage(ee.getControl("panel2"),"/App1PJ/pay/btn@2x.png","fill","","");  
+    ee.setTextColor(ee.getControl("panel3"),"#1dadf4");
+    ee.setTextColor(ee.getControl("panel5"),"#7b7b7b");
+}  
+function originalPanel(c){
+    ee.setImage(ee.getControl("panel"+c),"/App1PJ/pay/btn@2x.png","fill","","");  
+    ee.setTextColor(ee.getControl("panel"+(c+1)),"#1dadf4");
+    ee.setTextColor(ee.getControl("panel"+(c+2)),"#7b7b7b");
+}  
 
-  
+//微信
+g5.onDeviceReady = function () {
+    //alert("success cordova");
+    //g5.log("cordova initialized succ.");
+}
+document.addEventListener("deviceready", g5.onDeviceReady, false);
 
+//微信支付接口返回：
+//0成功
+//-1微信接口故障
+//-2用户取消支付
+//-3支付过程30秒超时
+g5.tamPlugin = { 
+    payWechat: function (prepayId, nonceStr, successCallback, errorCallback) {
+        if (isIOS) {
+            cordova.exec(
+                successCallback, // success callback function 
+                errorCallback, // error callback function 
+                "TamPlugin", // mapped to our native Java class called "CalendarPlugin" 
+                "payWechat", // with this action name 
+                [prepayId, nonceStr]
+            );  
+        } else {
+            cordova.exec(
+                successCallback, // success callback function 
+                errorCallback, // error callback function 
+                "TamPlugin", // mapped to our native Java class called "CalendarPlugin" 
+                "payWechat", // with this action name 
+                [{                  // and this array of custom arguments to create our entry 
+                    "prepayId": prepayId 
+                }] 
+            );
+        }  
+    },
+    getVersion: function() {
+        cordova.exec(
+            function (version) {
+                g5.version = version;
+                g5.onVersionReady();
+            },
+            function (msg) {
+                g5.onVersionReady();
+            },
+            "TamPlugin", "getVersion", [{ "a": "" }] 
+        );  
+    }
+}
+ 
 
 
 
 ]]></onControlLoad>
+      <onPageCreate>var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+var oHead = document.getElementsByTagName("HEAD").item(0); 
+var oScript
+if (isIOS) {
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova.js"; 
+    oHead.appendChild( oScript); 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova_plugins.js"; 
+    oHead.appendChild(oScript); 
+} else {
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova5/cordova.js"; 
+    oHead.appendChild( oScript); 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova5/cordova_plugins.js"; 
+    oHead.appendChild(oScript); 
+}</onPageCreate>
       <pageHead><![CDATA[<meta name="viewport" content="width=device-width, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 
 ]]></pageHead>
+      <top>0</top>
+      <width>458</width>
     </control>
-    <control type="Panel" pathname="/divRoot/panel4">
-      <left>167</left>
-      <top>729</top>
-      <width>495</width>
-      <height>56</height>
-      <leftRatio>0.202401372212693</leftRatio>
-      <topRatio>0.89010989010989</topRatio>
-      <widthRatio>0.598627787307033</widthRatio>
-      <heightRatio>0.0683760683760684</heightRatio>
-      <sizeRatio>0.160458452722063</sizeRatio>
+    <control type="Panel" pathname="/divRoot/panel44">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>445</height>
+      <heightRatio>0.545343137254902</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.01598173515982</sizeRatio>
+      <top>371</top>
+      <topRatio>0.454656862745098</topRatio>
+      <width>458</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel45">
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>button3</backgroundSkin>
-      <text>确 定</text>
-      <fontSizeAuto>20</fontSizeAuto>
-      <fontColor>FFFFFF</fontColor>
-      <layerVisible>false</layerVisible>
+      <fontBold>true</fontBold>
+      <fontColor>7B7B7B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>26</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>37</height>
+      <heightRatio>0.0831460674157303</heightRatio>
+      <left>24</left>
+      <leftRatio>0.0525114155251142</leftRatio>
+      <sizeRatio>0.103064066852368</sizeRatio>
+      <text>请选择或输入需要充值的金额</text>
+      <top>-1</top>
+      <topRatio>-0.00224719101123596</topRatio>
+      <width>375</width>
+      <widthRatio>0.819634703196347</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel2">
+      <backgroundImg>btn@2x.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>65</height>
+      <heightRatio>0.146067415730337</heightRatio>
+      <left>16</left>
+      <leftRatio>0.0342465753424658</leftRatio>
+      <onClick>ee.setImage(ee.getControl("panel2"),"/App1PJ/pay/btn1@2x.png","fill","","");  
+ee.setTextColor(ee.getControl("panel3"),"#fff");
+ee.setTextColor(ee.getControl("panel5"),"#fff");
+
+ee.setImage(ee.getControl("panel10"),"/App1PJ/pay/btn@2x.png","fill","","");  
+ee.setTextColor(ee.getControl("panel18"),"#1dadf4");
+ee.setTextColor(ee.getControl("panel19"),"#7b7b7b");
+ee.setEditText(ee.getControl("edit1"),"");
+originalPanel(6);   
+originalPanel(20);
+originalPanel(23);
+originalPanel(26);
+//originalPanel(29);
+g5.current=0;</onClick>
+      <sizeRatio>0.5078125</sizeRatio>
+      <top>63</top>
+      <topRatio>0.141573033707865</topRatio>
+      <width>134</width>
+      <widthRatio>0.292237442922374</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel2/panel3">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>47A9F9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>27</height>
+      <heightRatio>0.410958904109589</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.258620689655172</sizeRatio>
+      <text>充100元</text>
+      <top>12</top>
+      <topRatio>0.191780821917808</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel2/panel5">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7B7B7B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>40</fontSizeAuto>
+      <height>20</height>
+      <heightRatio>0.307692307692308</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.15625</sizeRatio>
+      <text>赠送0积分</text>
+      <top>37</top>
+      <topRatio>0.569230769230769</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel6">
+      <backgroundImg>btn@2x.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>65</height>
+      <heightRatio>0.146067415730337</heightRatio>
+      <left>162</left>
+      <leftRatio>0.353881278538813</leftRatio>
+      <onClick>setPanel(6); 
+ee.setImage(ee.getControl("panel10"),"/App1PJ/pay/btn@2x.png","fill","","");  
+ee.setTextColor(ee.getControl("panel18"),"#1dadf4");
+ee.setTextColor(ee.getControl("panel19"),"#7b7b7b");
+  
+originalPanel(20);
+originalPanel(23);
+originalPanel(26); 
+ee.setEditText(ee.getControl("edit1"),"");
+//originalPanel(29);
+g5.current=1;</onClick>
+      <sizeRatio>0.5078125</sizeRatio>
+      <top>63</top>
+      <topRatio>0.141573033707865</topRatio>
+      <width>134</width>
+      <widthRatio>0.292237442922374</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel6/panel7">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>47A9F9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>27</height>
+      <heightRatio>0.415384615384615</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.238938053097345</sizeRatio>
+      <text>充200元</text>
+      <top>12</top>
+      <topRatio>0.184615384615385</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel6/panel8">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7B7B7B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>40</fontSizeAuto>
+      <height>20</height>
+      <heightRatio>0.307692307692308</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.15625</sizeRatio>
+      <text>赠送20积分</text>
+      <top>37</top>
+      <topRatio>0.569230769230769</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel10">
+      <backgroundImg>btn@2x.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>65</height>
+      <heightRatio>0.146067415730337</heightRatio>
+      <left>308</left>
+      <leftRatio>0.67351598173516</leftRatio>
+      <onClick>ee.setImage(ee.getControl("panel10"),"/App1PJ/pay/btn1@2x.png","fill","","");  
+ee.setTextColor(ee.getControl("panel18"),"#fff");
+ee.setTextColor(ee.getControl("panel19"),"#fff");
+
+ee.setImage(ee.getControl("panel2"),"/App1PJ/pay/btn@2x.png","fill","","");  
+ee.setTextColor(ee.getControl("panel3"),"#1dadf4");
+ee.setTextColor(ee.getControl("panel5"),"#7b7b7b");
+    
+originalPanel(6);   
+originalPanel(20);
+originalPanel(23);
+originalPanel(26);
+//originalPanel(29);  
+ee.setEditText(ee.getControl("edit1"),"");
+g5.current=2;</onClick>
+      <sizeRatio>0.5078125</sizeRatio>
+      <top>63</top>
+      <topRatio>0.141573033707865</topRatio>
+      <width>134</width>
+      <widthRatio>0.292237442922374</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel10/panel18">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>47A9F9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>27</height>
+      <heightRatio>0.415384615384615</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0764872521246459</sizeRatio>
+      <text>充300元</text>
+      <top>12</top>
+      <topRatio>0.184615384615385</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel10/panel19">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7B7B7B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>40</fontSizeAuto>
+      <height>20</height>
+      <heightRatio>0.307692307692308</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.15625</sizeRatio>
+      <text>赠送35积分</text>
+      <top>37</top>
+      <topRatio>0.569230769230769</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel20">
+      <backgroundImg>btn@2x.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>65</height>
+      <heightRatio>0.146067415730337</heightRatio>
+      <left>16</left>
+      <leftRatio>0.0342465753424658</leftRatio>
+      <onClick>setPanel(20); 
+ee.setImage(ee.getControl("panel10"),"/App1PJ/pay/btn@2x.png","fill","","");  
+ee.setTextColor(ee.getControl("panel18"),"#1dadf4");
+ee.setTextColor(ee.getControl("panel19"),"#7b7b7b");
+originalPanel(6);   
+
+originalPanel(23);
+originalPanel(26);
+//originalPanel(29);   
+ee.setEditText(ee.getControl("edit1"),"");
+g5.current=3;</onClick>
+      <sizeRatio>0.5078125</sizeRatio>
+      <top>156</top>
+      <topRatio>0.350561797752809</topRatio>
+      <width>134</width>
+      <widthRatio>0.292237442922374</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel20/panel21">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>47A9F9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>27</height>
+      <heightRatio>0.415384615384615</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0764872521246459</sizeRatio>
+      <text>充600元</text>
+      <top>12</top>
+      <topRatio>0.184615384615385</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel20/panel22">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7B7B7B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>40</fontSizeAuto>
+      <height>20</height>
+      <heightRatio>0.307692307692308</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.15625</sizeRatio>
+      <text>赠送80积分</text>
+      <top>37</top>
+      <topRatio>0.569230769230769</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel23">
+      <backgroundImg>btn@2x.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>65</height>
+      <heightRatio>0.146067415730337</heightRatio>
+      <left>162</left>
+      <leftRatio>0.353881278538813</leftRatio>
+      <onClick>setPanel(23); 
+ee.setImage(ee.getControl("panel10"),"/App1PJ/pay/btn@2x.png","fill","","");  
+ee.setTextColor(ee.getControl("panel18"),"#1dadf4");
+ee.setTextColor(ee.getControl("panel19"),"#7b7b7b");
+originalPanel(6);   
+originalPanel(20);
+originalPanel(26);
+//originalPanel(29);    
+ee.setEditText(ee.getControl("edit1"),"");
+g5.current=4;</onClick>
+      <sizeRatio>0.5078125</sizeRatio>
+      <top>156</top>
+      <topRatio>0.350561797752809</topRatio>
+      <width>134</width>
+      <widthRatio>0.292237442922374</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel23/panel24">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>47A9F9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>27</height>
+      <heightRatio>0.415384615384615</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0764872521246459</sizeRatio>
+      <text>充1200元</text>
+      <top>12</top>
+      <topRatio>0.184615384615385</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel23/panel25">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7B7B7B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>40</fontSizeAuto>
+      <height>20</height>
+      <heightRatio>0.307692307692308</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.15625</sizeRatio>
+      <text>赠送175积分</text>
+      <top>37</top>
+      <topRatio>0.569230769230769</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel26">
+      <backgroundImg>btn@2x.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>65</height>
+      <heightRatio>0.146067415730337</heightRatio>
+      <left>308</left>
+      <leftRatio>0.67351598173516</leftRatio>
+      <onClick>setPanel(26); 
+ee.setImage(ee.getControl("panel10"),"/App1PJ/pay/btn@2x.png","fill","","");  
+ee.setTextColor(ee.getControl("panel18"),"#1dadf4");
+ee.setTextColor(ee.getControl("panel19"),"#7b7b7b");
+originalPanel(6);   
+originalPanel(20);
+originalPanel(23);
+//originalPanel(29); 
+ee.setEditText(ee.getControl("edit1"),"");
+g5.current=5;</onClick>
+      <sizeRatio>0.5078125</sizeRatio>
+      <top>156</top>
+      <topRatio>0.350561797752809</topRatio>
+      <width>134</width>
+      <widthRatio>0.292237442922374</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel26/panel27">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>47A9F9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>27</height>
+      <heightRatio>0.415384615384615</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0764872521246459</sizeRatio>
+      <text>充2000元</text>
+      <top>12</top>
+      <topRatio>0.184615384615385</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel26/panel28">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7B7B7B</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>40</fontSizeAuto>
+      <height>20</height>
+      <heightRatio>0.307692307692308</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.15625</sizeRatio>
+      <text>赠送300积分</text>
+      <top>37</top>
+      <topRatio>0.569230769230769</topRatio>
+      <width>134</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel32">
+      <backgroundColor>C6C6C6</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>1</height>
+      <heightRatio>0.00333889816360601</heightRatio>
+      <left>27</left>
+      <leftRatio>0.0598669623059867</leftRatio>
+      <sizeRatio>0.0050251256281407</sizeRatio>
+      <top>34</top>
+      <topRatio>0.0767946577629382</topRatio>
+      <width>404</width>
+      <widthRatio>0.882483370288248</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel44/edit1">
+      <backgroundImg>write@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>606060</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>0.0898876404494382</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>30</inputFontSizeAuto>
+      <left>30</left>
+      <leftRatio>0.0662100456621005</leftRatio>
+      <onChange>originalPanel(2); 
+originalPanel(6);      
+ee.setImage(ee.getControl("panel10"),"/App1PJ/pay/btn@2x.png","fill","","");  
+ee.setTextColor(ee.getControl("panel18"),"#1dadf4");
+ee.setTextColor(ee.getControl("panel19"),"#7b7b7b"); 
+ee.setTextColor(ee.getControl("panel5"),"#7b7b7b"); 
+ee.setTextColor(ee.getControl("panel4"),"#fff");
+originalPanel(20);
+originalPanel(23);
+originalPanel(26);  
+g5.current=-1;</onChange>
+      <sizeRatio>0.104166666666667</sizeRatio>
+      <text><![CDATA[自定义金额：<font style="color:#848484;font-size:10px;">请输入充值金额</font>]]></text>
+      <top>251</top>
+      <topRatio>0.564044943820225</topRatio>
+      <width>402</width>
+      <widthRatio>0.876712328767123</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel4">
+      <backgroundColor>1DADF4</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
       <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>56</height>
+      <heightRatio>0.0686274509803922</heightRatio>
+      <layerVisible>false</layerVisible>
+      <left>33</left>
+      <leftRatio>0.0730593607305936</leftRatio>
       <onClick>//var ref = window.open('http://www.baidu.com', '_system');
 //ref.addEventListener('loadstart', function(event) { alert('start: ' + event.url); });
 //ref.addEventListener('loadstop', function(event) { alert('stop: ' + event.url); });
@@ -85,536 +606,348 @@ g5.onDeviceReady = function () {
 
 //window.open('http://baidu.com', '_system', 'location=yes');
 
-pay();</onClick>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44">
-      <left>71</left>
-      <top>104</top>
-      <width>684</width>
-      <height>599</height>
-      <leftRatio>0.0864197530864197</leftRatio>
-      <topRatio>0.126984126984127</topRatio>
-      <widthRatio>0.827160493827161</widthRatio>
-      <heightRatio>0.731379731379731</heightRatio>
-      <sizeRatio>0.596019900497512</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <backgroundSkin>body5</backgroundSkin>
-      <fontSizeAuto>20</fontSizeAuto>
-      <fontColor>FFFFFF</fontColor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/panel45">
-      <left>62</left>
-      <top>57</top>
-      <width>559</width>
-      <height>50</height>
-      <leftRatio>0.0905511811023622</leftRatio>
-      <topRatio>0.0957095709570957</topRatio>
-      <widthRatio>0.816929133858268</widthRatio>
-      <heightRatio>0.0841584158415842</heightRatio>
-      <sizeRatio>0.12289156626506</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <text>请选择需要充值的金额</text>
-      <fontSizeAuto>30</fontSizeAuto>
-      <fontBold>true</fontBold>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/panel48">
-      <left>28</left>
-      <top>9</top>
-      <width>152</width>
-      <height>42</height>
-      <leftRatio>0.0413385826771654</leftRatio>
-      <topRatio>0.0148514851485149</topRatio>
-      <widthRatio>0.22244094488189</widthRatio>
-      <heightRatio>0.0693069306930693</heightRatio>
-      <sizeRatio>0.371681415929204</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <text>充值</text>
-      <fontSizeAuto>30</fontSizeAuto>
-      <fontColor>48A1DD</fontColor>
-      <fontBold>true</fontBold>
-      <hAlign>left</hAlign>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/panel49">
-      <left>26</left>
-      <top>46</top>
-      <width>631</width>
-      <height>2</height>
-      <leftRatio>0.0374015748031496</leftRatio>
-      <topRatio>0.0775577557755776</topRatio>
-      <widthRatio>0.923228346456693</widthRatio>
-      <heightRatio>0.0033003300330033</heightRatio>
-      <sizeRatio>0.00426439232409382</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <backgroundColor>48A1DD</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-    </control>
-    <control type="LayoutY" pathname="/divRoot/panel44/layouty1">
-      <left>69</left>
-      <top>114</top>
-      <width>551</width>
-      <height>436</height>
-      <leftRatio>0.100393700787402</leftRatio>
-      <topRatio>0.18976897689769</topRatio>
-      <widthRatio>0.80511811023622</widthRatio>
-      <heightRatio>0.727722772277228</heightRatio>
-      <sizeRatio>1.07823960880196</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <fieldCount>7</fieldCount>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel44/layouty1/layoutyitem1">
-      <left>0</left>
-      <top>0</top>
-      <width>551</width>
-      <height>62</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.142201834862385</heightRatio>
-      <sizeRatio>0.0762607626076261</sizeRatio>
-      <backgroundColor>f0f0f0</backgroundColor>
-      <backgroundSkin>empty</backgroundSkin>
-      <text>充100元 赠送0元</text>
-      <fontSizeAuto>25</fontSizeAuto>
-      <cursor>pointer</cursor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/layouty1/layoutyitem1/panel3">
-      <left>0</left>
-      <top>60</top>
-      <width>551</width>
-      <height>2</height>
-      <topRatio>0.967741935483871</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.032258064516129</heightRatio>
-      <sizeRatio>0.002460024600246</sizeRatio>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel44/layouty1/layoutyitem2">
-      <left>0</left>
-      <top>62</top>
-      <width>551</width>
-      <height>63</height>
-      <topRatio>0.142201834862385</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.144495412844037</heightRatio>
-      <sizeRatio>0.0774907749077491</sizeRatio>
-      <backgroundColor>d0d0d0</backgroundColor>
-      <backgroundSkin>empty</backgroundSkin>
-      <text>充200元 赠送20元</text>
-      <fontSizeAuto>25</fontSizeAuto>
-      <cursor>pointer</cursor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/layouty1/layoutyitem2/panel2">
-      <left>0</left>
-      <top>61</top>
-      <width>551</width>
-      <height>2</height>
-      <topRatio>0.968253968253968</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.0317460317460317</heightRatio>
-      <sizeRatio>0.002460024600246</sizeRatio>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel44/layouty1/layoutyitem3">
-      <left>0</left>
-      <top>125</top>
-      <width>551</width>
-      <height>62</height>
-      <topRatio>0.286697247706422</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.142201834862385</heightRatio>
-      <sizeRatio>0.0762607626076261</sizeRatio>
-      <backgroundColor>f0f0f0</backgroundColor>
-      <backgroundSkin>empty</backgroundSkin>
-      <text>充400元 赠送50元</text>
-      <fontSizeAuto>25</fontSizeAuto>
-      <cursor>pointer</cursor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/layouty1/layoutyitem3/panel5">
-      <left>0</left>
-      <top>60</top>
-      <width>551</width>
-      <height>2</height>
-      <topRatio>0.967741935483871</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.032258064516129</heightRatio>
-      <sizeRatio>0.002460024600246</sizeRatio>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel44/layouty1/layoutyitem4">
-      <left>0</left>
-      <top>187</top>
-      <width>551</width>
-      <height>62</height>
-      <topRatio>0.428899082568807</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.142201834862385</heightRatio>
-      <sizeRatio>0.0762607626076261</sizeRatio>
-      <backgroundColor>d0d0d0</backgroundColor>
-      <backgroundSkin>button2bf</backgroundSkin>
-      <text>充800元 赠送120元</text>
-      <fontSizeAuto>25</fontSizeAuto>
-      <fontColor>FFFFFF</fontColor>
-      <cursor>pointer</cursor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/layouty1/layoutyitem4/panel6">
-      <left>0</left>
-      <top>60</top>
-      <width>551</width>
-      <height>2</height>
-      <topRatio>0.967741935483871</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.032258064516129</heightRatio>
-      <sizeRatio>0.002460024600246</sizeRatio>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel44/layouty1/layoutyitem5">
-      <left>0</left>
-      <top>249</top>
-      <width>551</width>
-      <height>62</height>
-      <topRatio>0.571100917431193</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.142201834862385</heightRatio>
-      <sizeRatio>0.0762607626076261</sizeRatio>
-      <backgroundColor>f0f0f0</backgroundColor>
-      <backgroundSkin>empty</backgroundSkin>
-      <text>充1500元 赠送240元</text>
-      <fontSizeAuto>25</fontSizeAuto>
-      <cursor>pointer</cursor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/layouty1/layoutyitem5/panel7">
-      <left>0</left>
-      <top>60</top>
-      <width>551</width>
-      <height>2</height>
-      <topRatio>0.967741935483871</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.032258064516129</heightRatio>
-      <sizeRatio>0.002460024600246</sizeRatio>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel44/layouty1/layoutyitem6">
-      <left>0</left>
-      <top>311</top>
-      <width>551</width>
-      <height>63</height>
-      <topRatio>0.713302752293578</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.144495412844037</heightRatio>
-      <sizeRatio>0.0774907749077491</sizeRatio>
-      <backgroundColor>d0d0d0</backgroundColor>
-      <backgroundSkin>empty</backgroundSkin>
-      <text>充3000元 赠送500元</text>
-      <fontSizeAuto>25</fontSizeAuto>
-      <cursor>pointer</cursor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/layouty1/layoutyitem6/panel10">
-      <left>0</left>
-      <top>61</top>
-      <width>551</width>
-      <height>2</height>
-      <topRatio>0.968253968253968</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.0317460317460317</heightRatio>
-      <sizeRatio>0.002460024600246</sizeRatio>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
-    </control>
-    <control type="LayoutYItem" pathname="/divRoot/panel44/layouty1/layoutyitem7">
-      <left>0</left>
-      <top>374</top>
-      <width>551</width>
-      <height>62</height>
-      <topRatio>0.857798165137615</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.142201834862385</heightRatio>
-      <sizeRatio>0.0762607626076261</sizeRatio>
-      <backgroundColor>f0f0f0</backgroundColor>
-      <backgroundSkin>empty</backgroundSkin>
-      <text>充5000元 赠送1000元</text>
-      <fontSizeAuto>25</fontSizeAuto>
-      <cursor>pointer</cursor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel44/layouty1/layoutyitem7/panel8">
-      <left>0</left>
-      <top>60</top>
-      <width>551</width>
-      <height>2</height>
-      <topRatio>0.967741935483871</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.032258064516129</heightRatio>
-      <sizeRatio>0.002460024600246</sizeRatio>
-      <dockX>fill</dockX>
-      <dockY>bottom</dockY>
-      <backgroundColor>E0E0E0</backgroundColor>
-      <bgColorEnabled>true</bgColorEnabled>
+pay(); 
+
+//ee.showAni(ee.getControl("panel43")); </onClick>
+      <sizeRatio>0.150134048257373</sizeRatio>
+      <text>确 定</text>
+      <top>692</top>
+      <topRatio>0.848039215686274</topRatio>
+      <width>390</width>
+      <widthRatio>0.851598173515982</widthRatio>
     </control>
     <control type="LayoutY" pathname="/divRoot/layouty2">
-      <left>0</left>
-      <top>0</top>
-      <width>827</width>
-      <height>90</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.10989010989011</heightRatio>
-      <sizeRatio>0.154373927958834</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
       <fieldCount>2</fieldCount>
+      <height>90</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.154373927958834</sizeRatio>
+      <top>0</top>
+      <width>458</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty2/layoutyitem8">
-      <left>0</left>
-      <top>0</top>
-      <width>827</width>
-      <height>29</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.322222222222222</heightRatio>
-      <sizeRatio>0.0237510237510238</sizeRatio>
       <backgroundColor>BFCEDF</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <heavy>47</heavy>
+      <height>29</height>
+      <heightRatio>0.322222222222222</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0633187772925764</sizeRatio>
+      <top>0</top>
+      <width>458</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty2/layoutyitem9">
-      <left>0</left>
-      <top>29</top>
-      <width>827</width>
-      <height>61</height>
-      <topRatio>0.322222222222222</topRatio>
-      <widthRatio>1</widthRatio>
-      <heightRatio>0.677777777777778</heightRatio>
-      <sizeRatio>0.04995904995905</sizeRatio>
       <backgroundColor>47A9F9</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <text>充值赠送</text>
-      <fontSizeAuto>15</fontSizeAuto>
       <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>0.677777777777778</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.133187772925764</sizeRatio>
+      <text>充值赠送</text>
+      <top>29</top>
+      <topRatio>0.322222222222222</topRatio>
+      <width>458</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty2/layoutyitem9/panel11">
-      <left>23</left>
-      <top>13</top>
-      <width>98</width>
-      <height>34</height>
-      <leftRatio>0.0274442538593482</leftRatio>
-      <topRatio>0.213114754098361</topRatio>
-      <widthRatio>0.118353344768439</widthRatio>
-      <heightRatio>0.557377049180328</heightRatio>
-      <sizeRatio>0.492753623188406</sizeRatio>
+      <backgroundImg>back.gif</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundImg>back.png</backgroundImg>
-      <backgroundImgMode>fill</backgroundImgMode>
       <fontSizeAuto>30</fontSizeAuto>
-      <cursor>pointer</cursor>
+      <height>34</height>
+      <heightRatio>0.557377049180328</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0280373831775701</leftRatio>
+      <sizeRatio>0.666666666666667</sizeRatio>
+      <top>13</top>
+      <topRatio>0.213114754098361</topRatio>
+      <width>55</width>
+      <widthRatio>0.119158878504673</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty2/layoutyitem9/panel17">
+      <backgroundSkin>button1002</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>28</fontSizeAuto>
+      <height>37</height>
+      <heightRatio>0.60655737704918</heightRatio>
+      <left>341</left>
+      <leftRatio>0.744541484716157</leftRatio>
+      <onClick>window.location.href = ee.pageRoot + "/vouchers";
+
+</onClick>
+      <sizeRatio>0.336363636363636</sizeRatio>
+      <text>兑换优惠券</text>
+      <top>12</top>
+      <topRatio>0.19672131147541</topRatio>
+      <width>110</width>
+      <widthRatio>0.240174672489083</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty2/layoutyitem9/panel12">
-      <left>1</left>
-      <top>1</top>
-      <width>162</width>
-      <height>57</height>
-      <leftRatio>0.00171526586620926</leftRatio>
-      <topRatio>0.0163934426229508</topRatio>
-      <widthRatio>0.195540308747856</widthRatio>
-      <heightRatio>0.934426229508197</heightRatio>
-      <sizeRatio>0.5</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>empty</backgroundSkin>
+      <height>61</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
       <onClick>window.location.href = ee.pageRoot + "/student/sMain";</onClick>
+      <sizeRatio>0.321052631578947</sizeRatio>
+      <top>0</top>
+      <width>98</width>
+      <widthRatio>0.21324354657688</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel34">
+      <backgroundImg>pay.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>252</height>
+      <heightRatio>0.308823529411765</heightRatio>
+      <left>26</left>
+      <leftRatio>0.0570776255707763</leftRatio>
+      <sizeRatio>0.651162790697674</sizeRatio>
+      <top>104</top>
+      <topRatio>0.127450980392157</topRatio>
+      <width>405</width>
+      <widthRatio>0.883561643835616</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel43">
-      <left>0</left>
-      <top>0</top>
-      <width>827</width>
-      <height>819</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.670761670761671</sizeRatio>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
+      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
       <backgroundColor>000000</backgroundColor>
       <backgroundImg>dialogMask.png</backgroundImg>
       <backgroundImgMode>stretch</backgroundImgMode>
-      <layerName>确认充值</layerName>
-      <layerVisible>false</layerVisible>
-      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel43/panel1">
-      <left>82</left>
-      <top>153</top>
-      <width>642</width>
-      <height>443</height>
-      <leftRatio>0.0990990990990991</leftRatio>
-      <topRatio>0.186813186813187</topRatio>
-      <widthRatio>0.776412776412776</widthRatio>
-      <heightRatio>0.540903540903541</heightRatio>
-      <sizeRatio>0.467299578059072</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <backgroundSkin>button3a000</backgroundSkin>
-      <fontSizeAuto>20</fontSizeAuto>
-      <fontColor>FFFFFF</fontColor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel43/panel1/panel9">
-      <left>17</left>
-      <top>64</top>
-      <width>601</width>
-      <height>57</height>
-      <leftRatio>0.0265486725663717</leftRatio>
-      <topRatio>0.144469525959368</topRatio>
-      <widthRatio>0.935840707964602</widthRatio>
-      <heightRatio>0.128668171557562</heightRatio>
-      <sizeRatio>0.134751773049645</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <text>充值确认</text>
-      <fontSizeAuto>30</fontSizeAuto>
-      <fontBold>true</fontBold>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel43/panel1/panel46">
-      <left>138</left>
-      <top>248</top>
-      <width>351</width>
-      <height>54</height>
-      <leftRatio>0.214397496087637</leftRatio>
-      <topRatio>0.559819413092551</topRatio>
-      <widthRatio>0.546165884194053</widthRatio>
-      <heightRatio>0.121896162528217</heightRatio>
-      <sizeRatio>0.154727793696275</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
-      <backgroundSkin>button3</backgroundSkin>
-      <text>去支付宝充值</text>
-      <fontSizeAuto>25</fontSizeAuto>
-      <fontColor>FFFFFF</fontColor>
-      <cursor>pointer</cursor>
-    </control>
-    <control type="Panel" pathname="/divRoot/panel43/panel1/panel46/panel15">
-      <left>0</left>
-      <top>0</top>
-      <width>351</width>
-      <height>54</height>
-      <widthRatio>1</widthRatio>
-      <heightRatio>1</heightRatio>
-      <sizeRatio>0.104247104247104</sizeRatio>
       <dockX>fill</dockX>
       <dockY>fill</dockY>
-      <text><![CDATA[<a id="linkAlipay" href = "www.baidu.com" target="_blank">　　　　　　　　　　　　</a>]]></text>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>确认充值</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.78165938864629</sizeRatio>
+      <top>0</top>
+      <width>458</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1">
+      <backgroundSkin>button3a000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>441</height>
+      <heightRatio>0.540903540903541</heightRatio>
+      <left>45</left>
+      <leftRatio>0.0990990990990991</leftRatio>
+      <sizeRatio>0.467299578059072</sizeRatio>
+      <top>152</top>
+      <topRatio>0.186813186813187</topRatio>
+      <width>356</width>
+      <widthRatio>0.776412776412776</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel9">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>57</height>
+      <heightRatio>0.128668171557562</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0270618556701031</leftRatio>
+      <sizeRatio>0.0785123966942149</sizeRatio>
+      <text>充值确认</text>
+      <top>64</top>
+      <topRatio>0.144469525959368</topRatio>
+      <width>333</width>
+      <widthRatio>0.935567010309278</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel46">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>33</height>
+      <heightRatio>0.0748299319727891</heightRatio>
+      <left>76</left>
+      <leftRatio>0.214723926380368</leftRatio>
+      <sizeRatio>0.0741573033707865</sizeRatio>
+      <text>去支付宝充值</text>
+      <top>283</top>
+      <topRatio>0.64172335600907</topRatio>
+      <width>194</width>
+      <widthRatio>0.54601226993865</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel46/panel15">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
       <fontSizeAuto>10</fontSizeAuto>
+      <height>33</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.170103092783505</sizeRatio>
+      <text><![CDATA[<a id="linkAlipay" href = "www.baidu.com" target="_blank">　　　　　　　　　　　　</a>]]></text>
+      <top>0</top>
+      <width>194</width>
+      <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel43/panel1/panel47">
-      <left>139</left>
-      <top>376</top>
-      <width>351</width>
-      <height>54</height>
-      <leftRatio>0.215962441314554</leftRatio>
-      <topRatio>0.848758465011287</topRatio>
-      <widthRatio>0.546165884194053</widthRatio>
-      <heightRatio>0.121896162528217</heightRatio>
-      <sizeRatio>0.154727793696275</sizeRatio>
+      <backgroundSkin>button3000</backgroundSkin>
+      <cursor>pointer</cursor>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>button3000</backgroundSkin>
-      <text>关 闭</text>
-      <fontSizeAuto>25</fontSizeAuto>
       <fontColor>FFFFFF</fontColor>
-      <cursor>pointer</cursor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>33</height>
+      <heightRatio>0.0744920993227991</heightRatio>
+      <left>77</left>
+      <leftRatio>0.21523178807947</leftRatio>
       <onClick>ee.setVisible(ee.getControl("panel43"), false);</onClick>
+      <sizeRatio>0.1</sizeRatio>
+      <text>关 闭</text>
+      <top>373</top>
+      <topRatio>0.846501128668172</topRatio>
+      <width>195</width>
+      <widthRatio>0.54635761589404</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel43/panel1/panel13">
-      <left>28</left>
-      <top>10</top>
-      <width>153</width>
-      <height>47</height>
-      <leftRatio>0.0442477876106195</leftRatio>
-      <topRatio>0.0225733634311512</topRatio>
-      <widthRatio>0.238938053097345</widthRatio>
-      <heightRatio>0.106094808126411</heightRatio>
-      <sizeRatio>0.435185185185185</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <text>确认充值</text>
-      <fontSizeAuto>30</fontSizeAuto>
-      <fontColor>48A1DD</fontColor>
       <fontBold>true</fontBold>
+      <fontColor>48A1DD</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
       <hAlign>left</hAlign>
+      <height>47</height>
+      <heightRatio>0.106094808126411</heightRatio>
+      <left>16</left>
+      <leftRatio>0.0438144329896907</leftRatio>
+      <sizeRatio>0.254054054054054</sizeRatio>
+      <text>确认充值</text>
+      <top>10</top>
+      <topRatio>0.0225733634311512</topRatio>
+      <width>85</width>
+      <widthRatio>0.23840206185567</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel43/panel1/panel14">
-      <left>26</left>
-      <top>52</top>
-      <width>586</width>
-      <height>2</height>
-      <leftRatio>0.040650406504065</leftRatio>
-      <topRatio>0.117794486215539</topRatio>
-      <widthRatio>0.91260162601626</widthRatio>
-      <heightRatio>0.0050125313283208</heightRatio>
-      <sizeRatio>0.0044543429844098</sizeRatio>
-      <dockX>ratio</dockX>
-      <dockY>ratio</dockY>
       <backgroundColor>48A1DD</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>2</height>
+      <heightRatio>0.0050125313283208</heightRatio>
+      <left>14</left>
+      <leftRatio>0.040650406504065</leftRatio>
+      <sizeRatio>0.0044543429844098</sizeRatio>
+      <top>52</top>
+      <topRatio>0.117794486215539</topRatio>
+      <width>325</width>
+      <widthRatio>0.91260162601626</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel43/panel1/panel50">
-      <left>82</left>
-      <top>115</top>
-      <width>464</width>
-      <height>124</height>
-      <leftRatio>0.128325508607199</leftRatio>
-      <topRatio>0.259593679458239</topRatio>
-      <widthRatio>0.723004694835681</widthRatio>
-      <heightRatio>0.279909706546275</heightRatio>
-      <sizeRatio>0.268398268398268</sizeRatio>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <text>用户信息：</text>
-      <fontSizeAuto>30</fontSizeAuto>
       <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
       <hAlign>left</hAlign>
+      <height>123</height>
+      <heightRatio>0.279909706546275</heightRatio>
+      <left>46</left>
+      <leftRatio>0.128865979381443</leftRatio>
+      <sizeRatio>0.221033868092692</sizeRatio>
+      <text>用户信息：</text>
+      <top>114</top>
+      <topRatio>0.259593679458239</topRatio>
       <vAlign>top</vAlign>
+      <width>257</width>
+      <widthRatio>0.722938144329897</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel43/panel1/panel16">
-      <left>139</left>
-      <top>311</top>
-      <width>351</width>
-      <height>54</height>
-      <leftRatio>0.215962441314554</leftRatio>
-      <topRatio>0.702031602708804</topRatio>
-      <widthRatio>0.546165884194053</widthRatio>
-      <heightRatio>0.121896162528217</heightRatio>
-      <sizeRatio>0.154727793696275</sizeRatio>
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>button3</backgroundSkin>
-      <text>充值完成</text>
-      <fontSizeAuto>25</fontSizeAuto>
       <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>33</height>
+      <heightRatio>0.0744920993227991</heightRatio>
+      <left>77</left>
+      <leftRatio>0.21523178807947</leftRatio>
+      <onClick>//alert(money)     
+//payNews();
+window.location.href = ee.pageRoot + "/student/sMain";
+</onClick>
+      <sizeRatio>0.1</sizeRatio>
+      <text>充值完成</text>
+      <top>328</top>
+      <topRatio>0.742663656884876</topRatio>
+      <width>195</width>
+      <widthRatio>0.54635761589404</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel33">
+      <backgroundSkin>button3</backgroundSkin>
       <cursor>pointer</cursor>
-      <onClick>window.location.href = ee.pageRoot + "/student/sMain";</onClick>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>33</height>
+      <heightRatio>0.0744920993227991</heightRatio>
+      <left>77</left>
+      <leftRatio>0.21523178807947</leftRatio>
+      <onClick>payWechat();</onClick>
+      <sizeRatio>0.1</sizeRatio>
+      <text>去微信充值</text>
+      <top>237</top>
+      <topRatio>0.5372460496614</topRatio>
+      <width>195</width>
+      <widthRatio>0.54635761589404</widthRatio>
     </control>
   </controls>
-  <taskSet count="1">
+  <taskSet count="3">
     <taskSetItem name="pay">
-      <script1>eio.appendString8(eb.getCookie("pjToken"));
-eio.appendInt32(g5.current);
-</script1>
+      <script1><![CDATA[var text=ee.getEditText(ee.getControl("edit1")); 
+//var re="^[0-9]*$";
+
+if(g5.current==-1&amp;&amp;text==""){
+    alert("请选择或输入充值金额");
+    return;
+}       
+eio.appendString8(eb.getCookie("pjToken"));  
+if(text.length>0){       
+    var result=/^[0-9]*$/.test(text);
+    if(result==false){
+        alert("请输入一个正整数");
+        return;
+    } 
+    if(text<5){
+        alert("最少充值5元");
+        return;
+    }
+    eio.appendInt32(0);
+    eio.appendString16(text);
+}
+else{               
+    eio.appendInt32(1);
+    eio.appendInt32(g5.current);
+}]]></script1>
       <script2><![CDATA[/*
 合作者身份ID：  2088021117176475
 收款支付宝账号：2088021117176475
@@ -665,20 +998,147 @@ payment_type=1
 &amp;sign=6266f08c80899c19d41708582eebfdbe
 */
 var token = eio.readString8();
-var payIndex = eio.readInt32();
+//var payIndex = eio.readInt32();
 var sql,sqlResult;
 
-//查询
-sql = "select count(*) as c from log where userId= '"+ userId +"' and logType= '充值请求' or logType='充值'";
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id"); 
+es.logWarning(userId);
+es.logWarning(sql);   
+es.logWarning(token); 
+ 
+
+sql = "select count(*) as c from log where userId= '"+userId+"' and logType='充值'";
 es.logWarning(sql);
 sqlResult = db.executeQuery("PJ", sql);
 db.read(sqlResult);
 var count = db.getInt32(sqlResult, "c");
-es.logWarning(count);
-if(count == "0"){
-    moneyFree[payIndex] +=+200;
-    es.logWarning(moneyFree[payIndex]+"adsadasd");
+
+//发起充值请求，获取本地订单序号
+if (userId.length<=0) {
+    eio.appendString8("F");
+    eio.appendString8("会话丢失，请稍后再试");
+    return;
 }
+var flag = eio.readInt32();
+if(flag==0){
+    var money = eio.readString16(); 
+    var moneyFree = "0";  
+}  
+if(flag==1){
+var payIndex = eio.readInt32(); 
+var money = "100,200,300,600,1200,2000".split(",");   
+    money = money[payIndex];
+var moneyFree = "0,20,35,80,175,300".split(",");
+    moneyFree = moneyFree[payIndex];
+if (payIndex<0) { //||(payIndex>=money.length)
+    eio.appendString8("F");
+    eio.appendString8("用户输入数据非法");
+    return;
+} 
+}
+
+//var qian = 200;
+/*if(count<1){
+    moneyFree[payIndex]=parseInt(moneyFree[payIndex])+0+200; 
+    es.logWarning(moneyFree[payIndex]);
+}
+*/  
+
+
+sql = "exec createPay " + userId + ",'支付宝'," +
+    money + "," + moneyFree;
+sqlResult = db.executeQuery("PJ", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var localTicket = db.getString(sqlResult, "ticket");
+es.logWarning(sql);
+//产生支付url
+var url = "https://mapi.alipay.com/gateway.do";
+var key = "";
+key += "_input_charset=utf-8";
+key += "&amp;notify_url=http://m.1peijia.com:88/EEngine/ee.aspx";
+key += "&amp;out_trade_no=" + localTicket;
+key += "&amp;partner=2088021117176475";
+key += "&amp;payment_type=1";
+key += "&amp;return_url=http://m.1peijia.com:88/EEngine/ee.aspx";
+key += "&amp;seller_id=2088021117176475";
+key += "&amp;service=alipay.wap.create.direct.pay.by.user";
+key += "&amp;subject=1陪驾充值" ;
+key += "&amp;total_fee=" + money;
+
+var sign = "";
+sign += "&amp;sign=" + es.getMd5(key + "kj9othli5f3o0pjubgycbz8u7ggdu3du").toLowerCase();
+sign += "&amp;sign_type=MD5";
+
+url = url + "?" + es.urlEncodeHz(key) + sign;
+
+eio.appendString8("T");
+eio.appendString16(url);
+eio.appendString16(money);
+eio.appendString16(moneyFree);
+eio.appendInt32(count);   //充值记录有无
+//es.logWarning("adasdsadsddasd");
+es.logWarning("scscs");
+]]></script2>
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    alert("暂时无法进行充值："+eio.readString8());
+    window.history.back();
+    return;
+}
+var url = eio.readString16();
+var money = eio.readString16();
+var moneyFree = eio.readString16();
+var count = eio.readInt32();
+//window.open(url);
+//window.open(encodeURI(url), '_blank', 'location=yes');
+g5.payMoney=money;   
+var s = "";
+s = "您将进入支付系统支付￥"+money;
+if (moneyFree!="0") {
+    s += ",充值完成您将获得我们赠予的 "+moneyFree+"积分奖励";    
+}
+
+if(count<1){
+    s += ",首次充值将获得额外的200积分奖励";
+}     
+
+ee.setText(ee.getControl("panel50"),s);     
+$g("linkAlipay").href = url;
+ee.showAni(ee.getControl("panel43"));  
+//ee.setVisible(ee.getControl("panel43"));
+
+]]></script3>
+    </taskSetItem>
+    <taskSetItem name="payNews">
+      <script1>if(g5.payMoney==null){
+ window.location.href = ee.pageRoot + "/student/sMain";
+ return;   
+}    
+eio.appendString8(eb.getCookie("pjToken"));
+eio.appendString16(g5.payMoney);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var payMoney = eio.readString16(); 
+
+var sql,sqlResult;
 
 sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
 sqlResult = db.executeQuery("PJ", sql);
@@ -696,23 +1156,114 @@ if (db.getString(sqlResult, "sessionId").length < 5) {
 } 
 var userId = db.getString(sqlResult, "id");
 
+sql="select logType from log where id="+userId;
+
+sql="INSERT INTO sendNews (userId,title,newsContent,status) VALUES ('" + db.encode(userId) + "','充值通知','已成功充值"+payMoney+"元','未读')"
+sqlResult = db.executeQuery("PJ", sql); 
+db.read(sqlResult);
+es.logWarning(sql);
+eio.appendString8("T");
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("系统异常，请稍候再试");
+    window.history.back();
+    return;
+}
+window.location.href = ee.pageRoot + "/student/sMain";
+</script3>
+    </taskSetItem>
+    <taskSetItem name="payWechat">
+      <script1><![CDATA[//微信生成预处理订单 
+var text=ee.getEditText(ee.getControl("edit1"));
+if(g5.current==-1&amp;&amp;text==""){
+    alert("请选择充值金额");
+    return;
+}  
+//var re="^[0-9]*$";
+      
+  
+if(text.length>0){
+    var result=/^[0-9]*$/.test(text);
+    if(result==false){
+        alert("请输入一个正整数");
+        return;
+    }   
+    if(text<5){
+        alert("最少充值5元");
+        return;
+    }
+    eio.appendInt32(0);
+    eio.appendString16(text);
+}
+else{               
+    eio.appendInt32(1);
+    eio.appendInt32(g5.current);  
+    //alert("g5.current"+g5.current);
+}
+eio.appendString8(eb.getCookie("pjToken"));
+//alert("123");]]></script1>
+      <script2><![CDATA[ 
+
+
+//var money = "100,200,300,600,1200,2000".split(",");    
+//var moneyFree = "0,20,35,80,175,300".split(",");
+//var money = "100,200,400,0.03,1500,3000,5000".split(",");    
+//var moneyFree = "0,20,50,0.04,240,500,1000".split(","); 
+
+
+var flag = eio.readInt32();
+es.logWarning(flag);  
+if(flag==0){
+    var money = eio.readString16(); 
+    var moneyFree = "0";   
+    var payMoney = money*100;
+}
+                             
+if(flag==1){
+var payIndex = eio.readInt32();  
+
+  
+
+var money = "100,200,300,600,1200,2000".split(",");  
+    money = money[payIndex];   
+    es.logWarning("money"+money);
+if (payIndex<0) {//||(payIndex>=money.length)
+    eio.appendString8("F");
+    eio.appendString8("用户输入数据非法");
+    return;
+}      
+var moneyFree = "0,20,35,80,175,300".split(","); 
+    moneyFree = moneyFree[payIndex];
+var payMoney =money*100; //支付金额，分为单位
+}
+var token = eio.readString8();
 //var payIndex = eio.readInt32();
-//发起充值请求，获取本地订单序号
+var sql,sqlResult;
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);     
+var a=db.getString(sqlResult, "sessionId");
+es.logWarning("aaaaaaa="+a);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id");
 if (userId.length<=0) {
     eio.appendString8("F");
     eio.appendString8("会话丢失，请稍后再试");
     return;
-}
-var money = "100,0.01,400,800,1500,3000,5000".split(",");
-var moneyFree = "0,20,50,120,240,500,1000".split(",");
-if ((payIndex<0)||(payIndex>=money.length)) {
-    eio.appendString8("F");
-    eio.appendString8("用户输入数据非法");
-    return;
-}
-
-sql = "exec createPay " + userId + ",'支付宝'," +
-    money[payIndex] + "," + moneyFree[payIndex];
+} 
+//产生支付订单
+sql = "exec createPay " + userId + ",'微信支付'," + money + "," + moneyFree;
 sqlResult = db.executeQuery("PJ", sql); 
 if (sqlResult == null) {
     eio.appendString8("F");
@@ -722,53 +1273,97 @@ if (sqlResult == null) {
 db.read(sqlResult);
 var localTicket = db.getString(sqlResult, "ticket");
 
-//产生支付url
-var url = "https://mapi.alipay.com/gateway.do";
-var key = "";
-key += "_input_charset=utf-8";
-key += "&amp;notify_url=http://m.1peijia.com:88/EEngine/ee.aspx";
-key += "&amp;out_trade_no=" + localTicket;
-key += "&amp;partner=2088021117176475";
-key += "&amp;payment_type=1";
-key += "&amp;return_url=http://m.1peijia.com:88/EEngine/ee.aspx";
-key += "&amp;seller_id=2088021117176475";
-key += "&amp;service=alipay.wap.create.direct.pay.by.user";
-key += "&amp;subject=1陪驾充值" ;
-key += "&amp;total_fee=" + money[payIndex];
-
+var data = "";
 var sign = "";
-sign += "&amp;sign=" + es.getMd5(key + "kj9othli5f3o0pjubgycbz8u7ggdu3du").toLowerCase();
-sign += "&amp;sign_type=MD5";
+var randString = "A" + (new Date()).getTime();
+randString = es.getMd5(randString).toUpperCase();
+//计算sign
+sign += "appid=wx9b5794aacbbdf257";
+sign += "&amp;attach=充值";
+sign += "&amp;body=1陪驾充值";
+sign += "&amp;mch_id=1264325101";
+sign += "&amp;nonce_str=" + randString;
+sign += "&amp;notify_url=http://m.1peijia.com:88/eengine/ee.aspx";
+sign += "&amp;out_trade_no=" + localTicket;
+sign += "&amp;spbill_create_ip=127.0.0.1";
+sign += "&amp;total_fee=" + payMoney;
+sign += "&amp;trade_type=APP";
+sign += "&amp;key=YIpeijia123456789012345678901234";
+sign = es.getMd5(sign).toUpperCase();
+//产生递交数据
+data =
+    "<xml>\n" + 
+    "   <appid>wx9b5794aacbbdf257</appid>\n" + //不解释
+    "   <attach>充值</attach>\n" + //附加数据，在查询API和支付通知中原样返回，该字段主要用于商户携带订单的自定义数据
+    "   <body>1陪驾充值</body>\n" + //商品或支付单简要描述
+    "   <mch_id>1264325101</mch_id>\n" + //微信支付分配的商户号
+    "   <nonce_str>" + randString + "</nonce_str>\n" + //随机字符串，不长于32位
+    "   <notify_url>http://m.1peijia.com:88/eengine/ee.aspx</notify_url>\n" + //接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
+    "   <out_trade_no>" + localTicket + "</out_trade_no>\n" + //商户系统内部的订单号,32个字符内、可包含字母
+    "   <spbill_create_ip>127.0.0.1</spbill_create_ip>\n" + //用户端实际ip
+    "   <total_fee>" + payMoney + "</total_fee>\n" + //订单总金额，单位（分）
+    "   <trade_type>APP</trade_type>\n" + //支付类型
+    "   <sign>" + sign + "</sign>\n" +
+    "</xml>\n";
+//post   
 
-url = url + "?" + es.urlEncodeHz(key) + sign;
 
+var result = es.post("https://api.mch.weixin.qq.com/pay/unifiedorder", data);
+/* 返回消息
+<xml><return_code><![CDATA[SUCCESS]]]]><![CDATA[></return_code>
+<return_msg><![CDATA[OK]]]]><![CDATA[></return_msg>
+<appid><![CDATA[wx9b5794aacbbdf257]]]]><![CDATA[></appid>
+<mch_id><![CDATA[1264325101]]]]><![CDATA[></mch_id>
+<nonce_str><![CDATA[heGKmfwAQ2zSjfAI]]]]><![CDATA[></nonce_str>
+<sign><![CDATA[48BB46F9CCF2901D97F884EB44A7C5DF]]]]><![CDATA[></sign>
+<result_code><![CDATA[SUCCESS]]]]><![CDATA[></result_code>
+<prepay_id><![CDATA[wx20160520184034d34c9c543c0304138885]]]]><![CDATA[></prepay_id>
+<trade_type><![CDATA[APP]]]]><![CDATA[></trade_type>
+</xml>
+*/    
+es.logWarning("result:"+result);
+if (result.indexOf("<return_code><![CDATA[SUCCESS]]]]><![CDATA[>")<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试1");
+    return;
+} 
+//es.logWarning("111");
+//从返回值中提取prepay_id
+var r = result.indexOf("<prepay_id><![CDATA[");
+if (r<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试2");
+    return;
+}     
+//es.logWarning("222");
+r += "<prepay_id><![CDATA[".length;
+var r1 = result.indexOf("]", r);
+if (r1<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试3");
+    return;
+}   
+//es.logWarning("333");
+var prepayId = result.substring(r, r1); 
 eio.appendString8("T");
-eio.appendString16(url);
-eio.appendString16(money[payIndex]);
-eio.appendString16(moneyFree[payIndex]);
-
-
+eio.appendString16(prepayId);
+eio.appendString16(randString);
 ]]></script2>
-      <script3>if (eio.readString8()!="T") {
-    alert("暂时无法进行充值："+eio.readString8());
-    window.history.back();
+      <script3>var r = eio.readString8();
+if (r!="T") {
+    alert(eio.readString16());
     return;
 }
-var url = eio.readString16();
-var money = eio.readString16();
-var moneyFree = eio.readString16();
-
-//window.open(url);
-//window.open(encodeURI(url), '_blank', 'location=yes');
-
-var s = "";
-s = "您将进入支付系统支付￥"+money
-if (moneyFree!="0") {
-    s += ",充值完成您将获得我们赠予的￥"+moneyFree+"免费金额";
-}
-ee.setText(ee.getControl("panel50"),s);
-$("linkAlipay").href = url;
-ee.showAni(ee.getControl("panel43"));
+var prepayId = eio.readString16();
+var nonceStr = eio.readString16();
+g5.tamPlugin.payWechat(prepayId,nonceStr,
+    function() {
+        //g5.log("success");
+    },
+    function(msg) {
+        //g5.log("fail:" + msg);
+    }
+);
 
 </script3>
     </taskSetItem>

@@ -1,0 +1,37 @@
+<page>
+  <controls count="1">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>center</dockX>
+      <height>800</height>
+      <left>22</left>
+      <onPageCreate>function getPar(par){
+    //获取当前URL
+    var local_url = document.location.href; 
+    //获取要取得的get参数位置
+    var get = local_url.indexOf(par +"=");
+    if(get == -1){
+        return false;   
+    }   
+    //截取字符串
+    var get_par = local_url.slice(par.length + get + 1);    
+    //判断截取后的字符串是否还有其他get参数
+    var nextPar = get_par.indexOf("&amp;");
+    if(nextPar != -1){
+        get_par = get_par.slice(0, nextPar);
+    }
+    return get_par;
+}
+
+var get_code= getPar('code');  
+console.log('code='+get_code); 
+window.location.href = "http://m.1peijia.com:808/home/peijia/getcode?code="+get_code;    
+//window.location = "m.1peijia.com:808/home/peijia/qingnianjie?code="+get_code;</onPageCreate>
+      <top>0</top>
+      <width>1000</width>
+    </control>
+  </controls>
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

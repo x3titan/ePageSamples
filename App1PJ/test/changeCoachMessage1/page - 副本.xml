@@ -1,0 +1,2217 @@
+<page>
+  <controls count="100">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>819</height>
+      <left>0</left>
+      <onControlLoad>var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+if (!isIOS) {
+    ee.getControl("layoutyitem1").heavy = 0;
+}
+setTimeout(function(){
+    ee.autoResize = false;
+},1000);
+g5.readFlag=0;  
+/*g5.chooseFlag="update";
+setSessionChoose(); */
+getCoachMessage();
+getSession();
+
+</onControlLoad>
+      <onPageCreate><![CDATA[/*
+根据〖中华人民共和国国家标准 GB 11643-1999〗中有关公民身份号码的规定，公民身份号码是特征组合码，由十七位数字本体码和一位数字校验码组成。排列顺序从左至右依次为：六位数字地址码，八位数字出生日期码，三位数字顺序码和一位数字校验码。
+    地址码表示编码对象常住户口所在县(市、旗、区)的行政区划代码。
+    出生日期码表示编码对象出生的年、月、日，其中年份用四位数字表示，年、月、日之间不用分隔符。
+    顺序码表示同一地址码所标识的区域范围内，对同年、月、日出生的人员编定的顺序号。顺序码的奇数分给男性，偶数分给女性。
+    校验码是根据前面十七位数字码，按照ISO 7064:1983.MOD 11-2校验码计算出来的检验码。
+
+出生日期计算方法。
+    15位的身份证编码首先把出生年扩展为4位，简单的就是增加一个19或18,这样就包含了所有1800-1999年出生的人;
+    2000年后出生的肯定都是18位的了没有这个烦恼，至于1800年前出生的,那啥那时应该还没身份证号这个东东，⊙﹏⊙b汗...
+下面是正则表达式:
+ 出生日期1800-2099  (18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])
+ 身份证正则表达式 /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[12])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i            
+ 15位校验规则 6位地址编码+6位出生日期+3位顺序号
+ 18位校验规则 6位地址编码+8位出生日期+3位顺序号+1位校验位
+ 
+ 校验位规则     公式:∑(ai×Wi)(mod 11)……………………………………(1)
+                公式(1)中： 
+                i----表示号码字符从由至左包括校验码在内的位置序号； 
+                ai----表示第i位置上的号码字符值； 
+                Wi----示第i位置上的加权因子，其数值依据公式Wi=2^(n-1）(mod 11)计算得出。
+                i 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+                Wi 7 9 10 5 8 4 2 1 6 3 7 9 10 5 8 4 2 1
+
+*/
+//身份证号合法性验证 
+//支持15位和18位身份证号
+//支持地址编码、出生日期、校验位验证
+function idCodeValid (code) {
+    var city = { 11: "北京", 12: "天津", 13: "河北", 14: "山西", 15: "内蒙古", 21: "辽宁", 22: "吉林", 23: "黑龙江 ", 31: "上海", 32: "江苏", 33: "浙江", 34: "安徽", 35: "福建", 36: "江西", 37: "山东", 41: "河南", 42: "湖北 ", 43: "湖南", 44: "广东", 45: "广西", 46: "海南", 50: "重庆", 51: "四川", 52: "贵州", 53: "云南", 54: "西藏 ", 61: "陕西", 62: "甘肃", 63: "青海", 64: "宁夏", 65: "新疆", 71: "台湾", 81: "香港", 82: "澳门", 91: "国外 " };
+    var result = "";
+
+    if (!code || !/^\d{6}(18|19|20)?\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\d{3}(\d|X)$/i.test(code)) {
+        result = "身份证号格式错误";
+    } else if (!city[code.substr(0, 2)]) {
+        result = "地址编码错误";
+    } else {
+        //18位身份证需要验证最后一位校验位
+        if (code.length == 18) {
+            code = code.split('');
+            //∑(ai×Wi)(mod 11)
+            //加权因子
+            var factor = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+            //校验位
+            var parity = [1, 0, 'X', 9, 8, 7, 6, 5, 4, 3, 2];
+            var sum = 0;
+            var ai = 0;
+            var wi = 0;
+            for (var i = 0; i < 17; i++) {
+                ai = code[i];
+                wi = factor[i];
+                sum += ai * wi;
+            }
+            var last = parity[sum % 11];
+            if (parity[sum % 11] != code[17]) {
+                result = "校验位错误";
+            }
+        }
+    }
+    return result;
+}
+//var c = '130981199312253466';
+//var res = IdentityCodeValid(c);
+
+]]></onPageCreate>
+      <pageHead><![CDATA[<meta name="viewport" content="width=device-width, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<script type="text/javascript" charset="utf-8" src="scripts/cordova-2.0.0.js"></script>
+]]></pageHead>
+      <top>0</top>
+      <width>734</width>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>90</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0854700854700855</sizeRatio>
+      <top>0</top>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <backgroundColor>BFCEDF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>47</heavy>
+      <height>29</height>
+      <heightRatio>0.322222222222222</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.028971028971029</sizeRatio>
+      <top>0</top>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>0.677777777777778</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0609390609390609</sizeRatio>
+      <text>修改个人资料</text>
+      <top>29</top>
+      <topRatio>0.322222222222222</topRatio>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel6">
+      <backgroundImg>back.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>34</height>
+      <heightRatio>0.557377049180328</heightRatio>
+      <left>20</left>
+      <leftRatio>0.0274442538593482</leftRatio>
+      <sizeRatio>0.492753623188406</sizeRatio>
+      <top>13</top>
+      <topRatio>0.213114754098361</topRatio>
+      <width>87</width>
+      <widthRatio>0.118353344768439</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel7">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>57</height>
+      <heightRatio>0.934426229508197</heightRatio>
+      <left>2</left>
+      <leftRatio>0.00269905533063428</leftRatio>
+      <onClick>window.location.href = ee.pageRoot + "/regCoachCom";</onClick>
+      <sizeRatio>0.182108626198083</sizeRatio>
+      <top>1</top>
+      <topRatio>0.0163934426229508</topRatio>
+      <width>310</width>
+      <widthRatio>0.422402159244265</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <backgroundImg>tiXing.png</backgroundImg>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>51</height>
+      <heightRatio>0.0622710622710623</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0915619389587074</sizeRatio>
+      <top>90</top>
+      <topRatio>0.10989010989011</topRatio>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <backgroundColor>F7F7F7</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>8E8E8E</fontColor>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.100467289719626</sizeRatio>
+      <top>141</top>
+      <topRatio>0.172161172161172</topRatio>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>8E8E8E</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0180072028811525</leftRatio>
+      <sizeRatio>0.0766488413547237</sizeRatio>
+      <text>请准确填写您的个人信息</text>
+      <top>0</top>
+      <width>494</width>
+      <widthRatio>0.673469387755102</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0180072028811525</leftRatio>
+      <sizeRatio>0.0536159600997506</sizeRatio>
+      <top>180</top>
+      <topRatio>0.21978021978022</topRatio>
+      <width>707</width>
+      <widthRatio>0.962785114045618</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>40</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.156363636363636</sizeRatio>
+      <text>姓名</text>
+      <top>0</top>
+      <width>202</width>
+      <widthRatio>0.285269709543568</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/panel10">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00363636363636364</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>202</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem2">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>202</left>
+      <leftRatio>0.285269709543568</leftRatio>
+      <sizeRatio>0.0624092888243832</sizeRatio>
+      <top>0</top>
+      <width>505</width>
+      <widthRatio>0.714730290456432</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx1/layoutxitem2/edit1">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>0</left>
+      <onFocusLost>sessionIdName();</onFocusLost>
+      <sizeRatio>0.0624092888243832</sizeRatio>
+      <top>0</top>
+      <width>505</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/panel4">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00145137880986938</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>505</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx4">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0180072028811525</leftRatio>
+      <sizeRatio>0.0536159600997506</sizeRatio>
+      <top>227</top>
+      <topRatio>0.277167277167277</topRatio>
+      <width>707</width>
+      <widthRatio>0.962785114045618</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx4/layoutxitem7">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>40</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.156363636363636</sizeRatio>
+      <text>身份证号码</text>
+      <top>0</top>
+      <width>202</width>
+      <widthRatio>0.285269709543568</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx4/layoutxitem7/panel5">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00363636363636364</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>202</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx4/layoutxitem8">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>202</left>
+      <leftRatio>0.285269709543568</leftRatio>
+      <sizeRatio>0.0624092888243832</sizeRatio>
+      <top>0</top>
+      <width>505</width>
+      <widthRatio>0.714730290456432</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx4/layoutxitem8/edit2">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>0</left>
+      <onFocusLost>sessionIdNumber();</onFocusLost>
+      <sizeRatio>0.0624092888243832</sizeRatio>
+      <top>0</top>
+      <width>505</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx4/layoutxitem8/panel8">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00145137880986938</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>505</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx5">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>13</left>
+      <leftRatio>0.017982017982018</leftRatio>
+      <onClick>setChoose1();
+</onClick>
+      <sizeRatio>0.0446058091286307</sizeRatio>
+      <top>285</top>
+      <topRatio>0.347985347985348</topRatio>
+      <width>707</width>
+      <widthRatio>0.963036963036963</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx5/layoutxitem9">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>40</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.156363636363636</sizeRatio>
+      <text>地区</text>
+      <top>0</top>
+      <width>202</width>
+      <widthRatio>0.285269709543568</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx5/layoutxitem9/panel9">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00363636363636364</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>202</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx5/layoutxitem10">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>202</left>
+      <leftRatio>0.285269709543568</leftRatio>
+      <sizeRatio>0.0624092888243832</sizeRatio>
+      <top>0</top>
+      <width>505</width>
+      <widthRatio>0.714730290456432</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx5/layoutxitem10/panel11">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00145137880986938</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>505</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx5/layoutxitem10/panel23">
+      <backgroundImg>jianTou.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>right</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.581395348837209</heightRatio>
+      <left>480</left>
+      <leftRatio>0.949756888168558</leftRatio>
+      <sizeRatio>1</sizeRatio>
+      <top>9</top>
+      <topRatio>0.209302325581395</topRatio>
+      <width>25</width>
+      <widthRatio>0.0405186385737439</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx7">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0180072028811525</leftRatio>
+      <sizeRatio>0.0536159600997506</sizeRatio>
+      <top>332</top>
+      <topRatio>0.405372405372405</topRatio>
+      <width>707</width>
+      <widthRatio>0.962785114045618</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx7/layoutxitem13">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>40</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.156363636363636</sizeRatio>
+      <text>详细地址</text>
+      <top>0</top>
+      <width>202</width>
+      <widthRatio>0.285269709543568</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx7/layoutxitem13/panel12">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00363636363636364</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>202</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx7/layoutxitem14">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>202</left>
+      <leftRatio>0.285269709543568</leftRatio>
+      <sizeRatio>0.0624092888243832</sizeRatio>
+      <top>0</top>
+      <width>505</width>
+      <widthRatio>0.714730290456432</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx7/layoutxitem14/edit12">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>0</left>
+      <onFocusLost>sessionAddress();</onFocusLost>
+      <sizeRatio>0.0551282051282051</sizeRatio>
+      <top>0</top>
+      <width>505</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx7/layoutxitem14/panel13">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00145137880986938</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>505</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx6">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0179640718562874</leftRatio>
+      <sizeRatio>0.0892116182572614</sizeRatio>
+      <top>414</top>
+      <topRatio>0.505494505494505</topRatio>
+      <width>706</width>
+      <widthRatio>0.962075848303393</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx6/layoutxitem11">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>40</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.156363636363636</sizeRatio>
+      <text>紧急联系人</text>
+      <top>0</top>
+      <width>202</width>
+      <widthRatio>0.285269709543568</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx6/layoutxitem11/panel22">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>201</left>
+      <leftRatio>0.996363636363636</leftRatio>
+      <sizeRatio>43</sizeRatio>
+      <top>0</top>
+      <width>1</width>
+      <widthRatio>0.00363636363636364</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx6/layoutxitem12">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>202</left>
+      <leftRatio>0.285269709543568</leftRatio>
+      <sizeRatio>0.0624092888243832</sizeRatio>
+      <top>0</top>
+      <width>504</width>
+      <widthRatio>0.714730290456432</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx6/layoutxitem12/edit4">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>B5B5B5</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>0</left>
+      <onFocusLost>sessionEmName();</onFocusLost>
+      <sizeRatio>0.344</sizeRatio>
+      <text>联系人</text>
+      <top>0</top>
+      <width>121</width>
+      <widthRatio>0.239463601532567</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx6/layoutxitem12/panel27">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>126</left>
+      <leftRatio>0.25095785440613</leftRatio>
+      <sizeRatio>0.213930348258706</sizeRatio>
+      <text>联系人电话</text>
+      <top>0</top>
+      <width>194</width>
+      <widthRatio>0.385057471264368</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx6/layoutxitem12/panel27/panel21">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>193</left>
+      <leftRatio>0.99622641509434</leftRatio>
+      <sizeRatio>43</sizeRatio>
+      <top>0</top>
+      <width>1</width>
+      <widthRatio>0.00377358490566038</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx6/layoutxitem12/edit5">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>B5B5B5</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>322</left>
+      <leftRatio>0.639846743295019</leftRatio>
+      <onFocusLost>sessionEmTel();</onFocusLost>
+      <sizeRatio>0.234972677595628</sizeRatio>
+      <text>1234567899</text>
+      <top>0</top>
+      <width>177</width>
+      <widthRatio>0.350574712643678</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx2">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0180072028811525</leftRatio>
+      <sizeRatio>0.0536159600997506</sizeRatio>
+      <top>497</top>
+      <topRatio>0.606837606837607</topRatio>
+      <width>707</width>
+      <widthRatio>0.962785114045618</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx2/layoutxitem3">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>40</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.156363636363636</sizeRatio>
+      <text>车牌</text>
+      <top>0</top>
+      <width>202</width>
+      <widthRatio>0.285269709543568</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx2/layoutxitem3/panel14">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00363636363636364</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>202</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx2/layoutxitem3/panel43">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>201</left>
+      <leftRatio>0.996363636363636</leftRatio>
+      <sizeRatio>43</sizeRatio>
+      <top>0</top>
+      <width>1</width>
+      <widthRatio>0.00363636363636364</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx2/layoutxitem4">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>202</left>
+      <leftRatio>0.285269709543568</leftRatio>
+      <sizeRatio>0.0624092888243832</sizeRatio>
+      <top>0</top>
+      <width>505</width>
+      <widthRatio>0.714730290456432</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx2/layoutxitem4/edit6">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>B5B5B5</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>31</left>
+      <leftRatio>0.0614886731391586</leftRatio>
+      <onFocusLost>seesionCarId();</onFocusLost>
+      <sizeRatio>0.148275862068966</sizeRatio>
+      <text>请输入6位车牌号(无车可不填)</text>
+      <top>0</top>
+      <width>474</width>
+      <widthRatio>0.938511326860841</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx2/layoutxitem4/edit6/panel15">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00154559505409583</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>474</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx9">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0179640718562874</leftRatio>
+      <onClick>setChoose2();</onClick>
+      <sizeRatio>0.0892116182572614</sizeRatio>
+      <top>631</top>
+      <topRatio>0.77045177045177</topRatio>
+      <width>706</width>
+      <widthRatio>0.962075848303393</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx9/layoutxitem17">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>40</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.156363636363636</sizeRatio>
+      <text>陪驾区域</text>
+      <top>0</top>
+      <width>202</width>
+      <widthRatio>0.285269709543568</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx9/layoutxitem17/panel18">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00363636363636364</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>202</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx9/layoutxitem18">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>202</left>
+      <leftRatio>0.285269709543568</leftRatio>
+      <sizeRatio>0.0624092888243832</sizeRatio>
+      <top>0</top>
+      <width>504</width>
+      <widthRatio>0.714730290456432</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx9/layoutxitem18/panel19">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00145137880986938</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>504</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx9/layoutxitem18/panel25">
+      <backgroundImg>jianTou.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>right</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.581395348837209</heightRatio>
+      <left>479</left>
+      <leftRatio>0.927680798004987</leftRatio>
+      <sizeRatio>1</sizeRatio>
+      <top>18</top>
+      <topRatio>0.418604651162791</topRatio>
+      <width>25</width>
+      <widthRatio>0.0623441396508728</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel20">
+      <backgroundColor>F7F7F7</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>B5B5B5</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>37</height>
+      <heightRatio>0.0451770451770452</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.066427289048474</sizeRatio>
+      <top>455</top>
+      <topRatio>0.555555555555556</topRatio>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel20/panel34">
+      <dockX>ratio</dockX>
+      <dockY>fill</dockY>
+      <fontColor>B5B5B5</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>37</height>
+      <heightRatio>1</heightRatio>
+      <left>16</left>
+      <leftRatio>0.0219560878243513</leftRatio>
+      <sizeRatio>0.126712328767123</sizeRatio>
+      <text>准确提醒车辆详细信息</text>
+      <top>0</top>
+      <topRatio>0.027027027027027</topRatio>
+      <width>428</width>
+      <widthRatio>0.582834331337325</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel26">
+      <backgroundImg>gou1.png</backgroundImg>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>29</height>
+      <heightRatio>0.0354090354090354</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0139720558882236</leftRatio>
+      <onClick>if(g5.readFlag==0){
+    g5.readFlag=1; 
+    //alert(g5.readFlag)   
+    ee.setImage(ee.getControl("panel26"),"/App1PJ/regCoaches/gou2.png","trim","","");
+}
+else {
+    g5.readFlag=0;
+    //alert("a:"+g5.readFlag)   
+    ee.setImage(ee.getControl("panel26"),"/App1PJ/regCoaches/gou1.png","trim","","");
+}
+
+</onClick>
+      <sizeRatio>0.966666666666667</sizeRatio>
+      <top>697</top>
+      <topRatio>0.851037851037851</topRatio>
+      <width>44</width>
+      <widthRatio>0.0598802395209581</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel28">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>29</height>
+      <heightRatio>0.0354090354090354</heightRatio>
+      <left>51</left>
+      <leftRatio>0.0698602794411178</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel31"),true);
+
+ </onClick>
+      <sizeRatio>0.0732323232323232</sizeRatio>
+      <text><![CDATA[我已阅读并同意<FONT COLOR="#47a9f9">使用注册条款</FONT>]]></text>
+      <top>697</top>
+      <topRatio>0.851037851037851</topRatio>
+      <width>580</width>
+      <widthRatio>0.790419161676647</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel30">
+      <backgroundImg>btn.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>57</height>
+      <heightRatio>0.0695970695970696</heightRatio>
+      <left>51</left>
+      <leftRatio>0.0698602794411178</leftRatio>
+      <onClick><![CDATA[//客户端验证
+var value;
+value = ee.getEditText(ee.getControl("edit1"));
+if (value.length<=0) {
+    alert("请填写真实的姓名");
+    return;
+}
+if (value.length>5) {
+    alert("请填写身份证上的真实姓名，否则无法通过后续的人工审核");
+    return;
+}          
+value = ee.getEditText(ee.getControl("edit2"));
+if (idCodeValid(value).length>0) {
+    alert("请输入真实有效的身份证号码");
+    return;
+}
+/*value = ee.getText(ee.getControl("layoutx10"));
+if (value.length ==0||value==null||value==""){
+    alert("请选择您的所在城市");
+    return;
+} */ 
+value = ee.getEditText(ee.getControl("edit12"));
+if (value.length ==0||value==null||value==""){
+    alert("请输入您的详细住址");
+    return;
+}
+value = ee.getEditText(ee.getControl("edit4"));
+if ((value.length<2)||(value.length>5)) {
+    alert("请输入一个真实有效的紧急联系人，以方便我们在紧急情况下联系您的家人");
+    return;
+}
+value = ee.getEditText(ee.getControl("edit5"));
+if (value.length<8) {
+    alert("请输入一个真实有效的紧急联系人电话");
+    return;
+}
+value = ee.getEditText(ee.getControl("edit6"));
+if ((value.length<0)||(value.length>7)) {
+    alert("请输入您所拥有的真实有效的车牌号码如：沪F22334，没有车的可以不填");  
+    return;
+} 
+else if((value.length>0) &amp;&amp; (value.length<=7)){ 
+        if(g5.carType.length<=0){ 
+            alert("已填写车牌，请完善车辆信息(车型，排挡)")  
+            return;
+        }  
+}   
+else {
+       if(g5.carType.length>0){
+           alert("已选择车型，请填写车牌");
+            return;
+       }
+}
+/*value = ee.getText(ee.getControl("layoutx6"));
+if(value==null||value==""){
+   alert("请选择车的档位类型"); 
+   return;  
+} 
+
+value = ee.getText(ee.getControl("layoutx18"));
+if(value==null||value==""){
+   alert("请选择陪驾区域信息"); 
+   return;  
+}*/ 
+
+
+
+value = ee.getEditText(ee.getControl("edit10"));
+if (value.length<8) {
+    alert("请输入您真实有效的驾照号码");
+    return;
+}
+
+ 
+
+
+if(g5.readFlag==0){
+    alert("请先阅读注册条款");
+    return;
+}
+
+ee.showAni(ee.getControl("panel24")); 
+]]></onClick>
+      <sizeRatio>0.132558139534884</sizeRatio>
+      <text>下一步</text>
+      <top>747</top>
+      <topRatio>0.912087912087912</topRatio>
+      <width>630</width>
+      <widthRatio>0.858283433133733</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel24">
+      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImg>dialogMask.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>819</height>
+      <heightRatio>1</heightRatio>
+      <layerName>m1</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>0</top>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel24/panel35">
+      <backgroundSkin>body2</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>289</height>
+      <heightRatio>0.35326842837274</heightRatio>
+      <left>40</left>
+      <leftRatio>0.0545454545454545</leftRatio>
+      <sizeRatio>0.652956298200514</sizeRatio>
+      <top>153</top>
+      <topRatio>0.186369958275382</topRatio>
+      <width>649</width>
+      <widthRatio>0.884090909090909</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel24/panel35/panel36">
+      <backgroundSkin>line1001</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>115</height>
+      <heightRatio>0.397923875432526</heightRatio>
+      <left>23</left>
+      <leftRatio>0.0351351351351351</leftRatio>
+      <sizeRatio>0.333333333333333</sizeRatio>
+      <text>　　恭喜您的信息填写完整，您是否确认要将这些信息提交给我们的后台工作人员进行进一步的审核？</text>
+      <top>15</top>
+      <topRatio>0.0519031141868512</topRatio>
+      <width>605</width>
+      <widthRatio>0.932432432432432</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel24/panel35/panel37">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>46</height>
+      <heightRatio>0.15916955017301</heightRatio>
+      <left>67</left>
+      <leftRatio>0.102702702702703</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel24"), false);
+
+
+                                                   </onClick>
+      <sizeRatio>0.157534246575342</sizeRatio>
+      <text>不，我还有信息要修改</text>
+      <top>157</top>
+      <topRatio>0.543252595155709</topRatio>
+      <width>512</width>
+      <widthRatio>0.789189189189189</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel24/panel35/panel38">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>46</height>
+      <heightRatio>0.15916955017301</heightRatio>
+      <left>68</left>
+      <leftRatio>0.105343511450382</leftRatio>
+      <onClick>upateUserInfo();       
+ee.setVisible(ee.getControl("panel24"),false); 
+ee.showAni(ee.getControl("panel39"));
+//ee.setVisible(ee.getControl("panel20"),false);</onClick>
+      <sizeRatio>0.0889748549323017</sizeRatio>
+      <text>是的，我要提交审核</text>
+      <top>217</top>
+      <topRatio>0.750865051903114</topRatio>
+      <width>512</width>
+      <widthRatio>0.789312977099237</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel39">
+      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImg>dialogMask.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>819</height>
+      <heightRatio>1</heightRatio>
+      <layerName>m2</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>0</top>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel39/panel40">
+      <backgroundSkin>body2</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>289</height>
+      <heightRatio>0.35326842837274</heightRatio>
+      <left>40</left>
+      <leftRatio>0.0545454545454545</leftRatio>
+      <sizeRatio>0.652956298200514</sizeRatio>
+      <top>154</top>
+      <topRatio>0.187760778859527</topRatio>
+      <width>649</width>
+      <widthRatio>0.884090909090909</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel39/panel40/panel41">
+      <backgroundSkin>line1001</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>189</height>
+      <heightRatio>0.653979238754325</heightRatio>
+      <left>23</left>
+      <leftRatio>0.0351351351351351</leftRatio>
+      <sizeRatio>0.547826086956522</sizeRatio>
+      <text>　　感谢您对我们工作的信任和支持，我们的后台工作人员会在1-3个工作日内对您信息的真实性进行核实。审核通过后您将成为1陪驾的认证教练，正式开启您在1陪驾的教练之路。
+　　愿我们共同发展！
+
+　　　　　　　　　　　　　　　-- １陪驾运营团队</text>
+      <top>15</top>
+      <topRatio>0.0519031141868512</topRatio>
+      <width>605</width>
+      <widthRatio>0.932432432432432</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel39/panel40/panel42">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>46</height>
+      <heightRatio>0.15916955017301</heightRatio>
+      <left>66</left>
+      <leftRatio>0.102290076335878</leftRatio>
+      <onClick>window.location.href = ee.pageRoot + "/regCoachCom"; 
+ee.setVisible(ee.getControl("panel18"),false); 
+
+
+                                                   </onClick>
+      <sizeRatio>0.0893203883495146</sizeRatio>
+      <text>确 定</text>
+      <top>215</top>
+      <topRatio>0.743944636678201</topRatio>
+      <width>510</width>
+      <widthRatio>0.786259541984733</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44">
+      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImg>dialogMask.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>819</height>
+      <heightRatio>1</heightRatio>
+      <layerName>选车型</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.818181818181818</sizeRatio>
+      <top>0</top>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel45">
+      <backgroundSkin>body2</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>289</height>
+      <heightRatio>0.35326842837274</heightRatio>
+      <left>40</left>
+      <leftRatio>0.0545454545454545</leftRatio>
+      <sizeRatio>0.652956298200514</sizeRatio>
+      <top>153</top>
+      <topRatio>0.186369958275382</topRatio>
+      <width>649</width>
+      <widthRatio>0.884090909090909</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel45/panel47">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>46</height>
+      <heightRatio>0.15916955017301</heightRatio>
+      <left>68</left>
+      <leftRatio>0.105343511450382</leftRatio>
+      <onClick>g5.carType=ee.getText(ee.getControl("panel47"));
+ee.setText(ee.getControl("layoutxitem6"),g5.carType); 
+ee.setTextColor(ee.getControl("layoutxitem6"),"#000"); 
+seesionCarType();
+ee.setVisible(ee.getControl("panel44"), false); 
+
+
+
+                                                   </onClick>
+      <sizeRatio>0.0889748549323017</sizeRatio>
+      <text>手动挡</text>
+      <top>54</top>
+      <topRatio>0.186851211072664</topRatio>
+      <width>512</width>
+      <widthRatio>0.789312977099237</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel45/panel48">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>46</height>
+      <heightRatio>0.15916955017301</heightRatio>
+      <left>68</left>
+      <leftRatio>0.105343511450382</leftRatio>
+      <onClick>g5.carType=ee.getText(ee.getControl("panel48"));
+ee.setText(ee.getControl("layoutxitem6"),g5.carType);
+ee.setTextColor(ee.getControl("layoutxitem6"),"#000"); 
+seesionCarType();
+ee.setVisible(ee.getControl("panel44"), false);
+</onClick>
+      <sizeRatio>0.0889748549323017</sizeRatio>
+      <text>自动挡</text>
+      <top>119</top>
+      <topRatio>0.411764705882353</topRatio>
+      <width>512</width>
+      <widthRatio>0.789312977099237</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel44/panel45/panel46">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>46</height>
+      <heightRatio>0.15916955017301</heightRatio>
+      <left>68</left>
+      <leftRatio>0.105343511450382</leftRatio>
+      <onClick>g5.carType="";
+ee.setText(ee.getControl("layoutxitem6"),"无车可不填");
+ee.setTextColor(ee.getControl("layoutxitem6"),"#b5b5b5");
+seesionCarType();
+ee.setVisible(ee.getControl("panel44"), false);
+</onClick>
+      <sizeRatio>0.0889748549323017</sizeRatio>
+      <text>无车</text>
+      <top>184</top>
+      <topRatio>0.636678200692042</topRatio>
+      <width>512</width>
+      <widthRatio>0.789312977099237</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx3">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>14</left>
+      <leftRatio>0.0184729064039409</leftRatio>
+      <sizeRatio>0.0549872122762148</sizeRatio>
+      <top>544</top>
+      <topRatio>0.664224664224664</topRatio>
+      <width>707</width>
+      <widthRatio>0.963054187192118</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx3/layoutxitem5">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>10</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.178423236514523</sizeRatio>
+      <text><![CDATA[车型<font color="#b5b5b5">(选填)</font>]]></text>
+      <top>0</top>
+      <width>177</width>
+      <widthRatio>0.25</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx3/layoutxitem5/panel16">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.004149377593361</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>177</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx3/layoutxitem6">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <heavy>30</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>177</left>
+      <leftRatio>0.25</leftRatio>
+      <sizeRatio>0.0594744121715076</sizeRatio>
+      <top>0</top>
+      <width>530</width>
+      <widthRatio>0.75</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx3/layoutxitem6/panel17">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00138312586445367</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>530</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx3/layoutxitem6/panel51">
+      <backgroundImg>check.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>35</height>
+      <heightRatio>0.813953488372093</heightRatio>
+      <left>193</left>
+      <leftRatio>0.364548494983278</leftRatio>
+      <onClick>if(g5.carCheck2==false){
+   g5.carCheck2=true;   
+   g5.carType="手动挡";  
+   ee.setImage(ee.getControl("panel51"),"/App1PJ/regCoaches/checked.png","fill","",""); 
+   ee.setImage(ee.getControl("panel29"),"/App1PJ/regCoaches/check.png","fill","",""); 
+   seesionCarType();
+}  
+else {
+   g5.carCheck2=false;   
+   g5.carType="";  
+   ee.setImage(ee.getControl("panel51"),"/App1PJ/regCoaches/check.png","fill","",""); 
+   seesionCarType();
+}</onClick>
+      <sizeRatio>1</sizeRatio>
+      <top>3</top>
+      <topRatio>0.0697674418604651</topRatio>
+      <width>31</width>
+      <widthRatio>0.0585284280936455</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx3/layoutxitem6/panel52">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>225</left>
+      <leftRatio>0.424749163879599</leftRatio>
+      <sizeRatio>0.413461538461538</sizeRatio>
+      <text>手动</text>
+      <top>-1</top>
+      <topRatio>-0.0232558139534884</topRatio>
+      <width>92</width>
+      <widthRatio>0.173913043478261</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx3/layoutxitem6/panel50">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>57</left>
+      <leftRatio>0.107023411371237</leftRatio>
+      <sizeRatio>0.413461538461538</sizeRatio>
+      <text>自动</text>
+      <top>0</top>
+      <width>92</width>
+      <widthRatio>0.173913043478261</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx3/layoutxitem6/panel29">
+      <backgroundImg>check.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>35</height>
+      <heightRatio>0.813953488372093</heightRatio>
+      <left>27</left>
+      <leftRatio>0.0501672240802676</leftRatio>
+      <onClick>if(g5.carCheck1==false){
+   g5.carCheck1=true;   
+   g5.carType="自动挡";  
+   ee.setImage(ee.getControl("panel29"),"/App1PJ/regCoaches/checked.png","fill","","");  
+   ee.setImage(ee.getControl("panel51"),"/App1PJ/regCoaches/check.png","fill","","");    
+   seesionCarType();
+}  
+else {
+   g5.carCheck1=false;   
+   g5.carType="";  
+   ee.setImage(ee.getControl("panel29"),"/App1PJ/regCoaches/check.png","fill","",""); 
+   seesionCarType();
+}</onClick>
+      <sizeRatio>1</sizeRatio>
+      <top>4</top>
+      <topRatio>0.0930232558139535</topRatio>
+      <width>31</width>
+      <widthRatio>0.0585284280936455</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx10">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>4</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>15</left>
+      <leftRatio>0.0199600798403194</leftRatio>
+      <sizeRatio>0.0892116182572614</sizeRatio>
+      <top>375</top>
+      <topRatio>0.457875457875458</topRatio>
+      <width>706</width>
+      <widthRatio>0.962075848303393</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx10/layoutxitem19">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>70</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.477777777777778</sizeRatio>
+      <text>驾照号码</text>
+      <top>0</top>
+      <width>170</width>
+      <widthRatio>0.198237885462555</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx10/layoutxitem19/panel53">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>169</left>
+      <leftRatio>0.736363636363636</leftRatio>
+      <sizeRatio>43</sizeRatio>
+      <top>0</top>
+      <topRatio>0.418604651162791</topRatio>
+      <width>1</width>
+      <widthRatio>0.00909090909090909</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx10/layoutxitem20">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>170</left>
+      <leftRatio>0.230290456431535</leftRatio>
+      <sizeRatio>0.0579514824797844</sizeRatio>
+      <top>0</top>
+      <width>244</width>
+      <widthRatio>0.769709543568465</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx10/layoutxitem20/edit10">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>0</left>
+      <onFocusLost>sessionLicense();</onFocusLost>
+      <sizeRatio>0.0579514824797844</sizeRatio>
+      <top>0</top>
+      <width>244</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx10/layoutxitem15">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <heavy>70</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>414</left>
+      <leftRatio>0.585903083700441</leftRatio>
+      <sizeRatio>0.390909090909091</sizeRatio>
+      <text>领证年份</text>
+      <top>0</top>
+      <width>170</width>
+      <widthRatio>0.242290748898678</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx10/layoutxitem15/panel54">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>169</left>
+      <leftRatio>0.9</leftRatio>
+      <sizeRatio>43</sizeRatio>
+      <top>0</top>
+      <topRatio>0.720930232558139</topRatio>
+      <width>1</width>
+      <widthRatio>0.00909090909090909</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx10/layoutxitem16">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <fontFamily>黑体</fontFamily>
+      <heavy>50</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>584</left>
+      <leftRatio>0.828193832599119</leftRatio>
+      <sizeRatio>0.551282051282051</sizeRatio>
+      <top>0</top>
+      <width>122</width>
+      <widthRatio>0.171806167400881</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx10/layoutxitem16/edit3">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>0</left>
+      <onFocusLost>sessionYear();</onFocusLost>
+      <sizeRatio>0.313868613138686</sizeRatio>
+      <top>0</top>
+      <width>122</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx8">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>43</height>
+      <heightRatio>0.0525030525030525</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0179640718562874</leftRatio>
+      <sizeRatio>0.0890269151138716</sizeRatio>
+      <top>588</top>
+      <topRatio>0.717948717948718</topRatio>
+      <width>708</width>
+      <widthRatio>0.964071856287425</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx8/layoutxitem21">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>505050</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <heavy>30</heavy>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.394495412844037</sizeRatio>
+      <text>教练证号</text>
+      <top>0</top>
+      <width>163</width>
+      <widthRatio>0.231422505307856</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx8/layoutxitem21/panel55">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0045045045045045</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>163</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx8/layoutxitem22">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <left>163</left>
+      <leftRatio>0.230290456431535</leftRatio>
+      <sizeRatio>0.0579514824797844</sizeRatio>
+      <top>0</top>
+      <width>545</width>
+      <widthRatio>0.769709543568465</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx8/layoutxitem22/edit7">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>1</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>0</left>
+      <onFocusLost>sessionCoachLicense();</onFocusLost>
+      <sizeRatio>0.11878453038674</sizeRatio>
+      <top>0</top>
+      <width>545</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx8/layoutxitem22/panel56">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0232558139534884</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00134770889487871</sizeRatio>
+      <top>42</top>
+      <topRatio>0.976744186046512</topRatio>
+      <width>545</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundSkin>body5</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>726</height>
+      <heightRatio>0.886446886446886</heightRatio>
+      <layerName>条款内容</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>1.73684210526316</sizeRatio>
+      <top>90</top>
+      <topRatio>0.10989010989011</topRatio>
+      <width>734</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31/panel32">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>40</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>590</height>
+      <heightRatio>0.812760055478502</heightRatio>
+      <left>40</left>
+      <leftRatio>0.0722021660649819</leftRatio>
+      <outerBottom>40</outerBottom>
+      <outerLeft>40</outerLeft>
+      <outerRight>40</outerRight>
+      <outerTop>40</outerTop>
+      <sizeRatio>1.23628691983122</sizeRatio>
+      <text>甲方：上海云培信息技术有限公司
+乙方：注册1陪驾教练端的用户
+
+  为了避免陪驾服务中可能产生的纠纷问题，经甲乙双方充分协商，并根据国家相关规定，双方自愿达成如下协议，望共同遵守，具体事项如下：
+
+（一）工作岗位
+  根据甲乙双方工作需要，乙方自愿在1陪驾平台登记成为陪练员，遵守1陪驾的所有规章制度，并履行下列职责和义务。
+  1、持有由1陪驾和上海申诚驾驶员培训有限公司共同培训考核后颁发的《1陪驾驾驶陪练员证》，语言表达能力良好，能够按照教学大纲因材施教，对待学员热情，服务周到，教学过程中能够使用礼貌用语，实时考核分数高于60分（实时考核标准见附件）。
+  2、负责培训本本族，并安排跟踪学员下一步的培训工作。传授他们行驶经验：停车入库、侧方停车、掉头、会车让车、车辆性能等一系列的课程内容上有的知识。
+  3、每次陪练均需提供副刹车，行车记录仪和实习车贴，且行车记录仪的影像资料须及时备份，保留72小时以上。
+  4、供车的陪练员需确保提供的陪驾车辆购买有保额在50万以上的第三者责任险（额度不够可自行向保险公司申请提高）。
+  5、在陪练期间需购有保险，可自行购买保险在80万及以上的人身意外险+保额在8万以上的意外医疗险+保额在160元每天及以上的意外住院津贴，或者申报由公司统一购买，5元/次，仅在陪练服务时生效。
+  6、严格遵守1陪驾的各项规章制度，工作态度良好。具备完善的业务知识、业务技能，良好的职业道德与较强的责任心。陪练期间无事故发生，无学员投诉，无违纪现象发生。不能指导学员危险开车动作，在学员有类似要求时明确告知其危险性并拒绝请求。
+  7、如乙方陪练时因堵车等原因迟到，需提前至少半小时电话通知学员，并在接到乙方后才开始计时。
+  8、乙方需在每次陪练开始前出示自己的《1陪驾驾驶陪练员证》并检查学员驾照。
+  9、服务结束后，乙方应对学员本次课程做出总结。
+  10、不得接私单，如被发现，罚款200元，协议自动失效，并永不再合作。
+
+（二）双方的权利和义务
+  甲方的权利和义务：
+  1、甲方履行本合同规定的义务和岗位职责。
+  2、甲方对乙方履行岗位职责的情况，进行考核。
+  3、其它；
+  乙方的权利和义务：
+  1、乙方享受本合同规定的权利、待遇和保障。
+  2、乙方履行本合同规定的义务和岗位职责。
+  3、其它；
+
+（三）工作报酬及其他费用
+  1、乙方陪驾服务的收入和具体奖励措施可查询甲方当时的相关规定。 
+  2、如乙方接单后又临时有事需取消订单，需根据取消时间扣除账户余额，如账户余额不足则记账从下次收入中扣除：
+  ① 提前24小时以上取消，扣账户余额20元；
+  ② 提前12~24小时取消，扣除订单金额30元；
+  ③ 提前3~12小时取消，扣除订单金额50元；
+  ④ 提前0~3小时取消，扣除100元；
+  ⑤ 无提前通知扣200元。
+  3、乙方可在服务完成15日后自行申请提取佣金，甲方会在审核无误后尽快发放。乙方需自行缴纳个人所得税。
+  4、甲方会在乙方接单后，从前四次订单收益中扣除乙方的培训费用，每次50元，共计200元。
+  5、甲方可为乙方提供副刹车的参考购买地址，价格低于市场价。甲方不为该副刹车的质量做担保，不承担其他任何形式的责任。
+
+（四）工作纪律
+  1、甲方应严格遵守人事法规、纪律，努力维护乙方人事权益。
+  2、乙方应遵守单位各项规章制度，勤奋工作、尽职尽责。
+
+（五）违约责任
+  本合同所签条款，双方必须严格执行，不得违约，任何一方违约，给对方造成经济损失的，应给予赔偿。赔偿金确定办法按国家有关规定执行。
+
+（六）争议处理
+  如果双方发生争议，在双方协商不成或一方不愿协商的情况下，根据国家的有关法律、法规和规定，向劳动争议仲裁部门申请仲裁。
+
+（七）本合同效力不受甲方法定代表人变更影响。
+
+（八）本合同未尽事宜，甲、乙双方另行协商或按照国家有关法律法规执行。
+
+（九）本协议自乙方确认同意之时起生效。</text>
+      <top>40</top>
+      <topRatio>0.0554785020804438</topRatio>
+      <vAlign>top</vAlign>
+      <width>654</width>
+      <widthRatio>0.855595667870036</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel31/panel33">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>47</height>
+      <heightRatio>0.0651872399445215</heightRatio>
+      <left>167</left>
+      <leftRatio>0.227272727272727</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel31"),false);
+
+ </onClick>
+      <sizeRatio>0.206140350877193</sizeRatio>
+      <text>确定</text>
+      <top>654</top>
+      <topRatio>0.900138696255201</topRatio>
+      <width>400</width>
+      <widthRatio>0.545454545454545</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="17">
+    <taskSetItem name="sessionIdName">
+      <script1>eio.appendString8(ee.getEditText(ee.getControl("edit1")));
+</script1>
+      <script2>var idName = eio.readString8();
+session.set("idName", idName);  
+
+</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="getSession">
+      <script1 />
+      <script2>eio.appendString8(session.get("idName")); 
+eio.appendString8(session.get("idNumber"));
+eio.appendString8(session.get("chooseCity"));
+eio.appendString8(session.get("address"));
+eio.appendString8(session.get("license"));
+eio.appendString8(session.get("emName"));
+eio.appendString8(session.get("emTel"));
+eio.appendString8(session.get("carId")); 
+eio.appendString8(session.get("carType"));
+eio.appendString8(session.get("chooseArea"));
+eio.appendString8(session.get("year")); 
+eio.appendString8(session.get("coachLicense"));
+
+//车型
+//陪驾区域
+</script2>
+      <script3>var idName=eio.readString8();
+var idNumber=eio.readString8(); 
+var chooseCity=eio.readString8(); 
+var address=eio.readString8(); 
+var license=eio.readString8(); 
+var emName=eio.readString8();  
+var emTel=eio.readString8();
+var carId=eio.readString8();
+var carType=eio.readString8(); 
+var chooseArea=eio.readString8(); 
+var year=eio.readString8();
+var coachLicense=eio.readString8();
+//车型
+//陪驾区域
+
+ee.setEditText(ee.getControl("edit1"),idName);
+ee.setEditText(ee.getControl("edit2"),idNumber);
+ee.setText(ee.getControl("layoutxitem10"),chooseCity);
+ee.setEditText(ee.getControl("edit12"),address);
+ee.setEditText(ee.getControl("edit10"),license);
+ee.setEditText(ee.getControl("edit4"),emName);
+ee.setEditText(ee.getControl("edit5"),emTel);
+ee.setEditText(ee.getControl("edit6"),carId); 
+//ee.setText(ee.getControl("layoutxitem6"),carType);
+ee.setText(ee.getControl("layoutxitem18"),chooseArea); 
+ee.setEditText(ee.getControl("edit3"),year);  
+ee.setEditText(ee.getControl("edit7"),coachLicense);
+
+/*var lay6=(ee.getText(ee.getControl("layoutxitem6")));*/ 
+if(carType=="自动挡"){
+   ee.setImage(ee.getControl("panel29"),"/App1PJ/regCoaches/checked.png","fill","","");  
+   ee.setImage(ee.getControl("panel51"),"/App1PJ/regCoaches/check.png","fill","","");
+}
+else if(carType=="手动挡"){ 
+   ee.setImage(ee.getControl("panel51"),"/App1PJ/regCoaches/checked.png","fill","","");  
+   ee.setImage(ee.getControl("panel29"),"/App1PJ/regCoaches/check.png","fill","",""); 
+} 
+else {
+   ee.setImage(ee.getControl("panel29"),"/App1PJ/regCoaches/check.png","fill","","");  
+   ee.setImage(ee.getControl("panel51"),"/App1PJ/regCoaches/check.png","fill","","");
+}
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="sessionIdNumber">
+      <script1>eio.appendString8(ee.getEditText(ee.getControl("edit2")));
+</script1>
+      <script2>var idNumber = eio.readString8();
+session.set("idNumber", idNumber); 
+</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="sessionAddress">
+      <script1>eio.appendString8(ee.getEditText(ee.getControl("edit12")));
+</script1>
+      <script2>var address = eio.readString8();
+session.set("address", address);
+</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="sessionLicense">
+      <script1>eio.appendString8(ee.getEditText(ee.getControl("edit10")));
+</script1>
+      <script2>var license = eio.readString8();
+session.set("license", license);
+</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="sessionEmName">
+      <script1>eio.appendString8(ee.getEditText(ee.getControl("edit4")));
+</script1>
+      <script2>var emName = eio.readString8();
+session.set("emName", emName);
+</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="sessionEmTel">
+      <script1>eio.appendString8(ee.getEditText(ee.getControl("edit5")));
+</script1>
+      <script2>var emTel = eio.readString8();
+session.set("emTel",emTel);
+</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="seesionCarId">
+      <script1>eio.appendString8(ee.getEditText(ee.getControl("edit6")));
+</script1>
+      <script2>var carId = eio.readString8();
+session.set("carId", carId);
+</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="setSessionChoose">
+      <script1>eio.appendString8(g5.chooseFlag);
+</script1>
+      <script2>var chooseFlag=eio.readString8();
+session.set("chooseFlag", chooseFlag);
+ </script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="seesionCarType">
+      <script1>eio.appendString8(g5.carType);
+</script1>
+      <script2>var carType=eio.readString8();
+session.set("carType", carType);
+</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="setChoose1">
+      <script1 />
+      <script2>session.set("pageFlag","update");
+session.set("chooseFlag","city");
+</script2>
+      <script3>window.location.href = ee.pageRoot + "/regNewUser/city"; </script3>
+    </taskSetItem>
+    <taskSetItem name="setChoose2">
+      <script1 />
+      <script2>session.set("pageFlag","update");
+session.set("chooseFlag", "area");
+</script2>
+      <script3>window.location.href = ee.pageRoot + "/regNewUser/city"; </script3>
+    </taskSetItem>
+    <taskSetItem name="getCoachMessage">
+      <script1 />
+      <script2>var sql,sqlResult;  
+sql="select * from userInfo where mobile='"+db.encode(session.get("mobile"))+"' ";
+sqlResult = db.executeQuery("PJ",sql);  
+es.logWarning(sql);
+db.read(sqlResult);    
+if (sqlResult == null) {
+    eio.appendString8(sqlResult);
+    return;
+}
+var idName=db.getString(sqlResult, "idName"); 
+var idNumber=db.getString(sqlResult, "idNumber");
+var address=db.getString(sqlResult, "address");
+var emName=db.getString(sqlResult, "emName");
+var emTel=db.getString(sqlResult, "emTel");
+var carId=db.getString(sqlResult, "carId");
+var carType=db.getString(sqlResult, "carType");
+var licenseStart=db.getInt32(sqlResult, "licenseStart");
+var serviceArea=db.getString(sqlResult, "serviceArea");
+var licenseNumber=db.getString(sqlResult, "licenseNumber");
+var carBand=db.getString(sqlResult, "carBand");
+var coachNumber=db.getString(sqlResult, "coachNumber");
+eio.appendString8("T"); 
+eio.appendString8(idName);
+eio.appendString8(idNumber);
+eio.appendString8(address);
+eio.appendString8(emName);
+eio.appendString8(emTel);
+eio.appendString8(carId);
+eio.appendString8(carType);
+eio.appendInt32(licenseStart);
+eio.appendString8(serviceArea);
+eio.appendString8(licenseNumber);    
+eio.appendString8(carBand); 
+eio.appendString8(coachNumber); 
+es.logWarning(idName);   
+es.logWarning(idNumber);
+es.logWarning(address);
+es.logWarning(emName);
+es.logWarning(emTel);
+es.logWarning(carId);
+es.logWarning(carType);
+es.logWarning(licenseStart);
+es.logWarning(serviceArea); 
+es.logWarning(licenseNumber);
+
+
+</script2>
+      <script3><![CDATA[var resultCode = eio.readString8();
+if (resultCode =="F") {
+    alert("系统繁忙，请稍后再试。");
+    return;
+}
+   
+var idName = eio.readString8(); 
+var idNumber = eio.readString8();
+var address = eio.readString8();
+var emName = eio.readString8();
+var emTel = eio.readString8();
+var carId = eio.readString8();
+var carType = eio.readString8();
+var licenseStart = eio.readInt32();
+var serviceArea = eio.readString8();
+var licenseNumber = eio.readString8();
+var carBand=eio.readString8();   
+var coachNumber=eio.readString8(); 
+var index1;
+
+
+if(address.indexOf("区")>-1){
+    index1=address.indexOf("区");
+    var address2=address.substr(0,index1); 
+    var address3=address.substr(index1+1,address.length);
+} 
+
+ee.setEditText(ee.getControl("edit1"),idName);  
+ee.setEditText(ee.getControl("edit2"),idNumber); 
+ee.setText(ee.getControl("layoutxitem10"),address2);
+ee.setEditText(ee.getControl("edit12"),address3);
+ee.setEditText(ee.getControl("edit4"),emName);
+ee.setEditText(ee.getControl("edit5"),emTel);
+ee.setEditText(ee.getControl("edit6"),carId);   
+if(carType==""){
+   ee.setText(ee.getControl("layoutxitem6"),"无车可不填"); 
+   ee.setTextColor(ee.getControl("layoutxitem6"),"#b5b5b5"); 
+}
+else if(carType!="无车可不填"){ 
+   ee.setTextColor(ee.getControl("layoutxitem6"),"#000"); 
+} 
+else {
+   ee.setTextColor(ee.getControl("layoutxitem6"),"#b5b5b5"); 
+}
+ee.setText(ee.getControl("layoutxitem18"),serviceArea);
+ee.setEditText(ee.getControl("edit10"),licenseNumber);
+]]></script3>
+    </taskSetItem>
+    <taskSetItem name="upateUserInfo">
+      <script1>var address=ee.getText(ee.getControl("layoutxitem10"));//＋ee.getEditText(ee.getControl("edit11"));//+"区/县"＋ee.getEditText(ee.getControl("edit12")); 
+
+var add2=ee.getEditText(ee.getControl("edit12"));  
+    address=address+add2;  
+    
+    
+var address2=ee.getText(ee.getControl("layoutxitem18"));  
+
+/*var carTypes=ee.getText(ee.getControl("layoutxitem6"));
+if(carTypes=="无车可不填"){
+     carTypes="";
+}*/
+eio.appendString8(ee.getEditText(ee.getControl("edit1")));
+//eio.appendString8(eb.getCookie("am_photo1"));
+eio.appendString8(ee.getEditText(ee.getControl("edit2")));
+eio.appendString16(address);
+eio.appendString8(ee.getEditText(ee.getControl("edit4")));
+eio.appendString8(ee.getEditText(ee.getControl("edit5")));
+//eio.appendString8(eb.getCookie("am_emTel"));
+//eio.appendString8(g5.photo2);
+//eio.appendString8(g5.photo3);
+eio.appendString8(ee.getEditText(ee.getControl("edit6")));
+//eio.appendString8(carTypes); //车档位
+//eio.appendInt32(g5.licenseStart);
+eio.appendString16(address2);
+eio.appendString8(ee.getEditText(ee.getControl("edit10")));
+</script1>
+      <script2>var idName = eio.readString8();
+var idNumber = eio.readString8();
+var address = eio.readString16();
+var emName = eio.readString8();
+var emTel = eio.readString8();
+var carId = eio.readString8();
+var carType = session.get("carType");
+//var licenseStart = eio.readInt32();
+var serviceArea = eio.readString16();
+var licenseNumber = eio.readString8(); 
+//var carBand=eio.readString8();   
+//var coachNumber=eio.readString8();
+var id = session.get("mobile"); 
+var nickName = session.get("nickName");
+var password = session.get("password");
+var licenseStart = session.get("year"); 
+var coachNumber = session.get("coachLicense");
+
+es.logWarning(idName);
+es.logWarning(idNumber);
+es.logWarning(emName);
+es.logWarning(emTel);
+es.logWarning(carId);
+es.logWarning(carType);
+es.logWarning(serviceArea);
+es.logWarning(licenseNumber);
+
+var sql,sqlResult; 
+
+//创建用户
+sql = "exec createUser '" + db.encode(id) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+
+db.read(sqlResult);
+if (db.getInt32(sqlResult, "resultCode")!=0) {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "resultString"));
+    return;
+}
+
+sql = "update userInfo set " +
+    "idName = '" + db.encode(idName) + "', " +
+    "idNumber = '" + db.encode(idNumber) + "', " +
+    "address = '" + db.encode(address) + "', " + 
+    "emName = '" + db.encode(emName) + "', " + 
+    "emTel = '" + db.encode(emTel) + "', " + 
+    "carId = '" + db.encode(carId) + "', " + 
+    "carType = '" + db.encode(carType) + "', " + 
+    //"licenseStart = '" + licenseStart + "', " +
+    "serviceArea = '" + db.encode(serviceArea) + "', " + 
+    "licenseNumber = '" + db.encode(licenseNumber) + "', " +
+    //"carBand = '" + db.encode(carBand) + "', " +
+    "coachNumber = '" + db.encode(coachNumber) + "', " +
+    "userType = '教练'" +
+    "where mobile = '" + db.encode(id) + "'";
+sqlResult = db.executeQuery("PJ", sql);    
+if (!db.executeNoneQuery("PJ", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+es.logWarning(sql);
+eio.appendString8("T");
+</script2>
+      <script3>var resultCode = eio.readString8();
+//alert(resultCode)
+
+if (resultCode=="F") {
+    alert("修改个人资料失败：" + resultString);
+    return;
+}    
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="seesionCarType">
+      <script1>eio.appendString8(g5.carType);
+</script1>
+      <script2>var carType=eio.readString8();
+session.set("carType", carType);
+</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="sessionYear">
+      <script1>eio.appendString8(ee.getEditText(ee.getControl("edit3")));</script1>
+      <script2>var year = eio.readString8();
+session.set("year", year);</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="sessionCoachLicense">
+      <script1>eio.appendString8(ee.getEditText(ee.getControl("edit7")));</script1>
+      <script2>var coachLicense = eio.readString8();
+session.set("coachLicense", coachLicense);</script2>
+      <script3 />
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

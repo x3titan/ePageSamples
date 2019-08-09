@@ -1,0 +1,865 @@
+<page>
+  <controls count="20">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+if (!isIOS) {
+    ee.getControl("layoutyitem1").heavy = 0;
+}
+setTimeout(function(){
+    ee.autoResize = false;
+},1000);
+
+//var addHtml="<div class='demo_main'><fieldset class='demo_content'> <div id='map' style='width:100%;height:400px'></div></fieldset></div> ";    
+//$("#ee_divRoot").append(addHtml);
+//g5.p1=0;
+//g5.p2=0;   
+var flagOne=true; //是否第一次执行
+
+document.addEventListener("deviceready", onDeviceReady, false); 
+         /*var load = document.createElement("script");  
+                load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_c";   
+                document.body.appendChild(load);
+                alert("3232");*/
+    var watchID = null;
+    
+    // PhoneGap加载完毕
+    function onDeviceReady() {  
+    //alert("333");     
+    //var map = new BMap.Map("ee_panel1");
+   // var map = new BMap.Map("ee_panel1"); // 创建Map实例 
+        // 每隔3秒钟更新一次
+        //var options = { frequency: 10000 };
+        watchID = navigator.geolocation.watchPosition(onSuccess,onError);//,function(){ maximumAge: 10000, timeout: 200000, enableHighAccuracy: false });           //options    
+//navigator.geolocation.getCurrentPosition(onSuccess);
+    }
+      //var map = new BMap.Map("ee_panel1");
+    // 获取位置信息成功时调用的回调函数
+    var onSuccess = function(position) {   
+    //g5.flag=true;
+    //alert(position.coords.latitude);    
+   //var map = new BMap.Map("ee_panel1"); // 创建Map实例  
+                    //var point = new BMap.Point(position.coords.latitude,position.coords.longitude); //地图中心点，广州市  
+                if(flagOne==true){    
+                    g5.point1= position.coords.latitude;
+                    g5.point2= position.coords.longitude; 
+                          
+      var load = document.createElement("script");  
+                load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_init";  
+                 //load.src = "baidumap://map/geocoder?location=39.990912172420714,116.32715863448607&amp;coord_type=gcj02&amp;src=webapp.rgeo.yourCompanyName.yourAppName""; 
+                document.body.appendChild(load);     
+      //setTimeout(function(){},10000);  
+      flagOne=false;                                        
+        }   
+       else{
+                return;
+       } 
+                
+};
+    
+    // onError回调函数接收一个PositionError对象
+    function onError(error) {
+        alert('code: '    + error.code    + '\n' +
+            'message: ' + error.message + '\n');
+    } 
+
+
+ g5.map_c=function map_c(){
+          g5.map = new BMap.Map("ee_panel1"); // 创建Map实例 
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+g5.map_init = function map_init() {                     
+                    //g5.map.removeOverlay(markerCenter);  
+                    //alert(g5.point1);
+                    //alert(g5.point2);
+                    //alert(point);    
+                    if(!g5.map){
+                        g5.map = new BMap.Map("ee_panel1"); // 创建Map实例 
+                     } 
+                    /*else{   //时时监控位置，删除上一个标注（有点问题）
+                        // if(g5.p1!=g5.point1||(g5.p2!=g5.point2)){
+                             g5.map.removeOverlay(g5.markerCenter);   
+                         //}
+                     }*/       
+                    // marker.remove();
+                    var point = new BMap.Point(g5.point2,g5.point1); //地图中心点，广州市  
+                   //var point = new BMap.Point(121.312213, 31.347267); 
+                    //alert(position.coords.latitude,);
+                    g5.map.centerAndZoom(point,13); // 初始化地图,设置中心点坐标和地图级别。 
+                    //new window.BMap.Marker(point);   
+                    //此处显示的就是纠偏后的经纬度
+                       //真实经纬度转成百度坐标
+                    g5.map.enableScrollWheelZoom(true); //启用滚轮放大缩小  
+                    //向地图中添加缩放控件  
+                    var ctrlNav = new window.BMap.NavigationControl({  
+                        anchor: BMAP_ANCHOR_TOP_LEFT,  
+                        type: BMAP_NAVIGATION_CONTROL_LARGE  
+                    });  
+                    g5.map.addControl(ctrlNav); 
+                      
+                    //添加单个标记
+                    g5.markerCenter = new window.BMap.Marker(point);
+                    g5.map.addOverlay(g5.markerCenter);  
+                    //添加标记注释/名
+                    var labelCenter = new window.BMap.Label("当前位置", { offset: new window.BMap.Size(20, -10) });  
+                    labelCenter.setStyle({"color":"#3180ee","border":"none"});//设置label的样式
+                    g5.markerCenter.setLabel(labelCenter); 
+
+                    //向地图中添加缩略图控件  
+                    var ctrlOve = new window.BMap.OverviewMapControl({  
+                        anchor: BMAP_ANCHOR_BOTTOM_RIGHT,  
+                        isOpen: 1  
+                    });  
+                    g5.map.addControl(ctrlOve);  
+                    //向地图中添加比例尺控件  
+                    var ctrlSca = new window.BMap.ScaleControl({  
+                        anchor: BMAP_ANCHOR_BOTTOM_LEFT  
+                    });  
+                    g5.map.addControl(ctrlSca);  
+  
+                    var point = new Array(); //存放标注点经纬信息的数组  
+                    var marker = new Array(); //存放标注点对象的数组  
+                    var info = new Array(); //存放提示信息窗口对象的数组  
+                    for (var i = 0; i < markerArr.length; i++) {  
+                        var p0 = markerArr[i].point.split(",")[0]; //  
+                        var p1 = markerArr[i].point.split(",")[1]; //按照原数组的point格式将地图点坐标的经纬度分别提出来  
+                        point[i] = new window.BMap.Point(p0, p1); //循环生成新的地图点  
+                        marker[i] = new window.BMap.Marker(point[i]); //按照地图点坐标生成标记  
+                        g5.map.addOverlay(marker[i]);  
+                        marker[i].setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画  
+                        var label = new window.BMap.Label(markerArr[i].title, { offset: new window.BMap.Size(20, -10) });  
+                        label.setStyle({"border":"none"});
+                        marker[i].setLabel(label);  
+                        info[i] = new window.BMap.InfoWindow("<p style=’font-size:12px;lineheight:1.8em;’>" + markerArr[i].title + "</br>地址：" + markerArr[i].address + "</br> 参考价：" + markerArr[i].money + "元</br></p>"); // 创建信息窗口对象   
+                       /* marker[i].addEventListener("click", function () {  //红色标记点击到显示详情  
+                            alert("1234");
+                            this.openInfoWindow(info["\""+i+"\""]);   //只能写死变量不执行
+                            alert(i);  
+                            //alert(markerArr[0].title);  
+                            ee.setText(ee.getControl("panel7"),markerArr[i].title);
+                        });*/  
+                    }  
+                    /*marker.addEventListener("click", function () {
+                        alert("1111");
+                    }) */
+                    /*for(var k=0;k<29;k++){
+                         marker[k].addEventListener("click", function () {  //红色标记点击到显示详情
+                            this.openInfoWindow(info[k]);  
+                            //alert(markerArr[0].title);  
+                            ee.setText(ee.getControl("panel7"),markerArr[k].title);
+                        });          
+                        alert(k);
+                    } */
+                    /*markers(0);
+                    markers(1); 
+                    markers(2);
+                    markers(3);
+                    markers(4);*/ 
+                    marker[0].addEventListener("click", function () {  //红色标记点击到显示详情
+                        this.openInfoWindow(info[0]);  
+                        //alert(markerArr[0].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[0].title);
+                    });  
+                    marker[1].addEventListener("click", function () {  
+                        this.openInfoWindow(info[1]);  
+                        //alert(markerArr[1].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[1].title);
+                    });  
+                    marker[2].addEventListener("click", function () {  
+                        this.openInfoWindow(info[2]);  
+                        //alert(markerArr[2].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[2].title);
+                    });  
+                    marker[3].addEventListener("click", function () {  
+                        this.openInfoWindow(info[3]); 
+                        //alert(markerArr[3].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[3].title);
+                    }); 
+                    marker[4].addEventListener("click", function () {  
+                        this.openInfoWindow(info[4]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[4].title);
+                    });     
+                    marker[5].addEventListener("click", function () {  
+                        this.openInfoWindow(info[5]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[5].title);
+                    }); 
+                    marker[6].addEventListener("click", function () {  
+                        this.openInfoWindow(info[6]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[6].title);
+                    }); 
+                    marker[7].addEventListener("click", function () {  
+                        this.openInfoWindow(info[7]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[7].title);
+                    }); 
+                    marker[8].addEventListener("click", function () {  
+                        this.openInfoWindow(info[8]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[8].title);
+                    }); 
+                    marker[9].addEventListener("click", function () {  
+                        this.openInfoWindow(info[9]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[9].title);
+                    }); 
+                    marker[10].addEventListener("click", function () {  
+                        this.openInfoWindow(info[10]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[10].title);
+                    });  
+                    marker[11].addEventListener("click", function () {  
+                        this.openInfoWindow(info[11]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[11].title);
+                    }); 
+                    marker[12].addEventListener("click", function () {  
+                        this.openInfoWindow(info[12]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[12].title);
+                    }); 
+                    marker[13].addEventListener("click", function () {  
+                        this.openInfoWindow(info[13]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[13].title);
+                    }); 
+                    marker[14].addEventListener("click", function () {  
+                        this.openInfoWindow(info[14]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[14].title);
+                    }); 
+                    marker[15].addEventListener("click", function () {  
+                        this.openInfoWindow(info[15]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[15].title);
+                    }); 
+                    marker[16].addEventListener("click", function () {  
+                        this.openInfoWindow(info[16]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[16].title);
+                    }); 
+                    marker[17].addEventListener("click", function () {  
+                        this.openInfoWindow(info[17]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[17].title);
+                    }); 
+                    marker[18].addEventListener("click", function () {  
+                        this.openInfoWindow(info[18]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[18].title);
+                    }); 
+                    marker[19].addEventListener("click", function () {  
+                        this.openInfoWindow(info[19]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[19].title);
+                    }); 
+                    marker[20].addEventListener("click", function () {  
+                        this.openInfoWindow(info[20]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[20].title);
+                    });  
+                    marker[21].addEventListener("click", function () {  
+                        this.openInfoWindow(info[21]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[21].title);
+                    }); 
+                    marker[22].addEventListener("click", function () {  
+                        this.openInfoWindow(info[22]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[22].title);
+                    }); 
+                    marker[23].addEventListener("click", function () {  
+                        this.openInfoWindow(info[23]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[23].title);
+                    }); 
+                    marker[24].addEventListener("click", function () {  
+                        this.openInfoWindow(info[24]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[24].title);
+                    }); 
+                    marker[25].addEventListener("click", function () {  
+                        this.openInfoWindow(info[25]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[25].title);
+                    }); 
+                    marker[26].addEventListener("click", function () {  
+                        this.openInfoWindow(info[26]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[26].title);
+                    }); 
+                    marker[27].addEventListener("click", function () {  
+                        this.openInfoWindow(info[27]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[27].title);
+                    }); 
+                    marker[28].addEventListener("click", function () {  
+                        this.openInfoWindow(info[28]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[28].title);
+                    }); 
+                    marker[29].addEventListener("click", function () {  
+                        this.openInfoWindow(info[29]); 
+                        //alert(markerArr[4].title); 
+                        ee.setText(ee.getControl("panel7"),markerArr[29].title);
+                    });  
+                  // g5.p1=g5.point1;
+                  // g5.p2=g5.point2; 
+                }  
+                //异步调用百度js  
+               // var load = document.createElement("script");  
+               // load.src = "http://api.map.baidu.com/api?v=1.4&amp;callback=g5.map_init";  
+               // document.body.appendChild(load);  
+  /*function markers(p){     
+  alert(p);
+          marker[p].addEventListener("click", function () {  //红色标记点击到显示详情   
+              alert(p)
+                        this.openInfoWindow(info[p]);  
+                        //alert(markerArr[0].title);  
+                        ee.setText(ee.getControl("panel7"),markerArr[p].title);
+                    }); 
+  } */]]></onControlLoad>
+      <onPageCreate>var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+var oHead = document.getElementsByTagName("HEAD").item(0); 
+var oScript
+if (isIOS) {
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova.js"; 
+    oHead.appendChild( oScript); 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova_plugins.js"; 
+    oHead.appendChild(oScript); 
+} else {
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova5/cordova.js"; 
+    oHead.appendChild( oScript); 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova5/cordova_plugins.js"; 
+    oHead.appendChild(oScript); 
+}         
+</onPageCreate>
+      <onPageLoad>var markerArr = [  
+                { title: "上海万隆机动车驾驶员培训中心", point: "121.4512230000,31.3061110000", address: "万荣一路40号", money: "6000起" },  
+                { title: "上海通略阳浦机动车驾驶员培训部", point: "121.5572190000,31.2745310000", address: "隆昌路55号 ", money: "7000起" },  
+                { title: "上海通略机动车驾驶员培训有限公司第一分公司", point: "121.5464270000,31.2857980000", address: "隆昌路640号", money: "7000起" },  
+                { title: "上海荣臣机动车驾驶员培训有限公司分公司", point: "121.4476370000,31.1759480000", address: "龙漕路180号", money: "7000起" }, 
+                { title: "上海小昆山机动车驾驶技术学校", point: "121.1365790000,31.0374320000", address: "小昆山镇平原街398号", money: "7000起" },
+                { title: "上海松春机动车驾驶员培训有限公司", point: "121.2247630000,31.0197700000", address: "乐都路478号", money: "6000起" }, 
+                { title: "上海银都机动车驾驶员培训中心", point: "121.3572730000,31.0743120000", address: "申港路298号", money: "6500起" },
+                { title: "上海中航机动车驾驶员培训有限公司", point: "121.2975350000,31.1775150000", address: "徐泾镇老沪青平公路398号4幢", money: "6500起" },
+                { title: "上海大众驾驶员培训有限公司分公司", point: "121.2453220000,31.2062890000", address: "北青公路4149号5号楼", money: "7000起" },
+                { title: "上海成达汽车驾驶员培训有限公司", point: "121.3589830000,31.2861820000", address: "武威路901弄133号", money: "7500起" },
+                { title: "上海高校机动车驾驶员培训中心", point: "121.3919220000,31.2887850000", address: "古浪路415弄8号二楼(201-204)", money: "6900起" },
+                { title: "上海通略机动车驾驶员培训有限公司第二分公司", point: "121.4363130000,31.2720640000", address: "新村路401号3幢101室", money: "7000起" },
+                { title: "上海晟豪机动车驾驶员培训有限公司 ", point: "121.7604880000,30.9640570000", address: "南芦公路1288号", money: "6500起" },
+                { title: "上海强生机动车驾驶员培训中心有限公司浦东分部", point: "121.5248420000,31.1901690000", address: "浦三路752号", money: "6000起" },
+                { title: "上海高校机动车驾驶员培训中心二分部", point: "121.5473940000,31.2502110000", address: "浦东大道1606号", money: "6500起" },
+                { title: "上海莘庄驾驶员培训有限公司", point: "121.3575010000,31.1270350000", address: "黎安路1501号", money: "5800起" },
+                { title: "上海申通驾驶员教育培训七部有限公司", point: "121.3902310000,31.0751100000", address: "中春路2626号", money: "7000起" },
+                { title: "上海虹港机动车驾驶员培训有限公司", point: "121.4367730000,31.0890940000", address: "双柏路1513号5号", money: "6500起" },
+                { title: "上海荣安朱泾机动车驾驶员培训有限公司", point: "121.2247090000,30.8868980000", address: "朱泾镇慧农村9128号", money: "6800起" },
+                { title: "上海龙泉机动车驾驶员培训有限公司", point: "121.2468410000,31.2734720000", address: "黄渡镇联群路88号", money: "6500起" },
+                { title: "上海五汽驾驶员培训有限公司", point: "121.2247630000,31.0197700000", address: "曹安路4671号25幢240室", money: "5600起" },
+                { title: "上海安亭机动车驾驶员培训有限公司", point: "121.2292960000,31.3369560000", address: "伊宁路2000号88幢201室", money: "7000起" }, 
+                { title: "上海军体汽车驾驶培训有限公司", point: "121.4779590000,31.2848440000", address: "广中路444号", money: "7800起" },
+                { title: "上海齐爱机动车驾驶员培训有限公司", point: "121.3984610000,30.9831380000", address: "邬桥镇渔沥村1344号", money: "6200起" },
+                { title: "上海星火机动车驾驶员培训有限公司", point: "121.5615530000,30.8595960000", address: "星火开发区", money: "6200起" },
+                { title: "上海前卫机动车驾驶员培训有限公司", point: "121.4940980000,31.3288410000", address: "高逸路103号", money: "7000起" },
+                { title: "上海水泉机动车驾驶员培训有限公司", point: "121.4647320000,31.3448840000", address: "长江西路1181号", money: "7000起" },
+                { title: "上海宏大机动车驾驶员培训有限公司", point: "121.3456950000,31.4635980000", address: "罗宁路1508号K栋206室", money: "7000起" },
+                { title: "申诚驾校", point: "121.4006620000,30.9705260000", address: "庄行镇渔沥村839号", money: "6000起" }
+            ];  
+/*onDeviceReady: function() {
+        app.receivedEvent('deviceready');
+
+        //通过百度sdk来获取经纬度,并且alert出经纬度信息
+        var noop = function(){}
+        window.locationService.getCurrentPosition(function(pos){
+            alert(JSON.stringify(pos))
+            window.locationService.stop(noop,noop)
+        },function(e){
+            alert(JSON.stringify(e))
+            window.locationService.stop(noop,noop)
+        });
+    } */
+    
+/*function onSuccess(position) {   
+alert("1");
+alert(position.coords.latitude); 
+alert(position.coords.longitude);
+}
+
+// onError回调函数接收一个PositionError对象
+function onError(error) {
+alert('code: '    + error.code    + '\n' +'message: ' + error.message + '\n');
+}
+
+
+if (navigator.geolocation) {
+            alert( ' 浏览器支持 geolocation ' );
+}else{
+            alert( ' 浏览器不支持 geolocation ' );
+}
+
+var options = {maximumAge: 0, timeout: 20000, enableHighAccuracy:true};
+navigator.geolocation.getCurrentPosition(onSuccess, onError, options); */ 
+
+/*navigator.geolocation.getCurrentPosition(onSuccess, onError, { maximumAge: 3000, timeout: 20000, enableHighAccuracy: true });
+alert(11)
+
+navigator.geolocation.getCurrentPosition(function(pos){
+               alert(JSON.stringify(pos))
+        },function(err){
+               alert(JSON.stringify(err))
+          }, {
+    enableHighAccuracy: false,
+    timeout: 60*1000,
+    maximumAge: 1000*60*10
+});  ;*/  
+ 
+
+/*document.addEventListener("deviceready", onDeviceReady, false); 
+   alert("1") 
+    var watchID = null;
+    
+    // PhoneGap加载完毕
+    function onDeviceReady() {
+        // 每隔3秒钟更新一次
+        var options = { frequency: 3000 };
+        watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+    }
+    
+    // 获取位置信息成功时调用的回调函数
+    var onSuccess = function(position) {
+    alert('Latitude: '  + position.coords.latitude             + '\n' +
+        'Longitude: ' + position.coords.longitude            + '\n' +
+        'Timestamp: ' + new Date(position.timestamp * 1000)  + '\n');
+};
+    
+    // onError回调函数接收一个PositionError对象
+    function onError(error) {
+        alert('code: '    + error.code    + '\n' +
+            'message: ' + error.message + '\n');
+    }   */
+  
+  //alert(12);</onPageLoad>
+      <pageHead><![CDATA[<meta name="format-detection" content="telephone=no"/>
+  
+ 
+<script type="text/javascript"src="http://api.map.baidu.com/api?v=2.0&amp;ak=0OyGvMvG4gbXyIDkK7Cc2XSMUUviVwIo"></script>
+<script type="text/javascript"src="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.js"></script>
+<link rel="stylesheet"href="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.css"/> ]]></pageHead>
+      <top>0</top>
+      <width>465</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>529</height>
+      <heightRatio>0.64828431372549</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.10208333333333</sizeRatio>
+      <top>89</top>
+      <topRatio>0.10906862745098</topRatio>
+      <width>465</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>90</height>
+      <heightRatio>0.110294117647059</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.203619909502262</sizeRatio>
+      <top>0</top>
+      <width>465</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <backgroundColor>BFCEDF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>47</heavy>
+      <height>29</height>
+      <heightRatio>0.322222222222222</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0229612034837688</sizeRatio>
+      <top>0</top>
+      <width>465</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>0.677777777777778</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0482977038796516</sizeRatio>
+      <text>学驾</text>
+      <top>29</top>
+      <topRatio>0.322222222222222</topRatio>
+      <width>465</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel10">
+      <backgroundImg>back.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>34</height>
+      <heightRatio>0.557377049180328</heightRatio>
+      <left>13</left>
+      <leftRatio>0.0274442538593482</leftRatio>
+      <sizeRatio>0.492753623188406</sizeRatio>
+      <top>13</top>
+      <topRatio>0.213114754098361</topRatio>
+      <width>55</width>
+      <widthRatio>0.118353344768439</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel11">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>57</height>
+      <heightRatio>0.934426229508197</heightRatio>
+      <left>1</left>
+      <leftRatio>0.00211416490486258</leftRatio>
+      <onClick>window.location.href = ee.pageRoot + "/test";
+//history.go(-1) 
+</onClick>
+      <sizeRatio>0.619565217391304</sizeRatio>
+      <top>1</top>
+      <topRatio>0.0163934426229508</topRatio>
+      <width>90</width>
+      <widthRatio>0.194503171247357</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>4C4C4C</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>0.0490196078431373</heightRatio>
+      <left>76</left>
+      <leftRatio>0.16260162601626</leftRatio>
+      <sizeRatio>0.373831775700935</sizeRatio>
+      <text>驾校名称：</text>
+      <top>658</top>
+      <topRatio>0.806372549019608</topRatio>
+      <width>101</width>
+      <widthRatio>0.217479674796748</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>56</height>
+      <heightRatio>0.0686274509803922</heightRatio>
+      <leftRatio>0.2157712305026</leftRatio>
+      <onClick>if(ee.getText(ee.getControl("panel7"))==""||ee.getText(ee.getControl("panel7"))=="　"){
+    alert("请选择驾校");  
+    return;
+}    
+ee.setVisible(ee.getControl("panel8"),true);
+//apply();
+//alert("感谢您对我们工作的信任和支持，我们的后台工作人员会在1-3个工作日内为您处理。");</onClick>
+      <sizeRatio>0.0852359208523592</sizeRatio>
+      <text>确认报名</text>
+      <top>743</top>
+      <topRatio>0.910539215686274</topRatio>
+      <width>265</width>
+      <widthRatio>0.569324090121317</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel4">
+      <backgroundImg>iconImg.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>30</height>
+      <heightRatio>0.0367647058823529</heightRatio>
+      <left>39</left>
+      <leftRatio>0.0833333333333333</leftRatio>
+      <sizeRatio>0.967741935483871</sizeRatio>
+      <top>663</top>
+      <topRatio>0.8125</topRatio>
+      <width>29</width>
+      <widthRatio>0.0630081300813008</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>4C4C4C</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>34</height>
+      <heightRatio>0.0416666666666667</heightRatio>
+      <left>34</left>
+      <leftRatio>0.0731707317073171</leftRatio>
+      <sizeRatio>0.333333333333333</sizeRatio>
+      <text>地点查询</text>
+      <top>619</top>
+      <topRatio>0.758578431372549</topRatio>
+      <width>96</width>
+      <widthRatio>0.207317073170732</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel6">
+      <backgroundColor>DCDCDC</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>2</height>
+      <heightRatio>0.00245098039215686</heightRatio>
+      <left>41</left>
+      <leftRatio>0.0873983739837398</leftRatio>
+      <sizeRatio>0.00490196078431373</sizeRatio>
+      <top>653</top>
+      <topRatio>0.800245098039216</topRatio>
+      <width>386</width>
+      <widthRatio>0.829268292682927</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel7">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>AFAEAE</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>40</height>
+      <heightRatio>0.0490196078431373</heightRatio>
+      <left>43</left>
+      <leftRatio>0.0914634146341463</leftRatio>
+      <sizeRatio>0.0982800982800983</sizeRatio>
+      <text>　</text>
+      <top>699</top>
+      <topRatio>0.856617647058823</topRatio>
+      <width>385</width>
+      <widthRatio>0.827235772357724</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <height>197</height>
+      <heightRatio>0.241421568627451</heightRatio>
+      <layerName>弹框</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.427331887201735</sizeRatio>
+      <top>617</top>
+      <topRatio>0.756127450980392</topRatio>
+      <width>465</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel9">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>4C4C4C</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>35</height>
+      <heightRatio>0.176211453744493</heightRatio>
+      <left>34</left>
+      <leftRatio>0.0735694822888283</leftRatio>
+      <sizeRatio>0.579710144927536</sizeRatio>
+      <text>姓名：</text>
+      <top>23</top>
+      <topRatio>0.118942731277533</topRatio>
+      <width>87</width>
+      <widthRatio>0.188010899182561</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel8/edit1">
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>35</height>
+      <heightRatio>0.176211453744493</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontColor>505050</inputFontColor>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>124</left>
+      <leftRatio>0.267029972752044</leftRatio>
+      <sizeRatio>0.163934426229508</sizeRatio>
+      <top>23</top>
+      <topRatio>0.118942731277533</topRatio>
+      <width>309</width>
+      <widthRatio>0.664850136239782</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel12">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>4C4C4C</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>35</height>
+      <heightRatio>0.176211453744493</heightRatio>
+      <left>34</left>
+      <leftRatio>0.0735694822888283</leftRatio>
+      <sizeRatio>0.579710144927536</sizeRatio>
+      <text>电话：</text>
+      <top>76</top>
+      <topRatio>0.383259911894273</topRatio>
+      <width>87</width>
+      <widthRatio>0.188010899182561</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel8/edit2">
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>35</height>
+      <heightRatio>0.176211453744493</heightRatio>
+      <inputFont>黑体</inputFont>
+      <inputFontColor>505050</inputFontColor>
+      <inputFontSizeAuto>25</inputFontSizeAuto>
+      <left>124</left>
+      <leftRatio>0.267029972752044</leftRatio>
+      <sizeRatio>0.163934426229508</sizeRatio>
+      <top>76</top>
+      <topRatio>0.383259911894273</topRatio>
+      <width>309</width>
+      <widthRatio>0.664850136239782</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel13">
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.215859030837004</heightRatio>
+      <left>38</left>
+      <leftRatio>0.0817438692098093</leftRatio>
+      <onClick>apply();</onClick>
+      <sizeRatio>0.49</sizeRatio>
+      <text>确定</text>
+      <top>129</top>
+      <topRatio>0.656387665198238</topRatio>
+      <width>127</width>
+      <widthRatio>0.272479564032698</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8/panel14">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>43</height>
+      <heightRatio>0.215859030837004</heightRatio>
+      <left>298</left>
+      <leftRatio>0.640326975476839</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel8"),false);</onClick>
+      <sizeRatio>0.49</sizeRatio>
+      <text>取消</text>
+      <top>129</top>
+      <topRatio>0.656387665198238</topRatio>
+      <width>127</width>
+      <widthRatio>0.272479564032698</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="1">
+    <taskSetItem name="apply">
+      <script1>eio.appendString8(eb.getCookie("pjToken")); 
+eio.appendString8(ee.getText(ee.getControl("panel7")));   
+var applyName=ee.getEditText(ee.getControl("edit1")); 
+var tel=ee.getEditText(ee.getControl("edit2"));    
+if(applyName==""){
+    alert("姓名不能为空");  
+    return;
+}
+if(tel==""){
+    alert("电话不能为空"); 
+    return;
+}
+eio.appendString8(applyName);
+eio.appendString8(tel);</script1>
+      <script2><![CDATA[var token = eio.readString8(); 
+var schoolName= eio.readString8();  
+var applyName= eio.readString8(); 
+var tel= eio.readString8(); 
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id"); 
+
+sql="insert into learnDrive(uid,schoolName,applyName,tel,status) values("+userId+",'"+schoolName+"','"+applyName+"','"+tel+"','未付款')";  
+es.logWarning(sql);
+sqlResult = db.executeQuery("PJ", sql);
+eio.appendString8("T");]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("系统繁忙，请稍后再试"); 
+    return;
+}
+alert("感谢您对我们工作的信任和支持，我们的工作人员会在1-3个工作日内为您处理。");  
+//window.location.href = ee.pageRoot + "/test";
+//history.go(-1) 
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

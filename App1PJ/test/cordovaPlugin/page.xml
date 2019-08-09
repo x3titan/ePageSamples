@@ -1,0 +1,302 @@
+<page>
+  <controls count="6">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>DCEFEF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>819</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[g5.log = function(logString) {
+    var c = ee.getControl("panel4");
+    ee.setText(c, ee.getText(c) + "<br/>" + logString);
+} 
+
+g5.onDeviceReady = function () {
+    g5.log("cordova initialized succ.");
+}
+document.addEventListener("deviceready", g5.onDeviceReady, false);
+
+
+g5.version = "2.03或者更老的版本";
+g5.onVersionReady = function () {
+    alert("1陪驾当前版本：" + g5.version);
+}
+//微信支付接口返回：
+//0成功
+//-1微信接口故障
+//-2用户取消支付
+//-3支付过程30秒超时
+g5.tamPlugin = { 
+    payWechat: function (prepayId, successCallback, errorCallback) {
+        cordova.exec(
+            successCallback, // success callback function 
+            errorCallback, // error callback function 
+            "TamPlugin", // mapped to our native Java class called "CalendarPlugin" 
+            "payWechat", // with this action name 
+            [{                  // and this array of custom arguments to create our entry 
+                "prepayId": prepayId 
+            }] 
+        );  
+    },
+    getVersion: function() {
+        cordova.exec(
+            function (version) {
+                g5.version = version;
+                g5.onVersionReady();
+            },
+            function (msg) {
+                g5.onVersionReady();
+            },
+            "TamPlugin", "getVersion", [{ "a": "" }] 
+        );  
+    }
+}
+
+
+
+]]></onControlLoad>
+      <pageHead><![CDATA[<script type="text/javascript" charset="utf-8" src="cordova5/cordova.js"></script>
+<script type="text/javascript" charset="utf-8" src="cordova5/cordova_plugins.js"></script>]]></pageHead>
+      <top>0</top>
+      <width>1105</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <backgroundSkin>body5</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>65</height>
+      <heightRatio>0.0793650793650794</heightRatio>
+      <left>102</left>
+      <leftRatio>0.0923076923076923</leftRatio>
+      <onClick>window.location.href = ee.pageRoot + "/test";</onClick>
+      <sizeRatio>0.0712719298245614</sizeRatio>
+      <text><![CDATA[<< Back]]></text>
+      <top>29</top>
+      <topRatio>0.0354090354090354</topRatio>
+      <width>912</width>
+      <widthRatio>0.825339366515837</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <backgroundSkin>body5</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>65</height>
+      <heightRatio>0.0793650793650794</heightRatio>
+      <left>102</left>
+      <leftRatio>0.0923076923076923</leftRatio>
+      <onClick>/*
+   var startDate = new Date("July 19, 2013 8:00:00"); 
+        var endDate = new Date("July 19, 2013 18:00:00"); 
+        var notes = "Arrive on time, don't want to miss out (from Android)"; 
+        var title = "PhoneGap Day"; 
+        var location = "Portland, OR"; 
+        var notes = "Arrive on time, don't want to miss out!"; 
+        var success = function() { alert("Success"); }; 
+        var error = function(message) { alert("Oopsie! " + message); }; 
+        g5.tamPlugin.createEvent(title, location, notes, startDate, endDate, success, error); 
+*/
+payWechat();</onClick>
+      <sizeRatio>0.0711938663745893</sizeRatio>
+      <text>微信支付Android版</text>
+      <topRatio>0.122100122100122</topRatio>
+      <width>913</width>
+      <widthRatio>0.826244343891403</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <backgroundSkin>body5</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>539</height>
+      <heightRatio>0.658119658119658</heightRatio>
+      <left>102</left>
+      <leftRatio>0.0923076923076923</leftRatio>
+      <sizeRatio>0.591008771929825</sizeRatio>
+      <top>243</top>
+      <topRatio>0.296703296703297</topRatio>
+      <width>912</width>
+      <widthRatio>0.825339366515837</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3/panel4">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontSizeAuto>50</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>479</height>
+      <heightRatio>0.900826446280992</heightRatio>
+      <left>30</left>
+      <leftRatio>0.0286259541984733</leftRatio>
+      <outerBottom>30</outerBottom>
+      <outerLeft>30</outerLeft>
+      <outerRight>30</outerRight>
+      <outerTop>30</outerTop>
+      <sizeRatio>0.551619433198381</sizeRatio>
+      <text>.</text>
+      <top>30</top>
+      <topRatio>0.0495867768595041</topRatio>
+      <vAlign>top</vAlign>
+      <width>852</width>
+      <widthRatio>0.942748091603053</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5">
+      <backgroundSkin>body5</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>808080</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>65</height>
+      <heightRatio>0.0793650793650794</heightRatio>
+      <left>102</left>
+      <leftRatio>0.0923076923076923</leftRatio>
+      <onClick>g5.tamPlugin.getVersion();</onClick>
+      <sizeRatio>0.0711938663745893</sizeRatio>
+      <text>获取App版本号</text>
+      <top>172</top>
+      <topRatio>0.21001221001221</topRatio>
+      <width>913</width>
+      <widthRatio>0.826244343891403</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="1">
+    <taskSetItem name="payWechat">
+      <script1>//微信生成预处理订单
+eio.appendString8(eb.getCookie("pjToken"));</script1>
+      <script2><![CDATA[var token = eio.readString8();
+//var payIndex = eio.readInt32();
+var sql,sqlResult;
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id");
+if (userId.length<=0) {
+    eio.appendString8("F");
+    eio.appendString8("会话丢失，请稍后再试");
+    return;
+}
+//产生支付订单
+sql = "exec createPay " + userId + ",'微信支付'," + "0.01, 0.02";
+sqlResult = db.executeQuery("PJ", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var localTicket = db.getString(sqlResult, "ticket");
+
+var data = "";
+var sign = "";
+var randString = "A" + (new Date()).getTime();
+randString = es.getMd5(randString).toUpperCase();
+//计算sign
+sign += "appid=wx9b5794aacbbdf257";
+sign += "&amp;attach=充值";
+sign += "&amp;body=1陪驾充值";
+sign += "&amp;mch_id=1264325101";
+sign += "&amp;nonce_str=" + randString;
+sign += "&amp;notify_url=http://m.1peijia.com:88/eengine/ee.aspx";
+sign += "&amp;out_trade_no=" + localTicket;
+sign += "&amp;spbill_create_ip=127.0.0.1";
+sign += "&amp;total_fee=1";
+sign += "&amp;trade_type=APP";
+sign += "&amp;key=YIpeijia123456789012345678901234";
+sign = es.getMd5(sign).toUpperCase();
+//产生递交数据
+data =
+    "<xml>\n" + 
+    "   <appid>wx9b5794aacbbdf257</appid>\n" + //不解释
+    "   <attach>充值</attach>\n" + //附加数据，在查询API和支付通知中原样返回，该字段主要用于商户携带订单的自定义数据
+    "   <body>1陪驾充值</body>\n" + //商品或支付单简要描述
+    "   <mch_id>1264325101</mch_id>\n" + //微信支付分配的商户号
+    "   <nonce_str>" + randString + "</nonce_str>\n" + //随机字符串，不长于32位
+    "   <notify_url>http://m.1peijia.com:88/eengine/ee.aspx</notify_url>\n" + //接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
+    "   <out_trade_no>" + localTicket + "</out_trade_no>\n" + //商户系统内部的订单号,32个字符内、可包含字母
+    "   <spbill_create_ip>127.0.0.1</spbill_create_ip>\n" + //用户端实际ip
+    "   <total_fee>1</total_fee>\n" + //订单总金额，单位（分）
+    "   <trade_type>APP</trade_type>\n" + //支付类型
+    "   <sign>" + sign + "</sign>\n" +
+    "</xml>\n";
+//post
+var result = es.post("https://api.mch.weixin.qq.com/pay/unifiedorder", data);
+/* 返回消息
+<xml><return_code><![CDATA[SUCCESS]]]]><![CDATA[></return_code>
+<return_msg><![CDATA[OK]]]]><![CDATA[></return_msg>
+<appid><![CDATA[wx9b5794aacbbdf257]]]]><![CDATA[></appid>
+<mch_id><![CDATA[1264325101]]]]><![CDATA[></mch_id>
+<nonce_str><![CDATA[heGKmfwAQ2zSjfAI]]]]><![CDATA[></nonce_str>
+<sign><![CDATA[48BB46F9CCF2901D97F884EB44A7C5DF]]]]><![CDATA[></sign>
+<result_code><![CDATA[SUCCESS]]]]><![CDATA[></result_code>
+<prepay_id><![CDATA[wx20160520184034d34c9c543c0304138885]]]]><![CDATA[></prepay_id>
+<trade_type><![CDATA[APP]]]]><![CDATA[></trade_type>
+</xml>
+*/
+if (result.indexOf("<return_code><![CDATA[SUCCESS]]]]><![CDATA[>")<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试");
+    return;
+}
+//从返回值中提取prepay_id
+var r = result.indexOf("<prepay_id><![CDATA[");
+if (r<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试");
+    return;
+}
+r += "<prepay_id><![CDATA[".length;
+var r1 = result.indexOf("]", r);
+if (r1<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试");
+    return;
+} 
+var prepayId = result.substring(r, r1);
+eio.appendString8("T");
+eio.appendString16(prepayId);
+]]></script2>
+      <script3>var r = eio.readString8();
+if (r!="T") {
+    alert(eio.readString16());
+    return;
+}
+var prepayId = eio.readString16();
+g5.log("prepay_id=" + prepayId);
+g5.tamPlugin.payWechat(prepayId,
+    function() {
+        g5.log("success");
+    },
+    function(msg) {
+        g5.log("fail:" + msg);
+    }
+);
+
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

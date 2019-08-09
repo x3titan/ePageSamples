@@ -1,0 +1,549 @@
+<page>
+  <controls count="4">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad>//pay();  
+payWechat();
+
+
+</onControlLoad>
+      <pageHead><![CDATA[<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script> 
+<script src="http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js"></script>
+]]></pageHead>
+      <top>0</top>
+      <width>432</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <autoScroll>true</autoScroll>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <heightRatio>0.122549019607843</heightRatio>
+      <left>140</left>
+      <leftRatio>0.323869610935857</leftRatio>
+      <sizeRatio>0.588235294117647</sizeRatio>
+      <text>.</text>
+      <top>257</top>
+      <topRatio>0.314950980392157</topRatio>
+      <width>77</width>
+      <widthRatio>0.17875920084122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <autoScroll>true</autoScroll>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <heightRatio>0.122549019607843</heightRatio>
+      <left>148</left>
+      <leftRatio>0.341745531019979</leftRatio>
+      <sizeRatio>0.588235294117647</sizeRatio>
+      <text>.</text>
+      <top>435</top>
+      <topRatio>0.533088235294118</topRatio>
+      <width>77</width>
+      <widthRatio>0.17875920084122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <backgroundColor>00FF00</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <heightRatio>0.122549019607843</heightRatio>
+      <left>117</left>
+      <leftRatio>0.270833333333333</leftRatio>
+      <onClick>//http://1peijia.12580gogo.com/payview/
+
+window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxeeb9b2f6e1f01d23&amp;response_type=code&amp;redirect_uri=http%3A%2F%2Fm.1peijia.com%2Feengine%2Fee.aspx&amp;scope=snsapi_base&amp;state=STATE#wechat_redirect";</onClick>
+      <sizeRatio>1</sizeRatio>
+      <top>91</top>
+      <topRatio>0.111519607843137</topRatio>
+      <widthRatio>0.231481481481481</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="5">
+    <taskSetItem name="pay">
+      <script1>alert("0");</script1>
+      <script2><![CDATA[
+var payMoney ="0.01"; //支付金额，分为单位
+
+
+//var payIndex = eio.readInt32();
+var sql,sqlResult;
+
+//产生支付订单
+sql = "exec webCreatePay '微信支付'," +payMoney+",'"+"13764236680"+"','"+"微信支付测试"+"','"+"123456"+"'";
+sqlResult = db.executeQuery("PJ", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var localTicket = db.getString(sqlResult, "ticket");
+es.logWarning("localTicket:"+localTicket);
+var data = "";
+var sign = "";
+var randString = "A" + (new Date()).getTime();
+randString = es.getMd5(randString).toUpperCase();
+es.logWarning("randString:"+randString);
+//计算sign
+sign += "appid=wx9b5794aacbbdf257";
+sign += "&amp;attach=充值";
+sign += "&amp;body=1陪驾充值";
+sign += "&amp;mch_id=1264325101";
+sign += "&amp;nonce_str=" + randString;
+sign += "&amp;notify_url=http://m.1peijia.com:88/eengine/ee.aspx";
+sign += "&amp;out_trade_no=" + localTicket;
+sign += "&amp;spbill_create_ip=127.0.0.1";
+sign += "&amp;total_fee=" + payMoney;
+sign += "&amp;trade_type=APP";
+sign += "&amp;key=YIpeijia123456789012345678901234";
+sign = es.getMd5(sign).toUpperCase();
+//产生递交数据
+data =
+    "<xml>\n" + 
+    "   <appid>wx9b5794aacbbdf257</appid>\n" + //不解释
+    "   <attach>充值</attach>\n" + //附加数据，在查询API和支付通知中原样返回，该字段主要用于商户携带订单的自定义数据
+    "   <body>1陪驾充值</body>\n" + //商品或支付单简要描述
+    "   <mch_id>1264325101</mch_id>\n" + //微信支付分配的商户号
+    "   <nonce_str>" + randString + "</nonce_str>\n" + //随机字符串，不长于32位
+    "   <notify_url>http://m.1peijia.com:88/eengine/ee.aspx</notify_url>\n" + //接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
+    "   <out_trade_no>" + localTicket + "</out_trade_no>\n" + //商户系统内部的订单号,32个字符内、可包含字母
+    "   <spbill_create_ip>127.0.0.1</spbill_create_ip>\n" + //用户端实际ip
+    "   <total_fee>" + payMoney + "</total_fee>\n" + //订单总金额，单位（分）
+   // "   <trade_type>APP</trade_type>\n" + //支付类型  
+    "   <trade_type>APP</trade_type>\n"+
+    "   <sign>" + sign + "</sign>\n" +
+    "</xml>\n";
+    
+/*
+data="<xml>\n"
+   "<appid>wx2421b1c4370ec43b</appid>\n"+
+   "<attach>支付测试</attach>\n"+
+   "<body>JSAPI支付测试</body>\n"+
+   "<mch_id>10000100</mch_id>\n"+
+   "<detail><![CDATA[{ 'goods_detail':[ { 'goods_id':'iphone6s_16G', 'wxpay_goods_id':'1001', 'goods_name':'iPhone6s 16G', 'quantity':1, 'price':528800, 'goods_category':'123456', 'body':'苹果手机' }, { 'goods_id':'iphone6s_32G', 'wxpay_goods_id':'1002', 'goods_name':'iPhone6s 32G', 'quantity':1, 'price':608800, 'goods_category':'123789', 'body':'苹果手机' } ] }]]]]><![CDATA[></detail>\n"+
+   "<nonce_str>1add1a30ac87aa2db72f57a2375d8fec</nonce_str>\n"+
+   "<notify_url>http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php</notify_url>\n"+
+   "<openid>oUpF8uMuAJO_M2pxb1Q9zNjWeS6o</openid>\n"+
+   "<out_trade_no>1415659990</out_trade_no>\n"+
+   "<spbill_create_ip>14.23.150.211</spbill_create_ip>\n"+
+   "<total_fee>1</total_fee>\n"+
+   "<trade_type>JSAPI</trade_type>\n"+
+   "<sign>0CB01533B8C1EF103065174F50BCA001</sign>\n"+
+"</xml>\n"*/ 
+        
+//post   
+
+
+//var result = es.post("https://api.mch.weixin.qq.com/pay/unifiedorder", data);
+var result = es.post("https://api.mch.weixin.qq.com/pay/unifiedorder", data);
+
+/* 返回消息
+<xml><return_code><![CDATA[SUCCESS]]]]><![CDATA[></return_code>
+<return_msg><![CDATA[OK]]]]><![CDATA[></return_msg>
+<appid><![CDATA[wx9b5794aacbbdf257]]]]><![CDATA[></appid>
+<mch_id><![CDATA[1264325101]]]]><![CDATA[></mch_id>
+<nonce_str><![CDATA[heGKmfwAQ2zSjfAI]]]]><![CDATA[></nonce_str>
+<sign><![CDATA[48BB46F9CCF2901D97F884EB44A7C5DF]]]]><![CDATA[></sign>
+<result_code><![CDATA[SUCCESS]]]]><![CDATA[></result_code>
+<prepay_id><![CDATA[wx20160520184034d34c9c543c0304138885]]]]><![CDATA[></prepay_id>
+<trade_type><![CDATA[APP]]]]><![CDATA[></trade_type>
+</xml>
+*/
+if (result.indexOf("<return_code><![CDATA[SUCCESS]]]]><![CDATA[>")<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试1");
+    return;
+}
+//从返回值中提取prepay_id
+var r = result.indexOf("<prepay_id><![CDATA[");
+if (r<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试2");
+    return;
+}
+r += "<prepay_id><![CDATA[".length;
+var r1 = result.indexOf("]", r);
+if (r1<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试3");
+    return;
+} 
+var prepayId = result.substring(r, r1);
+//eio.appendString8("T");
+eio.appendString16(prepayId);
+eio.appendString32(randString);
+
+//onBridgeReady();
+
+]]></script2>
+      <script3>var prepayId=eio.readString16();  
+var randString=eio.readString32(); 
+alert(prepayId);
+alert(randString);
+/*function onBridgeReady(){
+   //alert("onbridge ready");
+ WeixinJSBridge.invoke(
+       "getBrandWCPayRequest", {
+           "appId":"wx2421b1c4370ec43b",     //公众号名称，由商户传入     
+           "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
+           "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串     
+           "package":"prepay_id=u802345jgfjsdfgsdg888",     
+           "signType":"MD5",         //微信签名方式：     
+           "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
+           
+       },
+       function(res){     
+           if(res.err_msg == "get_brand_wcpay_request：ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+       }  
+   );  
+}     
+if (typeof WeixinJSBridge == "undefined"){
+   if( document.addEventListener ){
+       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+   }else if (document.attachEvent){
+       document.attachEvent('WeixinJSBridgeReady',onBridgeReady); 
+       document.attachEvent('onWeixinJSBridgeReady',onBridgeReady);
+   }  
+}else{
+   onBridgeReady();
+}   */
+//alert(WeixinJSBridge);
+alert("222"); 
+alert(wx.config);</script3>
+    </taskSetItem>
+    <taskSetItem name="pay2">
+      <script1 />
+      <script2 />
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="payWechat">
+      <script1>/*var myDate = new Date();
+var time=myDate.getTime(); ;
+alert(time);
+return;*/
+
+
+
+
+/*var token={"access_token":"ahFQD-pJ2VwyqZF20JfBas26y3lLrx1VGhFn_qEbddQ7-xSgDyad0rUvPMPehCdkaS4hqCYx3TsfQ6ho-qCkjNOGnfw4cvN59gmhUs4k12DTTV3gwwQqiRYpuhMMUQQkIMLeADAAED","expires_in":7200};
+    token=JSON.stringify(token);
+
+
+var json=token.split(",");
+var access_token=json[0].split(":"); 
+var a=access_token[1].split("\"") */
+//alert(a[1]);
+//var json = eval(token);
+//alert(json.access_token); 
+var url = window.location.search   
+var index=url.indexOf("code"); 
+var code=url.substr(index+5,url.length);
+//alert(index);
+alert(url); 
+alert(code);
+//微信生成预处理订单
+eio.appendString16(code); 
+eio.appendInt32(0);    
+
+//eio.appendString8(eb.getCookie("pjToken"));</script1>
+      <script2><![CDATA[
+/*var token = es.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&amp;appid=wxeeb9b2f6e1f01d23&amp;secret=3efec074c3b012d58e297a1d75265f3b&amp;code=031vZR7n0jjbLe1LxS6n0K7Q7n0vZR7U");
+token=JSON.stringify(token);
+
+var json=token.split(",");
+var access=json[0].split(":"); 
+var a=access[1].split("\"")  
+var access_token=a[1];    
+    access_token=access_token.substr(0,access_token.length-1);
+//var json = eval(token);
+//var access_token=json.access_token; 
+*/     
+var code =eio.readString16(); 
+es.logWarning("code:"+code);
+var get = es.get("https://api.weixin.qq.com/sns/oauth2/access_token?appid=wxeeb9b2f6e1f01d23&amp;secret=3efec074c3b012d58e297a1d75265f3b&amp;code="+code+"&amp;grant_type=authorization_code");
+es.logWarning("get="+get);
+get=JSON.stringify(get);
+es.logWarning("get1="+get);
+ 
+var json=get.split(","); 
+es.logWarning("json="+json);
+var access=json[3].split(":"); 
+es.logWarning("access="+access);
+var a=access[1].split("\""); 
+es.logWarning("a="+access[1]); 
+    var openid=a[1]; 
+    openid=openid.substr(0,openid.length-1); 
+  es.logWarning("openid="+openid);
+
+
+
+
+/*
+var openid=es.get("https://api.weixin.qq.com/cgi-bin/user/info?access_token="+access_token+"&amp;openid=OPENID");
+es.logWarning(token);
+es.logWarning(access_token);  
+es.logWarning("openid:"+openid);
+*/
+
+var payIndex = eio.readInt32();   
+
+
+var money = "0.01,200,400,800,1500,3000".split(",");    
+//var moneyFree = "0,20,50,120,240,500".split(",");
+//var money = "100,200,400,0.03,1500,3000,5000".split(",");    
+//var moneyFree = "0,20,50,0.04,240,500,1000".split(",");
+
+if ((payIndex<0)||(payIndex>=money.length)) {
+    eio.appendString8("F");
+    eio.appendString8("用户输入数据非法");
+    return;
+} 
+var payMoney =money[payIndex]*100; //支付金额，分为单位
+
+/*var token = eio.readString8();
+
+var sql,sqlResult;
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id");
+if (userId.length<=0) {
+    eio.appendString8("F");
+    eio.appendString8("会话丢失，请稍后再试");
+    return;
+}  */
+//产生支付订单
+sql = "exec createPay " + "8680" + ",'微信支付'," + money[payIndex] + "," + "0";
+sqlResult = db.executeQuery("PJ", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var localTicket = db.getString(sqlResult, "ticket");
+
+var data = "";
+var sign = "";
+var randString = "A" + (new Date()).getTime();
+randString = es.getMd5(randString).toUpperCase();
+//计算sign
+sign += "appid=wxeeb9b2f6e1f01d23";
+sign += "&amp;attach=充值";
+sign += "&amp;body=1陪驾充值";
+sign += "&amp;mch_id=1239143502";  
+sign += "&amp;nonce_str=" + randString;
+sign += "&amp;notify_url=http://m.1peijia.com/eengine/ee.aspx"; 
+sign += "&amp;openid="+openid;//o_2KrszDgDmw--9LpCQqomVr1lF0
+sign += "&amp;out_trade_no=" + localTicket;
+sign += "&amp;spbill_create_ip=127.0.0.1";
+sign += "&amp;total_fee=" + payMoney;
+sign += "&amp;trade_type=JSAPI";
+sign += "&amp;key=YIpeijia123456789012345678901234";
+sign = es.getMd5(sign).toUpperCase();
+//产生递交数据
+data =
+    "<xml>\n" + 
+    "   <appid>wxeeb9b2f6e1f01d23</appid>\n" + //不解释
+    "   <attach>充值</attach>\n" + //附加数据，在查询API和支付通知中原样返回，该字段主要用于商户携带订单的自定义数据
+    "   <body>1陪驾充值</body>\n" + //商品或支付单简要描述
+    "   <mch_id>1239143502</mch_id>\n" + //微信支付分配的商户号
+    "   <nonce_str>" + randString + "</nonce_str>\n" + //随机字符串，不长于32位
+    "   <notify_url>http://m.1peijia.com/eengine/ee.aspx</notify_url>\n" + //接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
+    //"   <openid>o_2KrszDgDmw--9LpCQqomVr1lF0</openid>\n"+ 
+    "   <openid>"+ openid +"</openid>\n"+
+    "   <out_trade_no>" + localTicket + "</out_trade_no>\n" + //商户系统内部的订单号,32个字符内、可包含字母
+    "   <spbill_create_ip>127.0.0.1</spbill_create_ip>\n" + //用户端实际ip
+    "   <total_fee>" + payMoney + "</total_fee>\n" + //订单总金额，单位（分）
+    "   <trade_type>JSAPI</trade_type>\n" + //支付类型  
+   // "   <openid>DFvSN8MRQrV6R-AAbUY-xmVslmrAuSkzgkaklzlgc8jCICHtOBVjiQEGtXqMTajWKesn80u_DKMAON5tq35_djNvavBeVmG-_73RdlWnHnqWybEVuilsv10pzuVc8fgmDIPfAJAJOV</openid>\n"+
+     "   <sign>" + sign + "</sign>\n" +
+    "</xml>\n";
+//post   
+
+
+var result = es.post("https://api.mch.weixin.qq.com/pay/unifiedorder", data);
+/* 返回消息
+<xml><return_code><![CDATA[SUCCESS]]]]><![CDATA[></return_code>
+<return_msg><![CDATA[OK]]]]><![CDATA[></return_msg>
+<appid><![CDATA[wx9b5794aacbbdf257]]]]><![CDATA[></appid>
+<mch_id><![CDATA[1264325101]]]]><![CDATA[></mch_id>
+<nonce_str><![CDATA[heGKmfwAQ2zSjfAI]]]]><![CDATA[></nonce_str>
+<sign><![CDATA[48BB46F9CCF2901D97F884EB44A7C5DF]]]]><![CDATA[></sign>
+<result_code><![CDATA[SUCCESS]]]]><![CDATA[></result_code>
+<prepay_id><![CDATA[wx20160520184034d34c9c543c0304138885]]]]><![CDATA[></prepay_id>
+<trade_type><![CDATA[APP]]]]><![CDATA[></trade_type>
+</xml>
+*/
+if (result.indexOf("<return_code><![CDATA[SUCCESS]]]]><![CDATA[>")<0) {  
+   // eio.appendString16(result);
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试");
+    return;
+}
+//从返回值中提取prepay_id
+var r = result.indexOf("<prepay_id><![CDATA[");
+if (r<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试");
+    return;
+}
+r += "<prepay_id><![CDATA[".length;
+var r1 = result.indexOf("]", r);
+if (r1<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试");
+    return;
+} 
+var prepayId = result.substring(r, r1);
+eio.appendString8("T");
+eio.appendString16(prepayId);
+eio.appendString16(randString);   
+var paysign = "";
+//计算sign
+paysign += "appId=wxeeb9b2f6e1f01d23"; 
+paysign += "&amp;nonceStr="+randString;
+paysign += "&amp;package=prepay_id="+prepayId;       
+paysign += "&amp;signType=MD5";  
+paysign += "&amp;timeStamp=1395712654";  
+paysign += "&amp;key=YIpeijia123456789012345678901234";
+paysign = es.getMd5(paysign).toUpperCase();  
+eio.appendString16(paysign);
+//eio.appendString16(sign);
+//eio.appendString16(result);]]></script2>
+      <script3>//alert(eio.readString8()); 
+
+var r = eio.readString8(); 
+alert("r:"+r);
+if (r!="T") {
+    alert(eio.readString16());
+    return;
+}
+var prepayId = eio.readString16();
+var randString = eio.readString16();
+var paysign = eio.readString16();
+alert("paysign:"+paysign); 
+//var sign = eio.readString16();     
+//alert(prepayId);
+//alert(randString);  
+
+ 
+//alert(sign);
+
+ee.setText(ee.getControl("panel1"),prepayId);  
+ee.setText(ee.getControl("panel2"),randString);
+
+//计算sign              
+
+
+/*function onBridgeReady(){
+   //alert("onbridge ready");
+ WeixinJSBridge.invoke(
+       "getBrandWCPayRequest", {
+           "appId":"wxeeb9b2f6e1f01d23",     //公众号名称，由商户传入     
+           "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
+           "nonceStr":+randString, //随机串     
+           "package":"prepay_id="+prepayId,     
+           "signType":"MD5",         //微信签名方式：     
+           "paySign":+sign //微信签名            
+       },
+       function(res){     
+           if(res.err_msg == "get_brand_wcpay_request：ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+       }  
+   );  
+}     
+if (typeof WeixinJSBridge == "undefined"){
+   if( document.addEventListener ){
+       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+   }else if (document.attachEvent){
+       document.attachEvent('WeixinJSBridgeReady',onBridgeReady); 
+       document.attachEvent('onWeixinJSBridgeReady',onBridgeReady);
+   }  
+}else{
+   onBridgeReady();
+} */ 
+
+
+/*
+alert("sign:"+sign)*/; 
+function onBridgeReady(){ 
+alert("123");
+   //alert("onbridge ready");
+ WeixinJSBridge.invoke(
+       "getBrandWCPayRequest", {
+           "appId":"wxeeb9b2f6e1f01d23",     //公众号名称，由商户传入     
+           "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
+           "nonceStr":randString, //随机串     
+           "package":"prepay_id="+prepayId,                
+           "signType":"MD5",        //微信签名方式：     
+           "paySign":paysign//paysign //微信签名            
+       },
+       function(res){  
+           alert(res.err_msg);   
+           if(res.err_msg == "get_brand_wcpay_request:ok" ) { 
+               //alert("11");
+               window.location.href = ee.pageRoot +"/test/downloadApp";
+           }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+       }  
+   );  
+}     
+if (typeof WeixinJSBridge == "undefined"){
+   if( document.addEventListener ){
+       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+   }else if (document.attachEvent){
+       document.attachEvent('WeixinJSBridgeReady',onBridgeReady); 
+       document.attachEvent('onWeixinJSBridgeReady',onBridgeReady);
+   }  
+}else{
+   onBridgeReady();
+}  
+//alert(WeixinJSBridge);
+alert("222"); 
+
+
+/*g5.tamPlugin.payWechat(prepayId,nonceStr,
+    function() {
+        //g5.log("success");
+    },
+    function(msg) {
+        //g5.log("fail:" + msg);
+    }
+);*/
+
+////alert(prepayId);
+</script3>
+    </taskSetItem>
+    <taskSetItem name="get">
+      <script1 />
+      <script2>es.get</script2>
+      <script3 />
+    </taskSetItem>
+    <taskSetItem name="regStudent">
+      <script1 />
+      <script2 />
+      <script3 />
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

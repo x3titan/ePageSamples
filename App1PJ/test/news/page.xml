@@ -1,0 +1,1115 @@
+<page>
+  <controls count="44">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>819</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[
+//=========手册处理部分==========
+//手册功能函数
+//激活某类消息
+g5.refreshBook = function(index, contentIndex) {
+    if (!g5.book1) return;
+    var scroll = g5.root.scrollTop;
+    var i;
+    g5.bookIndex = index;
+    g5.contentIndex = contentIndex;
+    g5.clearList();
+    g5.create1pj();
+    if (index==0) {
+        g5.create1Active();
+        for (i=0; i<g5.book1.rowCount; i++) {
+            g5.createTitle4(i,g5.book1.getData(2,i),g5.book1.getData(1,i));
+            if (i==contentIndex) {
+                g5.createTextBody(g5.book1.getData(3,i));
+            }
+        }
+    } else {
+        g5.create1();    
+    }
+    if (index==1) {
+        g5.create2Active();
+        g5.createTitle1("知识库：");
+        for (i=0; i<g5.book2.rowCount; i++) {
+            g5.createTitle2(i,g5.book2.getData(2,i));
+            if (i==contentIndex) {
+                g5.createTextBody(g5.book2.getData(3,i));
+            }
+        }
+    } else {
+        g5.create2();    
+    }
+    if (index==2) {
+        g5.create3Active();
+        g5.createTitle1("常见问题：");
+        for (i=0; i<g5.book3.rowCount; i++) {
+            g5.createTitle3(i,g5.book3.getData(2,i));
+            if (i==contentIndex) {
+                g5.createTextBody(g5.book3.getData(3,i));
+            }
+        }
+    } else {
+        g5.create3();    
+    }
+     
+    eb.processDock();
+    g5.root.scrollTop = scroll;        
+}
+g5.clearList = function() {
+    while (g5.root.eeChildren.length > 0) {
+        ee.removeControl(g5.root.eeChildren[0]);
+    }
+    g5.currentPos = 0;
+}
+g5.create1pj = function() {
+    c = createPanel(g5.root, "temp", "EFEFEF", 0, 2, 450, 73);
+    addText(c, "1陪驾", "center", "middle", "宋体", 9, "000000", "normal");
+    eb.setFontSizeAuto(c, 15);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0998632010943912;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    c = createPanel(c, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");    
+}
+//公告未激活  
+g5.create1 = function() {
+    c = createPanel(g5.root, "temp", "EFEFEF", 0, 76, 450, 73);
+    ee.setImage(c,"/App1PJ/test/news/bg155.jpg","stretch","","")
+    addText(c, "公告", "center", "middle", "宋体", 9, "000000", "normal");
+    eb.setFontSizeAuto(c, 20);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0998632010943912;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 138, 17, 41, 39);
+    ee.setImage(c,"/App1PJ/test/news/gg.png","fill","","")
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.306666666666667;
+    c.widthRatio=0.0911111111111111;
+    c.topRatio=0.232876712328767;
+    c.heightRatio=0.534246575342466;
+    ee.setOnClick(root, function(sender,event){
+        g5.refreshBook(0,-1);
+    });
+}
+//公告激活  
+g5.create1Active = function() {
+    c = createPanel(g5.root, "temp", "60B2F8", 0, 112, 450, 73);
+    addText(c, "公告", "center", "middle", "宋体", 9, "FFFFFF", "normal");
+    eb.setFontSizeAuto(c, 20);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0998632010943912;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 138, 17, 41, 39);
+    ee.setImage(c,"/App1PJ/test/news/gg.png","fill","","")
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.306666666666667;
+    c.widthRatio=0.0911111111111111;
+    c.topRatio=0.232876712328767;
+    c.heightRatio=0.534246575342466;
+    ee.setOnClick(root, function(sender,event){
+        g5.refreshBook(-1,-1);
+    });
+} 
+//知识库未激活
+g5.create2 = function() {
+    c = createPanel(g5.root, "temp", "EFEFEF", 0, 185, 450, 73);
+    ee.setImage(c,"/App1PJ/test/news/bg155.jpg","stretch","","")
+    addText(c, "知识库", "center", "middle", "宋体", 9, "000000", "normal");
+    eb.setFontSizeAuto(c, 20);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0998632010943912;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 130, 17, 41, 39);
+    ee.setImage(c,"/App1PJ/test/news/zsk.png","fill","","")
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.288888888888889;
+    c.widthRatio=0.0911111111111111;
+    c.topRatio=0.232876712328767;
+    c.heightRatio=0.534246575342466;
+    ee.setOnClick(root, function(sender,event){
+        g5.refreshBook(1,-1);
+    });
+}
+//知识库已激活
+g5.create2Active = function() {
+    c = createPanel(g5.root, "temp", "60B2F8", 0, 222, 450, 73);
+    addText(c, "知识库", "center", "middle", "宋体", 9, "FFFFFF", "normal");
+    eb.setFontSizeAuto(c, 20);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0998632010943912;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 130, 17, 41, 39);
+    ee.setImage(c,"/App1PJ/test/news/zsk.png","fill","","")
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.288888888888889;
+    c.widthRatio=0.0911111111111111;
+    c.topRatio=0.232876712328767;
+    c.heightRatio=0.534246575342466;
+    ee.setOnClick(root, function(sender,event){
+        g5.refreshBook(-1,-1);
+    });
+} 
+//常见问题未激活
+g5.create3 = function() {
+    c = createPanel(g5.root, "temp", "EFEFEF", 0, 295, 450, 73);
+    ee.setImage(c,"/App1PJ/test/news/bg155.jpg","stretch","","")
+    addText(c, "常见问题", "center", "middle", "宋体", 9, "000000", "normal");
+    eb.setFontSizeAuto(c, 20);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0998632010943912;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 122, 17, 41, 39);
+    ee.setImage(c,"/App1PJ/test/news/cjwt.png","fill","","")
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.271111111111111;
+    c.widthRatio=0.0911111111111111;
+    c.topRatio=0.232876712328767;
+    c.heightRatio=0.534246575342466;
+    ee.setOnClick(root, function(sender,event){
+        g5.refreshBook(2,-1);
+    });
+}
+//常见问题已激活
+g5.create3Active = function() {
+    c = createPanel(g5.root, "temp", "60B2F8", 0, 332, 450, 73);
+    addText(c, "常见问题", "center", "middle", "宋体", 9, "FFFFFF", "normal");
+    eb.setFontSizeAuto(c, 20);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0998632010943912;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "808080", 0, 71, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 122, 17, 41, 39);
+    ee.setImage(c,"/App1PJ/test/news/cjwt.png","fill","","")
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.271111111111111;
+    c.widthRatio=0.0911111111111111;
+    c.topRatio=0.232876712328767;
+    c.heightRatio=0.534246575342466;
+    ee.setOnClick(root, function(sender,event){
+        g5.refreshBook(-1,-1);
+    });
+}
+//设计图中“知识库：”
+g5.createTitle1 = function(name) {
+    c = createPanel(g5.root, "temp", "E9E9E9", 0, 404, 450, 32);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0437756497948016;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "", 28, 0, 422, 32);
+    addText(c, name, "left", "middle", "宋体", 9, "404040", "normal");
+    eb.setFontSizeAuto(c, 20);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.0622222222222222;
+    c.widthRatio=0.937777777777778;
+    c.topRatio=0;
+    c.heightRatio=1;
+    c = createPanel(root, "temp", "C0C0C0", 0, 30, 490, 2);
+    eb.setDock(c,"fill","bottom");
+}
+//设计图中“独立驾车训练”
+g5.createTitle2 = function(index, name) {
+    c = createPanel(g5.root, "temp", "FFFFFF", 0, 437, 450, 41);
+    c.bookIndex = index;
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0560875512995896;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "E0E0E0", 0, 39, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 28, 0, 422, 41);
+    addText(c, name, "left", "middle", "宋体", 9, "7D7D7D", "normal");
+    eb.setFontSizeAuto(c, 25);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.0622222222222222;
+    c.widthRatio=0.937777777777778;
+    c.topRatio=0;
+    c.heightRatio=1;
+    c = createPanel(c, "temp", "", 401, 16, 49, 11);
+    ee.setImage(c,"/App1PJ/test/news/down.png","fill","","")
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.872093023255814;
+    c.widthRatio=0.106976744186047;
+    c.topRatio=0.390243902439024;
+    c.heightRatio=0.268292682926829;
+    ee.setOnClick(root, function(sender,event){
+        if (g5.contentIndex==sender.bookIndex) {        
+            g5.refreshBook(g5.bookIndex,-1);
+        } else {
+            g5.refreshBook(g5.bookIndex,sender.bookIndex);
+        }
+    });
+}
+//设计图中“我能享受哪些服务?”
+g5.createTitle3 = function(index, name) {
+    c = createPanel(g5.root, "temp", "FFFFFF", 0, 477, 450, 41);
+    c.bookIndex = index;
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0560875512995896;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "E0E0E0", 0, 39, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 68, 0, 382, 41);
+    addText(c, name, "left", "middle", "宋体", 9, "7D7D7D", "normal");
+    eb.setFontSizeAuto(c, 25);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.151111111111111;
+    c.widthRatio=0.848888888888889;
+    c.topRatio=0;
+    c.heightRatio=1;
+    c = createPanel(root, "temp", "", 28, 6, 34, 25);
+    ee.setImage(c,"/App1PJ/test/news/q.png","fill","","")
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.0612244897959184;
+    c.widthRatio=0.0755102040816327;
+    c.topRatio=0.195121951219512;
+    c.heightRatio=0.609756097560976;
+    ee.setOnClick(root, function(sender,event){
+        if (g5.contentIndex==sender.bookIndex) {        
+            g5.refreshBook(g5.bookIndex,-1);
+        } else {
+            g5.refreshBook(g5.bookIndex,sender.bookIndex);
+        }
+    });
+}
+//设计图中：５期报名开始了
+g5.createTitle4 = function(index, title, time) {
+    time = time.substring(0,4)+"年"+parseInt(time.substring(5,7))+"月"+parseInt(time.substring(8,10))+"日";
+    c = createPanel(g5.root, "temp", "FFFFFF", 0, 572, 490, 41);
+    c.bookIndex = index;
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.0560875512995896;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "E0E0E0", 0, 39, 490, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 46, 0, 444, 41);
+    addText(c, title, "left", "middle", "宋体", 9, "7D7D7D", "normal");
+    eb.setFontSizeAuto(c, 25);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.0938775510204082;
+    c.widthRatio=0.906122448979592;
+    c.topRatio=0;
+    c.heightRatio=1;
+    c = createPanel(root, "temp", "", 7, 10, 37, 25);
+    ee.setImage(c,"/App1PJ/test/news/flag.png","fill","","")
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.0142857142857143;
+    c.widthRatio=0.0755102040816327;
+    c.topRatio=0.24390243902439;
+    c.heightRatio=0.609756097560976;
+    c = createPanel(root, "temp", "", 168, 0, 322, 41);
+    addText(c, time, "right", "middle", "宋体", 9, "7D7D7D", "normal");
+    eb.setFontSizeAuto(c, 35);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0.342857142857143;
+    c.widthRatio=0.657142857142857;
+    c.topRatio=0;
+    c.heightRatio=1;
+    ee.setOnClick(root, function(sender,event){
+        if (g5.contentIndex==sender.bookIndex) {        
+            g5.refreshBook(g5.bookIndex,-1);
+        } else {
+            g5.refreshBook(g5.bookIndex,sender.bookIndex);
+        }
+    });
+}
+//文字内容
+g5.createTextBody = function(text) {
+    c = createPanel(g5.root, "temp", "f5f5f5", 0, 527, 450, 243);
+    eb.setDock(c,"ratio","ratio");
+    c.leftRatio=0;
+    c.widthRatio=1;
+    c.heightRatio=0.632421340629275;
+    c.topRatio=g5.currentPos;
+    g5.currentPos+=c.heightRatio;
+    var root = c;
+    c = createPanel(root, "temp", "", 0, 241, 450, 2);
+    eb.setDock(c,"fill","bottom");
+    c = createPanel(root, "temp", "", 20, 20, 410, 203);
+    c.style.overflow = "auto";
+    eb.setOuter(c,20,20,20,20);
+    addText(c, text, "left", "top", "宋体", 9, "7D7D7D", "normal");
+    eb.setFontSizeAuto(c, 25);
+    eb.setDock(c,"fill","fill");
+}
+//手册初始化
+getNewsList();
+g5.root = ee.getControl("panel1");
+g5.currentPos = 0;
+g5.clearList();
+g5.create1pj();
+g5.create1();
+g5.create2();
+g5.create3();
+g5.root.style.overflow = "auto";
+g5.bookIndex = -1; //当前激活的栏目
+]]></onControlLoad>
+      <top>0</top>
+      <width>764</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>739</height>
+      <heightRatio>0.902319902319902</heightRatio>
+      <left>35</left>
+      <leftRatio>0.0458115183246073</leftRatio>
+      <sizeRatio>1.07883211678832</sizeRatio>
+      <top>28</top>
+      <topRatio>0.0341880341880342</topRatio>
+      <width>685</width>
+      <widthRatio>0.896596858638744</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4">
+      <backgroundColor>EFEFEF</backgroundColor>
+      <backgroundImg>bg155.jpg</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>74</height>
+      <heightRatio>0.100135317997294</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.108029197080292</sizeRatio>
+      <text>公告</text>
+      <top>77</top>
+      <topRatio>0.104194857916103</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel5">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel8">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4/panel9">
+      <backgroundImg>gg.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>40</height>
+      <heightRatio>0.534246575342466</heightRatio>
+      <left>210</left>
+      <leftRatio>0.306666666666667</leftRatio>
+      <sizeRatio>0.951219512195122</sizeRatio>
+      <top>17</top>
+      <topRatio>0.232876712328767</topRatio>
+      <width>62</width>
+      <widthRatio>0.0911111111111111</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel2">
+      <backgroundColor>EFEFEF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>74</height>
+      <heightRatio>0.0998632010943912</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.162222222222222</sizeRatio>
+      <text>1陪驾</text>
+      <top>2</top>
+      <topRatio>0.0027359781121751</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel2/panel3">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6">
+      <backgroundColor>60B2F8</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>74</height>
+      <heightRatio>0.0998632010943912</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.162222222222222</sizeRatio>
+      <text>公告</text>
+      <top>113</top>
+      <topRatio>0.153214774281806</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6/panel7">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6/panel10">
+      <backgroundImg>gg.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>40</height>
+      <heightRatio>0.534246575342466</heightRatio>
+      <left>210</left>
+      <leftRatio>0.306666666666667</leftRatio>
+      <sizeRatio>0.951219512195122</sizeRatio>
+      <top>17</top>
+      <topRatio>0.232876712328767</topRatio>
+      <width>62</width>
+      <widthRatio>0.0911111111111111</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel11">
+      <backgroundColor>EFEFEF</backgroundColor>
+      <backgroundImg>bg155.jpg</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>74</height>
+      <heightRatio>0.100135317997294</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.108029197080292</sizeRatio>
+      <text>知识库</text>
+      <top>187</top>
+      <topRatio>0.253044654939107</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel11/panel12">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel11/panel13">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel11/panel14">
+      <backgroundImg>zsk.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>40</height>
+      <heightRatio>0.534246575342466</heightRatio>
+      <left>198</left>
+      <leftRatio>0.288888888888889</leftRatio>
+      <sizeRatio>0.951219512195122</sizeRatio>
+      <top>17</top>
+      <topRatio>0.232876712328767</topRatio>
+      <width>62</width>
+      <widthRatio>0.0911111111111111</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel15">
+      <backgroundColor>60B2F8</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>74</height>
+      <heightRatio>0.0998632010943912</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.162222222222222</sizeRatio>
+      <text>知识库</text>
+      <top>224</top>
+      <topRatio>0.303693570451436</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel15/panel16">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel15/panel17">
+      <backgroundImg>zsk.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>40</height>
+      <heightRatio>0.534246575342466</heightRatio>
+      <left>198</left>
+      <leftRatio>0.288888888888889</leftRatio>
+      <sizeRatio>0.951219512195122</sizeRatio>
+      <top>17</top>
+      <topRatio>0.232876712328767</topRatio>
+      <width>62</width>
+      <widthRatio>0.0911111111111111</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel18">
+      <backgroundColor>EFEFEF</backgroundColor>
+      <backgroundImg>bg155.jpg</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>74</height>
+      <heightRatio>0.100135317997294</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.108029197080292</sizeRatio>
+      <text>常见问题</text>
+      <top>298</top>
+      <topRatio>0.403247631935047</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel18/panel19">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel18/panel20">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel18/panel21">
+      <backgroundImg>cjwt.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>40</height>
+      <heightRatio>0.534246575342466</heightRatio>
+      <left>186</left>
+      <leftRatio>0.271111111111111</leftRatio>
+      <sizeRatio>0.951219512195122</sizeRatio>
+      <top>17</top>
+      <topRatio>0.232876712328767</topRatio>
+      <width>62</width>
+      <widthRatio>0.0911111111111111</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel22">
+      <backgroundColor>60B2F8</backgroundColor>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>74</height>
+      <heightRatio>0.0998632010943912</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.162222222222222</sizeRatio>
+      <text>常见问题</text>
+      <top>336</top>
+      <topRatio>0.454172366621067</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel22/panel23">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.027027027027027</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>72</top>
+      <topRatio>0.972972972972973</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel22/panel24">
+      <backgroundImg>cjwt.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>40</height>
+      <heightRatio>0.534246575342466</heightRatio>
+      <left>186</left>
+      <leftRatio>0.271111111111111</leftRatio>
+      <sizeRatio>0.951219512195122</sizeRatio>
+      <top>17</top>
+      <topRatio>0.232876712328767</topRatio>
+      <width>62</width>
+      <widthRatio>0.0911111111111111</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel25">
+      <backgroundColor>E9E9E9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>32</height>
+      <heightRatio>0.0437756497948016</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0711111111111111</sizeRatio>
+      <top>408</top>
+      <topRatio>0.552667578659371</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel25/panel28">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>404040</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>32</height>
+      <heightRatio>1</heightRatio>
+      <left>43</left>
+      <leftRatio>0.0622222222222222</leftRatio>
+      <sizeRatio>0.0758293838862559</sizeRatio>
+      <text>知识库：</text>
+      <top>0</top>
+      <width>642</width>
+      <widthRatio>0.937777777777778</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel25/panel43">
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0625</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>30</top>
+      <topRatio>0.9375</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel26">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>41</height>
+      <heightRatio>0.0560875512995896</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0911111111111111</sizeRatio>
+      <top>442</top>
+      <topRatio>0.59781121751026</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel26/panel27">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0487804878048781</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>39</top>
+      <topRatio>0.951219512195122</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel26/panel29">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7D7D7D</fontColor>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>41</height>
+      <heightRatio>1</heightRatio>
+      <left>43</left>
+      <leftRatio>0.0622222222222222</leftRatio>
+      <sizeRatio>0.0971563981042654</sizeRatio>
+      <text>独立驾车训练</text>
+      <top>0</top>
+      <width>642</width>
+      <widthRatio>0.937777777777778</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel26/panel29/panel30">
+      <backgroundImg>down.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>11</height>
+      <heightRatio>0.268292682926829</heightRatio>
+      <left>560</left>
+      <leftRatio>0.872093023255814</leftRatio>
+      <sizeRatio>0.239130434782609</sizeRatio>
+      <top>16</top>
+      <topRatio>0.390243902439024</topRatio>
+      <width>69</width>
+      <widthRatio>0.106976744186047</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel31">
+      <backgroundColor>E9E9E9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>246</height>
+      <heightRatio>0.332421340629275</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.495918367346939</sizeRatio>
+      <top>532</top>
+      <topRatio>0.719562243502052</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel31/panel32">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.00813008130081301</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>244</top>
+      <topRatio>0.991869918699187</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel31/panel33">
+      <backgroundColor>E9E9E9</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>7D7D7D</fontColor>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>206</height>
+      <heightRatio>0.83739837398374</heightRatio>
+      <left>20</left>
+      <leftRatio>0.0291970802919708</leftRatio>
+      <outerBottom>20</outerBottom>
+      <outerLeft>20</outerLeft>
+      <outerRight>20</outerRight>
+      <outerTop>20</outerTop>
+      <scrollPosX>20</scrollPosX>
+      <sizeRatio>0.31937984496124</sizeRatio>
+      <text>独立驾车训练文字内容</text>
+      <top>20</top>
+      <topRatio>0.0813008130081301</topRatio>
+      <vAlign>top</vAlign>
+      <width>645</width>
+      <widthRatio>0.941605839416058</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel34">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>41</height>
+      <heightRatio>0.0560875512995896</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0911111111111111</sizeRatio>
+      <top>482</top>
+      <topRatio>0.652530779753762</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel34/panel35">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0487804878048781</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>39</top>
+      <topRatio>0.951219512195122</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel34/panel36">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7D7D7D</fontColor>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>41</height>
+      <heightRatio>1</heightRatio>
+      <left>104</left>
+      <leftRatio>0.151111111111111</leftRatio>
+      <sizeRatio>0.107329842931937</sizeRatio>
+      <text>我能享受哪些服务？</text>
+      <top>0</top>
+      <width>581</width>
+      <widthRatio>0.848888888888889</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel34/panel37">
+      <backgroundImg>q.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.609756097560976</heightRatio>
+      <left>42</left>
+      <leftRatio>0.0612244897959184</leftRatio>
+      <sizeRatio>0.675675675675676</sizeRatio>
+      <top>8</top>
+      <topRatio>0.195121951219512</topRatio>
+      <width>52</width>
+      <widthRatio>0.0755102040816327</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel38">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>41</height>
+      <heightRatio>0.0560875512995896</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0836734693877551</sizeRatio>
+      <top>578</top>
+      <topRatio>0.782489740082079</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel38/panel39">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0487804878048781</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00291970802919708</sizeRatio>
+      <top>39</top>
+      <topRatio>0.951219512195122</topRatio>
+      <width>685</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel38/panel40">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7D7D7D</fontColor>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>41</height>
+      <heightRatio>1</heightRatio>
+      <left>64</left>
+      <leftRatio>0.0938775510204082</leftRatio>
+      <sizeRatio>0.0923423423423423</sizeRatio>
+      <text>5期报名开始了</text>
+      <top>0</top>
+      <width>621</width>
+      <widthRatio>0.906122448979592</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel38/panel41">
+      <backgroundImg>flag.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>25</height>
+      <heightRatio>0.609756097560976</heightRatio>
+      <left>10</left>
+      <leftRatio>0.0142857142857143</leftRatio>
+      <sizeRatio>0.675675675675676</sizeRatio>
+      <top>10</top>
+      <topRatio>0.24390243902439</topRatio>
+      <width>52</width>
+      <widthRatio>0.0755102040816327</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel38/panel42">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>7D7D7D</fontColor>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>right</hAlign>
+      <height>41</height>
+      <heightRatio>1</heightRatio>
+      <left>235</left>
+      <leftRatio>0.342857142857143</leftRatio>
+      <sizeRatio>0.127329192546584</sizeRatio>
+      <text>2016年3月5日</text>
+      <top>0</top>
+      <width>450</width>
+      <widthRatio>0.657142857142857</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="1">
+    <taskSetItem name="getNewsList">
+      <script1 />
+      <script2>var sql, sqlResult;  
+//公告
+sql = "SELECT id,convert(varchar,lastModify,20) as lastModify,title,[text] from news " +
+    "where newsTypeStr = '系统公告' order by sort, lastmodify desc";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.clear();
+    eio.appendString8("F");
+    eio.appendString8("统繁忙，请稍后再试");
+    es.logWarning("getNewsList数据库执行出错:" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendDataSet(sqlResult, "id,lastModify,title,text",0,9999);
+//知识库
+sql = "SELECT id,convert(varchar,lastModify,20) as lastModify,title,[text] from news " +
+    "where newsTypeStr = '知识库' order by sort, lastmodify desc";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.clear();
+    eio.appendString8("F");
+    eio.appendString8("统繁忙，请稍后再试");
+    es.logWarning("getNewsList数据库执行出错:" + sql);
+    return;
+}
+eio.appendDataSet(sqlResult, "id,lastModify,title,text",0,9999);
+//常见问题
+sql = "SELECT id,convert(varchar,lastModify,20) as lastModify,title,[text] from news " +
+    "where newsTypeStr = '常见问题' order by sort, lastmodify desc";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.clear();
+    eio.appendString8("F");
+    eio.appendString8("统繁忙，请稍后再试");
+    es.logWarning("getNewsList数据库执行出错:" + sql);
+    return;
+}
+eio.appendDataSet(sqlResult, "id,lastModify,title,text",0,9999);</script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("获取手册失败：" + eio.readString8());
+    return;
+}
+g5.book1 = eio.readDataSet(); //公告
+g5.book2 = eio.readDataSet(); //知识库
+g5.book3 = eio.readDataSet(); //常见问题
+
+
+
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

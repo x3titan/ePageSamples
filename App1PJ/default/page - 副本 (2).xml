@@ -1,0 +1,713 @@
+<page>
+  <controls count="2">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>799</height>
+      <left>0</left>
+      <onControlLoad>/* 
+alert(g5.goto)
+
+if ( g5.goto== "0"){
+    window.location.href = ee.pageRoot + "/student/sMain";  
+} else if ( g5.goto== "1"){
+    window.location.href = ee.pageRoot + "/test/downLoadApp"; 
+} else {
+    window.location.href = ee.pageRoot + "/student/sMain";
+}  
+  
+ 
+ alert(g5.a);  
+ 
+ var c = eb.getCookie("flag");
+ 
+ alert(c);  
+  */
+  
+ window.location.href = ee.pageRoot + "/student/sMain"; 
+
+
+
+  </onControlLoad>
+      <onPageCreate><![CDATA[ var url = window.location.search;
+        //alert(url);
+var callBackType="<%
+/*
+//充值成功回调
+payment_type=1
+&amp;subject=1%u966a%u9a7e%u5145%u503c
+&amp;trade_no=2016012121001004180033798750
+&amp;buyer_email=tam3000%40163.com
+&amp;gmt_create=2016-01-21+19%3a25%3a29
+&amp;notify_type=trade_status_sync
+&amp;quantity=1
+&amp;out_trade_no=112233445573
+&amp;notify_time=2016-01-21+19%3a25%3a30
+&amp;seller_id=2088021117176475
+&amp;trade_status=TRADE_SUCCESS
+&amp;is_total_fee_adjust=N
+&amp;total_fee=0.01
+&amp;gmt_payment=2016-01-21+19%3a25%3a30
+&amp;seller_email=mosquito%401peijia.com
+&amp;price=0.01
+&amp;buyer_id=2088002167604181
+&amp;notify_id=a02fe26a8bab82594f7625223c94473he0
+&amp;use_coupon=N
+&amp;sign_type=MD5
+&amp;sign=6266f08c80899c19d41708582eebfdbe
+*/  
+
+ es.logWarning("back for pay");
+ //es.logWarning(request.getPostData());   
+  
+  //document.cookie = "goto11="+"1";  
+  //var flag ="0" 
+  //eb.redirect("www.baidu.com?a=123");  
+    //Server.Transfer("http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJ/test")
+   // Response.Redirect("xxx.asp")
+   // session.set("flag","0");
+  // Response.Write("<script>window.showModalDialog('Default2.aspx')</script>");
+   //Response.Write("123");  
+   
+//支付宝回调处理
+if ((request.get("trade_status") == "TRADE_SUCCESS")&amp;&amp;(request.getQueryStringCount()==0)) {
+    //导入和分离参数
+    var i,j,paramName,sign="";
+    var params = new Array();
+    for (i=0; i < request.getFormCount(); i++) {
+        paramName = request.getFormKey(i);
+        if (paramName=="sign_type") continue;
+        if (paramName=="sign") {
+            sign = request.get(paramName);
+            continue;
+        }
+        var obj = new Object();
+        params.push(obj);
+        obj.paramName = paramName;
+        obj.paramValue = request.get(paramName);
+    }
+    //排序
+    var tempObj;
+    for (i=0; i<params.length-1; i++) {
+        for (j=i+1; j<params.length; j++) {
+            if (params[i].paramName>params[j].paramName) {
+                tempObj = params[i];
+                params[i]=params[j];
+                params[j]=tempObj;
+            }
+        }
+    }
+    //生成key
+    var key = "";
+    for (i=0; i<params.length; i++) {    
+        if (key!="") key += "&amp;";
+        key += params[i].paramName + "=" + params[i].paramValue;
+    }
+    //校验
+    if (sign.toLowerCase()!=es.getMd5(key+"kj9othli5f3o0pjubgycbz8u7ggdu3du").toLowerCase()) {
+        es.logWarning("检测到支付宝传送的非法数据包：" + request.getFormData());
+    } else {
+        /* 
+        var buyer = request.get("buyer_email");
+        var no = request.get("trade_no");
+        var mess = buyer +";"+no;
+        es.logWarning(mess);
+        var sql = "exec confirmPay '" + db.encode(request.get("out_trade_no")) + 
+            "','" + db.encode(mess) + "'";    
+        es.logWarning("pay sql="+sql); 
+        */
+        /*    
+        var sql = "exec confirmPay '" + db.encode(request.get("out_trade_no")) + 
+            "','" + db.encode(request.get("buyer_email")) + "'";  
+            */ 
+        /*
+        var sqlResult = db.executeQuery("PJ", sql); 
+        es.logWarning("用户支付成功，本地订单号:" + request.get("out_trade_no") +
+            ",支付者账户:" + request.get("buyer_email") +
+            ",支付宝流水号:" + request.get("trade_no")); 
+        */
+        var buyer = request.get("buyer_email");
+        var no = request.get("trade_no");
+        var tradeNo = no;
+        var mess = buyer +";"+no;
+        es.logWarning(mess); 
+        var code = request.get("out_trade_no");
+        var sql1 = "select * from log where strParam1='"+db.encode(code)+"'";
+        var sqlResult1 = db.executeQuery("PJ",sql1);
+        db.read(sqlResult1);
+        var logType = db.getString(sqlResult1,"logType");
+        var userId = db.getString(sqlResult1,"userId"); 
+        var note = db.getString(sqlResult1,"note"); 
+        
+        var pwd = note;         
+        var pwdMd5 = es.getMd5(pwd);
+        
+        es.logWarning("logType="+logType);
+        es.logWarning("userId="+userId);
+        es.logWarning("note="+note);  
+        es.logWarning("nickname="+nickName);
+        es.logWarning("pwd="+pwd);
+        if (logType == "web充值请求" || logType == "web充值成功" ){
+             es.logWarning("执行操作"); 
+             var nickName = "";
+             var sql = "exec webConfirmPay '"+ db.encode(request.get("out_trade_no")) +
+                       "','"+ db.encode(mess)+"','"+ db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"'";  
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web用户支付成功，本地订单号:" + request.get("out_trade_no") +
+                ",支付者账户:" + request.get("buyer_email") +
+                ",支付宝流水号:" + request.get("trade_no")); 
+        } else if(logType == "充值请求") { 
+            var sql = "exec confirmPay '" + db.encode(request.get("out_trade_no")) + 
+                "','" + db.encode(mess) + "'";    
+            es.logWarning("pay sql="+sql);
+            /*    
+            var sql = "exec confirmPay '" + db.encode(request.get("out_trade_no")) + 
+                "','" + db.encode(request.get("buyer_email")) + "'";  
+                */
+            var sqlResult = db.executeQuery("PJ", sql); 
+            es.logWarning("用户支付成功，本地订单号:" + request.get("out_trade_no") +
+                ",支付者账户:" + request.get("buyer_email") +
+                ",支付宝流水号:" + request.get("trade_no")); 
+        }
+    }
+    "支付宝";  
+    return;
+}
+     // es.logWarning("flag2="+session.get("flag"));
+//微信回调处理
+/* 微信回调数据格式：
+<xml>
+<appid><![CDATA[wx9b5794aacbbdf257]]]]><![CDATA[></appid>
+<attach><![CDATA[充值]]]]><![CDATA[></attach>
+<bank_type><![CDATA[CFT]]]]><![CDATA[></bank_type>
+<cash_fee><![CDATA[1]]]]><![CDATA[></cash_fee>
+<fee_type><![CDATA[CNY]]]]><![CDATA[></fee_type>
+<is_subscribe><![CDATA[N]]]]><![CDATA[></is_subscribe>
+<mch_id><![CDATA[1264325101]]]]><![CDATA[></mch_id>
+<nonce_str><![CDATA[1001060CD3A516EFD839C2B4EBEC690F]]]]><![CDATA[></nonce_str>
+<openid><![CDATA[ojZpFs7CTnlvAqV2z3k41Z7xYXAM]]]]><![CDATA[></openid>
+<out_trade_no><![CDATA[A1464576111783]]]]><![CDATA[></out_trade_no>
+<result_code><![CDATA[SUCCESS]]]]><![CDATA[></result_code>
+<return_code><![CDATA[SUCCESS]]]]><![CDATA[></return_code>
+<sign><![CDATA[63679E9BE6BD08193659EE2109237F92]]]]><![CDATA[></sign>
+<time_end><![CDATA[20160530104203]]]]><![CDATA[></time_end>
+<total_fee>1</total_fee>
+<trade_type><![CDATA[APP]]]]><![CDATA[></trade_type>
+<transaction_id><![CDATA[4009692001201605306502630614]]]]><![CDATA[></transaction_id>
+</xml>
+*/
+var formData = request.getPostData();
+//es.logWarning(formData);
+if (formData.indexOf("<appid>")>=0) {
+    //读取所有参数
+    var i, j, paramName, sp, obj;
+    var sign="", tradeNo = "", sn = "", resultCode = "";
+    var params = new Array();
+    for (i = 2; i < formData.length; i++) {
+        if (formData.charAt(i) != "<") continue;
+        //read paramName
+        sp = formData.indexOf(">", i);
+        if (sp<0) continue;
+        obj = new Object();
+        obj.paramName = formData.substring(i + 1, sp);
+        //read paramValue
+        i = sp + 1;
+        sp = formData.indexOf("<", i + 1);
+        if (sp < 0) continue;
+        obj.paramValue = formData.substring(i, sp);
+        //adjust paramValue
+        if (obj.paramValue.indexOf("<![CDATA[")==0) {
+            obj.paramValue = obj.paramValue.substring("<![CDATA[".length, obj.paramValue.length - "]]]]><![CDATA[>".length);  
+        }
+        //backup sign
+        if (obj.paramName == "sign") {
+            sign = obj.paramValue;        
+        } else {
+            params.push(obj);
+        }
+        //tradeNo
+        if (obj.paramName == "out_trade_no") tradeNo = obj.paramValue;
+        //订单号
+        if (obj.paramName == "transaction_id") sn = obj.paramValue;
+        //交易是否成功标记
+        if (obj.paramName == "result_code") resultCode = obj.paramValue;
+        i = sp + 4;
+    }
+    //排序
+    var tempObj;
+    for (i=0; i<params.length-1; i++) {
+        for (j=i+1; j<params.length; j++) {
+            if (params[i].paramName>params[j].paramName) {
+                tempObj = params[i];
+                params[i]=params[j];
+                params[j]=tempObj;
+            }
+        }
+    }
+    //生成key
+    var key = "";
+    for (i=0; i<params.length; i++) {    
+        if (key!="") key += "&amp;";
+        key += params[i].paramName + "=" + params[i].paramValue;
+    }
+    //校验
+    es.logWarning("here");
+    if (sign.toLowerCase()!=es.getMd5(key+"&amp;key=YIpeijia123456789012345678901234").toLowerCase()) {
+        es.logWarning("检测到微信支付传送的非法数据包：" + formData);
+    } else if (resultCode == "SUCCESS") { 
+        //获取本地订单的信息 根据tradeNo  
+        es.logWarning("tradeNo="+tradeNo);
+        var sql = "select * from log where strParam1='"+ tradeNo +"'";
+        var sqlResult = db.executeQuery("PJ", sql);
+        db.read(sqlResult);
+        var logType = db.getString(sqlResult,"logType");
+        var userId = db.getString(sqlResult,"userId"); 
+        var note = db.getString(sqlResult,"note");
+        var pwd = note;         
+        var pwdMd5 = es.getMd5(pwd); 
+        var money=db.getString(sqlResult,"intParam1");
+        es.logWarning("logType="+logType);
+        es.logWarning("pwd="+pwd);      
+        es.logWarning("money="+money);
+        if(logType =="web微信支付"){
+             es.logWarning("web微信执行操作"); 
+             var nickName = "";
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','300','0','浦发活动'";  
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);  
+        }else if (logType =="车享女神节") {
+             es.logWarning("车享女神节执行操作"); 
+             var nickName = "";
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','300','0','车享女神节'";  
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);
+        }else if (logType =="51深圳") {
+             es.logWarning("51深圳执行操作"); 
+             var nickName = "";
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','200','0','51深圳'";  
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);
+        }else if (logType =="双十一") {
+             es.logWarning("双十一"); 
+             var nickName = "";
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','100','1000','双十一'";  
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("双十一 支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);
+        }else if (logType =="54华茂-1") {
+             es.logWarning("51深圳执行操作"); 
+             var nickName = "";
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','300','0','54华茂-1'";  
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);
+        }else if (logType =="华茂-长期-99") {
+             es.logWarning("华茂-长期-99 执行操作"); 
+             var nickName = "";
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','220','0','华茂-长期-99'";  
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);
+        }else if (logType =="福新") {
+             es.logWarning("福新 执行操作"); 
+             var nickName = "";
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','300','0','福新'";  
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);
+        }else if (logType.indexOf("福建抽奖活动") != -1) {
+             es.logWarning(logType + " 执行操作"); 
+             var nickName = "";
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','','0','"+logType+"'";  
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);
+        }
+        else if(logType =="微信公众号支付"){
+             es.logWarning("web微信执行操作"); 
+             var nickName = "";  
+             var balanceFree="0";   
+             money = money * 0.01;    //由于money从log表记录中获取，而记录生成时数值乘以了100，所有这里要除以100；
+                     
+             if(money=="200"){
+                 balanceFree="20";  
+                 //money="0.01";
+             }        
+             if(money=="300"){ 
+                 
+                 balanceFree="35"; 
+                 //money="0.02";
+             }  
+             if(money=="400"){ 
+                 
+                 balanceFree="50";
+             }              
+            /* if(money=="4"){ 
+                 
+                 balanceFree="35";
+             }*/ 
+             if(money=="450"){ 
+                 
+                 balanceFree="60";
+             } 
+             if(money=="600"){ 
+                 
+                 balanceFree="80";
+             } 
+             if(money=="1000"){ 
+                 
+                 balanceFree="140";
+             } 
+             if(money=="1500"){ 
+                 
+                 balanceFree="220";
+             } 
+             if(money=="2000"){ 
+                 
+                 balanceFree="300";
+             } 
+             if(money=="3000"){ 
+                 
+                 balanceFree="465";
+             }  
+             //上海
+             /*if(money=="295"){     
+                 balanceFree="35";
+             }
+             if(money=="390"){ 
+                 
+                 balanceFree="50";
+             }  
+             if(money=="0.01"){ 
+                 
+                 balanceFree="20";
+             } */
+             /*if(money=="11"){ 
+                 
+                 balanceFree="220";
+             } 
+             if(money=="12"){ 
+                 
+                 balanceFree="320";
+             } 
+             if(money=="13"){ 
+                 
+                 balanceFree="465";
+             }*/ 
+             if(money=="4500"){ 
+                 
+                 balanceFree="700";
+             }   
+             es.logWarning("balanceFree="+balanceFree);
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','"+money+"','"+balanceFree+"','微信公众号支付'";
+             es.logWarning(sql);           
+             es.logWarning("微信公众号支付"); 
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);  
+                sql="update log set logType='充值' where strParam1='"+ tradeNo +"'";
+                sqlResult = db.executeQuery("PJ",sql);   
+             es.logWarning(sql);   
+        }
+        else if(logType =="微信公众号支付预约陪驾"){
+             es.logWarning("web微信执行操作微信公众号支付预约陪驾"); 
+             var nickName = "";  
+             var balanceFree="0";   
+             money = money * 0.01;    //由于money从log表记录中获取，而记录生成时数值乘以了100，所有这里要除以100；
+                     
+             if(money=="200"){
+                 balanceFree="20";  
+             }        
+             if(money=="300"){ 
+                 
+                 balanceFree="35"; 
+                
+             }  
+             if(money=="400"){ 
+                 
+                 balanceFree="50";
+             }              
+             if(money=="450"){ 
+                 
+                 balanceFree="60";
+             } 
+             if(money=="600"){ 
+                 
+                 balanceFree="80";
+             } 
+               
+             //上海
+             if(money=="295"){     
+                 balanceFree="35";
+             }
+             if(money=="390"){ 
+                 
+                 balanceFree="50";
+             }  
+             if(money=="0.01"){ 
+                 
+                 balanceFree="20";
+             } 
+                
+             es.logWarning("balanceFree="+balanceFree);
+             var sql = "exec webConfirmPay '"+ db.encode(tradeNo) +"','"+ db.encode(sn)+"','"
+                 + db.encode(nickName)+"','"+db.encode(pwd)+"','"+db.encode(pwdMd5)+"','"+money+"','"+balanceFree+"','微信公众号支付预约陪驾'";     
+                 //select  @money = intParam1, @mobile = strParam3,@payType = strParam2 from [log] where strParam1 = @localTicket and userId = '0'
+             es.logWarning(sql);           
+             es.logWarning("微信公众号支付预约陪驾"); 
+             var sqlResult = db.executeQuery("PJ",sql); 
+             es.logWarning(sql);
+             es.logWarning("web微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" +  sn  +
+                ",原始数据：" + formData);  
+                sql="update log set logType='充值' where strParam1='"+ tradeNo +"'";
+                sqlResult = db.executeQuery("PJ",sql);   
+             es.logWarning(sql); 
+             // 修改订单    
+             var sql = "exec webtaskUptate '"+ db.encode(tradeNo)+"'";
+             es.logWarning(sql);           
+             es.logWarning("微信公众号支付预约陪驾订单状态修改"); 
+             var sqlResult = db.executeQuery("PJ",sql); 
+             
+             
+        } 
+        else if(logType == "充值请求"){
+            var sql = "exec confirmPay '" + db.encode(tradeNo) + 
+                "','" + db.encode(sn) + "'";
+            var sqlResult = db.executeQuery("PJ", sql); 
+            es.logWarning("用户微信支付成功，本地订单号:" + tradeNo +
+                ",微信支付订单号:" + sn + ",原始数据：" + formData);    
+        }
+        else {
+            es.logWarning("logType === others");
+        }
+    
+        
+    } else {
+        es.logWarning("用户微信支付失败，本地订单号:" + tradeNo + ",原始数据：" + formData);
+    }
+    "微信支付app";
+}  
+/*
+if (request.get("type").length>3) {
+    //微信JSSDK支付方式第一步获取code的回叫处理
+    es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,code=" + request.get("code"));
+    request.get("type");
+}
+*/  
+if(request.get("type").length>0){   
+    //es.logWarning("type="+"111");
+    if (request.get("type") == "123"){
+        if (request.get("code").length>3) {  
+            es.logWarning("type="+"222");
+            //微信JSSDK支付方式第一步获取code的回叫处理 
+            es.logWarning("type :request.get(type)="+request.get("type"));
+            es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,公众号支付,code=" + request.get("code"));
+           request.get("code")+"`微信公众号支付";
+        }
+        else{
+             return;
+        } 
+    }else if (request.get("type") == "124"){
+        if (request.get("code").length>3) {  
+            es.logWarning("type="+"224");
+            //微信JSSDK支付方式第一步获取code的回叫处理 
+            es.logWarning("type :request.get(type)="+request.get("type"));
+            es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,公众号支付,code=" + request.get("code"));
+           request.get("code")+"`车享女神节";
+        }
+        else{
+             return;
+        } 
+    }else if (request.get("type") == "125"){
+        if (request.get("code").length>3) {  
+            //es.logWarning("type="+"224");
+            //微信JSSDK支付方式第一步获取code的回叫处理 
+            es.logWarning("type :request.get(type)="+request.get("type"));
+            es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,公众号支付,code=" + request.get("code"));
+           request.get("code")+"`福建抽奖活动";
+        }
+        else {
+             return;
+        } 
+    }else if (request.get("type") == "126"){
+        if (request.get("code").length>3) {  
+            //es.logWarning("type="+"224");
+            //微信JSSDK支付方式第一步获取code的回叫处理 
+            es.logWarning("type :request.get(type)="+request.get("type"));
+            es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,公众号支付,code=" + request.get("code"));
+           request.get("code")+"`51深圳";
+        }
+        else {
+             return;
+        } 
+    }else if (request.get("type") == "127"){
+        if (request.get("code").length>3) {  
+            //es.logWarning("type="+"224");
+            //微信JSSDK支付方式第一步获取code的回叫处理 
+            es.logWarning("type :request.get(type)="+request.get("type"));
+            es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,公众号支付,code=" + request.get("code"));
+           request.get("code")+"`54华茂-1";
+        }
+        else {
+             return;
+        } 
+    }else if (request.get("type") == "128"){
+        if (request.get("code").length>3) {  
+            //es.logWarning("type="+"224");
+            //微信JSSDK支付方式第一步获取code的回叫处理 
+            es.logWarning("type :request.get(type)="+request.get("type"));
+            es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,公众号支付,code=" + request.get("code"));
+           request.get("code")+"`华茂-长期-99";
+        }
+        else {
+             return;
+        } 
+    }else if (request.get("type") == "131"){
+        if (request.get("code").length>3) {  
+            //es.logWarning("type="+"224");
+            //微信JSSDK支付方式第一步获取code的回叫处理 
+            es.logWarning("type :request.get(type)="+request.get("type"));
+            es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,公众号支付,code=" + request.get("code"));
+           request.get("code")+"`双十一";
+        }
+        else {
+             return;
+        } 
+    }else if (request.get("type") == "129"){
+        if (request.get("code").length>3) {  
+            //es.logWarning("type="+"224");
+            //微信JSSDK支付方式第一步获取code的回叫处理 
+            es.logWarning("type :request.get(type)="+request.get("type"));
+            es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,公众号支付,code=" + request.get("code"));
+           request.get("code")+"`福新";
+        }
+        else {
+             return;
+        } 
+    }else if (request.get("type") == "211"){
+        if (request.get("code").length>3) {  
+            es.logWarning("type="+"211");
+            //微信JSSDK支付方式第一步获取code的回叫处理 
+            es.logWarning("type :request.get(type)="+request.get("type"));
+            es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,公众号支付,code=" + request.get("code"));
+           request.get("code")+"`优驾微信支付";
+        }
+        else {
+             return;
+        } 
+    }else {
+        return;
+    }   
+} 
+else{      
+    if (request.get("code").length>3) {
+        //微信JSSDK支付方式第一步获取code的回叫处理
+        es.logWarning("微信JSSDK支付方式第一步获取code的回叫处理,其它,code=" + request.get("code"));
+        request.get("code")+"`web微信支付"; 
+
+    } 
+    else{
+        return;
+    }
+}
+  //"ddddd`"+request.get("code");   
+%>"; 
+//alert("callBackType:"+callBackType)   
+if(callBackType.indexOf("`")!=-1){
+    //alert("123456789");
+    
+     var arr=callBackType.split("`"); 
+    // alert(arr[1]);
+     if (arr[1] == "微信公众号支付"){ 
+         window.location.href = ee.pageRoot + "/weChat/pay&amp;code="+arr[0];
+     }else if (arr[1] == "web微信支付"){
+         window.location.href = ee.pageRoot + "/pufa&amp;code=" + arr[0];
+     }else if (arr[1] == "车享女神节"){
+         window.location.href = ee.pageRoot + "/chexiang&amp;code=" + arr[0];
+     }else if (arr[1] == "双十一"){
+         window.location.href = ee.pageRoot + "/doubleone&amp;code=" + arr[0];
+     }else if (arr[1] == "51深圳"){
+         window.location.href = ee.pageRoot + "/51shenzhen&amp;code=" + arr[0];
+     }else if (arr[1] == "54华茂-1"){
+         window.location.href = ee.pageRoot + "/54huamao1&amp;code=" + arr[0];
+     }else if (arr[1] == "华茂-长期-99"){
+         window.location.href = ee.pageRoot + "/54huamao3&amp;code=" + arr[0];
+     }else if (arr[1] == "福新"){
+         window.location.href = ee.pageRoot + "/fuxin&amp;code=" + arr[0];
+     }else if (arr[1] == "福建抽奖活动"){
+         window.location.href = ee.pageRoot + "/fujiandraw&amp;code=" + arr[0];
+     }else if (arr[1] == "优驾微信支付"){
+         window.location.href = "http://m.1peijia.com/EEngine/ee.aspx?_L_=/Ujia/pay&amp;code=" + arr[0];
+     }  
+} 
+else {   
+//alert("callBackType2:"+callBackType) 
+if (callBackType == "支付宝" || callBackType == "微信支付app" || callBackType == ""){
+    window.location.href = ee.pageRoot + "/student/sMain";  
+}else {
+    //window.location.href = ee.pageRoot + "/pufa&amp;code=" + callBackType; 
+    window.location.href = ee.pageRoot + "/student/sMain"; 
+}
+  
+
+} 
+
+
+]]></onPageCreate>
+      <top>0</top>
+      <width>1204</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>98</height>
+      <heightRatio>0.122549019607843</heightRatio>
+      <layerName>b1</layerName>
+      <left>201</left>
+      <leftRatio>0.167053364269142</leftRatio>
+      <onClick>getTT();</onClick>
+      <sizeRatio>1.31578947368421</sizeRatio>
+      <top>108</top>
+      <topRatio>0.134803921568627</topRatio>
+      <width>212</width>
+      <widthRatio>0.176334106728538</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

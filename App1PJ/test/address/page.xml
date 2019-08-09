@@ -1,0 +1,120 @@
+<page>
+  <controls count="2">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad>var map = new BMap.Map("ee_panel1");         
+var point = new BMap.Point(116.404, 39.915);  
+map.centerAndZoom(point, 15);    
+ function getPosition() {
+ //用ajax请求
+  $.ajax({
+   url: "/wechat/jssdk",//请求地址
+   type: 'post',//post请求
+   dataType: 'json',
+   contentType: "application/x-www-form-urlencoded; charset=utf-8",
+   data: {
+    'url': location.href.split('#')[0]//将第一个#号前的地址传递
+   },
+//请求成功的函数
+   success: function (data) {
+    wx.config({
+     // debug: true,
+     appId: data.data.appId,
+     timestamp: data.data.timestamp,
+     nonceStr: data.data.nonceStr,
+     signature: data.data.signature,
+     jsApiList: ['checkJsApi', 'getLocation']
+    });
+    wx.ready(function () {
+     wx.getLocation({
+     //获得定位成功
+      success: function (res) {
+      //这是微信返回的真正经纬度
+       var oldLat = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+       var oldLng = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+       /*下面是为了将获得的真正经纬度转换为对应的百度经纬度，因为是利用百度地图的经纬度去查询数据的，数据库中存的也是百度的经纬度*/
+       //创建一个百度地图的点
+       //var customerPoint = new BMap.Point(oldLng, oldLat);
+       var customerPoint = new BMap.Point(oldLng, oldLat);
+       map.centerAndZoom(customerPoint, 15);  
+       //
+       var convertor = new BMap.Convertor();
+ 
+       var pointArr = [];//创建一个数组
+       pointArr.push(customerPoint);//将刚才的点放进去
+       convertor.translate(pointArr, 1, 5, initMap); //转换坐标
+       function initMap(data) {
+        if (data.status === 0) {//转换成功
+         var point = data.points[0];//得到后的点
+         var lng = point.lng;//获得转换后的经度
+         var lat = point.lat;//获得转换后的纬度
+         toDoFunction(lng, lat);//将经纬度传入到要运用的函数中
+        } else {
+        //下面两行是默认定位到西湖的经纬度
+         lng = 120.141375;
+         lat = 30.257806;
+         toDoFunction(lng, lat);//将经纬度传入到要运用的函数中
+        }
+       }
+ 
+      },
+      //取消定位
+      cancel: function () {
+      //下面两行是默认定位到西湖的经纬度
+       var lng = 120.141375;
+       var lat = 30.257806;
+       toDoFunction(lng, lat);//将经纬度传入到要运用的函数中
+      },
+      //定位失败
+      fail: function () {
+      //下面两行是默认定位到西湖的经纬度
+       var lng = 120.141375;
+       var lat = 30.257806;
+       toDoFunction(lng, lat);//将经纬度传入到要运用的函数中
+      }
+ 
+     });
+     //定位发生错误
+     wx.error(function () {
+     //下面两行是默认定位到西湖的经纬度
+      var lng = 120.141375;
+      var lat = 30.257806;
+      toDoFunction(lng, lat);//将经纬度传入到要运用的函数中
+     });
+ 
+    });
+   }
+  });
+ }           
+</onControlLoad>
+      <pageHead><![CDATA[<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&amp;ak=GuGTavoMYWqzKGwDQIXWYIr9g1VxbqVf"></script>
+]]></pageHead>
+      <top>0</top>
+      <width>1232</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.662337662337662</sizeRatio>
+      <top>0</top>
+      <width>1232</width>
+      <widthRatio>1</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="1">
+    <taskSetItem name="address">
+      <script1 />
+      <script2 />
+      <script3 />
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

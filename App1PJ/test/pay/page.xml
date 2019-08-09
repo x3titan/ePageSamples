@@ -1,0 +1,1495 @@
+<page>
+  <controls count="36">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+if (!isIOS) {
+    ee.getControl("layoutyitem8").heavy = 0;
+}
+setTimeout(function(){
+    ee.autoResize = false;
+},1000);
+
+g5.current=-1;
+
+
+
+//document.addEventListener("deviceready", g5.onDeviceReady, false);
+function setPanel(c){
+    ee.setImage(ee.getControl("panel"+c),"/App1PJ/pay/btn1@2x.png","fill","","");  
+    ee.setTextColor(ee.getControl("panel"+(c+1)),"#fff");
+    ee.setTextColor(ee.getControl("panel"+(c+2)),"#fff"); 
+    ee.setImage(ee.getControl("panel10"),"/App1PJ/pay/btn@2x.png","fill","","");  
+    ee.setTextColor(ee.getControl("panel18"),"#1dadf4");
+    ee.setTextColor(ee.getControl("panel19"),"#7b7b7b");
+    ee.setImage(ee.getControl("panel2"),"/App1PJ/pay/btn@2x.png","fill","","");  
+    ee.setTextColor(ee.getControl("panel3"),"#1dadf4");
+    ee.setTextColor(ee.getControl("panel5"),"#7b7b7b");
+}  
+function originalPanel(c){
+    ee.setImage(ee.getControl("panel"+c),"/App1PJ/pay/btn@2x.png","fill","","");  
+    ee.setTextColor(ee.getControl("panel"+(c+1)),"#1dadf4");
+    ee.setTextColor(ee.getControl("panel"+(c+2)),"#7b7b7b");
+}  
+
+//微信
+g5.onDeviceReady = function () {
+    //alert("success cordova");
+    //g5.log("cordova initialized succ.");
+}
+document.addEventListener("deviceready", g5.onDeviceReady, false);
+
+//微信支付接口返回：
+//0成功
+//-1微信接口故障
+//-2用户取消支付
+//-3支付过程30秒超时
+g5.tamPlugin = { 
+    payWechat: function (prepayId, nonceStr, successCallback, errorCallback) {
+        if (isIOS) {
+            cordova.exec(
+                successCallback, // success callback function 
+                errorCallback, // error callback function 
+                "TamPlugin", // mapped to our native Java class called "CalendarPlugin" 
+                "payWechat", // with this action name 
+                [prepayId, nonceStr]
+            );  
+        } else {
+            cordova.exec(
+                successCallback, // success callback function 
+                errorCallback, // error callback function 
+                "TamPlugin", // mapped to our native Java class called "CalendarPlugin" 
+                "payWechat", // with this action name 
+                [{                  // and this array of custom arguments to create our entry 
+                    "prepayId": prepayId 
+                }] 
+            );
+        }  
+    },
+    getVersion: function() {
+        cordova.exec(
+            function (version) {
+                g5.version = version;
+                g5.onVersionReady();
+            },
+            function (msg) {
+                g5.onVersionReady();
+            },
+            "TamPlugin", "getVersion", [{ "a": "" }] 
+        );  
+    }
+}   
+
+
+
+
+
+//html5 新增 touch 事件
+
+var w = ee.getControl("panel43"); //"确认充值" 弹窗 
+w.style.zIndex = 1000;   
+
+var container = ee.getControl("panel22");   //容器
+ 
+var c1 = ee.getControl("panel23");   //card1 ~ card5
+var c2 = ee.getControl("panel24");
+var c3 = ee.getControl("panel25");
+var c4 = ee.getControl("panel26");
+var c5 = ee.getControl("panel27");   
+c1.style.zIndex = 1;
+c2.style.zIndex = 2;
+c3.style.zIndex = 3;
+c4.style.zIndex = 4;
+c5.style.zIndex = 5;
+
+//禁用手机默认的触屏滚动行为
+document.addEventListener('touchmove', function(event) {
+    event.preventDefault();
+}, false);   
+//使用参数，每一个使用情景下，参数不同
+g5.card = 0; //默认第一张card 
+var arr = [c1,c2,c3,c4,c5];   
+var cardStart = 0;
+var cardEnd = 4;  
+var zIndexNum = 6;
+
+//touchstart事件
+function touchSatrtFunc(evt) {
+    try {
+        //evt.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等
+ 
+        var touch = evt.touches[0]; //获取第一个触点
+        var x = Number(touch.pageX); //页面触点X坐标
+        var y = Number(touch.pageY); //页面触点Y坐标
+        //记录触点初始位置
+        g5.startX = x;
+        g5.startY = y; 
+    } catch (e) {
+        alert('touchSatrtFunc：' + e.message);
+    }
+}
+ 
+//touchmove事件，这个事件 获取坐标
+function touchMoveFunc(evt) {
+    try {
+        //evt.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等
+        var touch = evt.touches[0]; //获取第一个触点
+        g5.x = Number(touch.pageX); //页面触点X坐标
+        g5.y = Number(touch.pageY); //页面触点Y坐标 
+
+        //document.getElementById("version").innerHTML = "原:"+startY+"   "+"现:"+y;
+
+    } catch (e) {
+        alert('touchMoveFunc：' + e.message);
+    }    
+}
+ 
+//touchend事件
+function touchEndFunc(evt) {
+    try {
+        evt.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等 
+        //判断滑动方向 
+         
+        if (g5.x - g5.startX > 100){ //向右滑动
+            g5.card --;   
+            if (g5.card < cardStart){
+                g5.card=cardStart; 
+                return;
+            }
+            var cell = arr[g5.card];           
+            eb.setAni(cell, "null", "leftFlyIn", "null", 0, true, false);   
+            zIndexNum ++;
+            cell.style.zIndex = zIndexNum;
+            ee.showAni(cell);           
+            
+        }else if (g5.x - g5.startX < -100){   //向左滑动 
+          
+            g5.card ++;  
+            if (g5.card > cardEnd){
+                g5.card=cardEnd;   
+                return;
+            }
+            var cell = arr[g5.card];          
+            eb.setAni(cell, "null", "rightFlyIn", "null", 0, true, false);  
+            zIndexNum ++;
+            cell.style.zIndex = zIndexNum; 
+            ee.showAni(cell);                     
+   
+        } 
+                                                
+    } catch (e) {
+        alert('touchEndFunc：' + e.message);
+        //window.location.href = ee.pageRoot + "/login";    //发生错误，则跳回到login页面，由于已设置cookie，所以不会重复跳入该页面
+    }
+}
+ 
+//绑定事件
+function bindEvent() {
+    container.addEventListener('touchstart', touchSatrtFunc, false);
+    container.addEventListener('touchmove', touchMoveFunc, false);
+    container.addEventListener('touchend', touchEndFunc, false);
+}
+ 
+//判断是否支持触摸事件
+function isTouchDevice() {
+    //document.getElementById("version").innerHTML = navigator.appVersion;
+ 
+    try {
+        document.createEvent("TouchEvent");
+        //alert("支持TouchEvent事件！");
+ 
+        bindEvent(); //绑定事件
+    } catch (e) {
+        alert("不支持TouchEvent事件！" + e.message); 
+        //window.location.href = ee.pageRoot + "/login";   //设备不支持touchEvent事件，则跳回到login页面，由于已设置cookie，所以不会重复跳入该页面
+    }
+}
+
+isTouchDevice();
+
+
+
+]]></onControlLoad>
+      <onPageCreate>/*
+var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+var oHead = document.getElementsByTagName("HEAD").item(0);  
+
+var oScript
+if (isIOS) {
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova.js"; 
+    oHead.appendChild( oScript); 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova4/cordova_plugins.js"; 
+    oHead.appendChild(oScript); 
+} else {
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova5/cordova.js"; 
+    oHead.appendChild( oScript); 
+    oScript = document.createElement("script"); 
+    oScript.type = "text/javascript"; 
+    oScript.src="cordova5/cordova_plugins.js"; 
+    oHead.appendChild(oScript); 
+} */</onPageCreate>
+      <pageHead><![CDATA[<meta name="viewport" content="width=device-width, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+]]></pageHead>
+      <top>0</top>
+      <width>522</width>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty2">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+      <height>90</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.154373927958834</sizeRatio>
+      <top>0</top>
+      <width>522</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty2/layoutyitem8">
+      <backgroundColor>BFCEDF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>47</heavy>
+      <height>29</height>
+      <heightRatio>0.322222222222222</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0320088300220751</sizeRatio>
+      <top>0</top>
+      <width>522</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty2/layoutyitem9">
+      <backgroundColor>67BCFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <height>61</height>
+      <heightRatio>0.677777777777778</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0673289183222958</sizeRatio>
+      <text>充值赠送</text>
+      <top>29</top>
+      <topRatio>0.322222222222222</topRatio>
+      <width>522</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty2/layoutyitem9/panel11">
+      <backgroundImg>back.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>34</height>
+      <heightRatio>0.557377049180328</heightRatio>
+      <left>14</left>
+      <leftRatio>0.0273348519362187</leftRatio>
+      <sizeRatio>0.653846153846154</sizeRatio>
+      <top>13</top>
+      <topRatio>0.213114754098361</topRatio>
+      <width>62</width>
+      <widthRatio>0.118451025056948</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty2/layoutyitem9/panel17">
+      <backgroundSkin>button3</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>28</fontSizeAuto>
+      <height>37</height>
+      <heightRatio>0.60655737704918</heightRatio>
+      <left>389</left>
+      <leftRatio>0.744525547445255</leftRatio>
+      <onClick>window.location.href = ee.pageRoot + "/vouchers";
+
+</onClick>
+      <sizeRatio>0.373737373737374</sizeRatio>
+      <text>兑换优惠券</text>
+      <top>12</top>
+      <topRatio>0.19672131147541</topRatio>
+      <width>126</width>
+      <widthRatio>0.240875912408759</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty2/layoutyitem9/panel12">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>61</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>window.location.href = ee.pageRoot + "/student/sMain";</onClick>
+      <sizeRatio>0.321052631578947</sizeRatio>
+      <top>0</top>
+      <width>111</width>
+      <widthRatio>0.21324354657688</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>726</height>
+      <heightRatio>0.889705882352941</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.65375854214123</sizeRatio>
+      <top>89</top>
+      <topRatio>0.10906862745098</topRatio>
+      <width>522</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3">
+      <backgroundImg>账户余额背景-切割@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>519</height>
+      <heightRatio>0.714876033057851</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.18223234624146</sizeRatio>
+      <top>1</top>
+      <topRatio>0.00137741046831956</topRatio>
+      <width>522</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel4">
+      <backgroundImg>1陪驾地区的收费标准.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>203</height>
+      <heightRatio>0.391136801541426</heightRatio>
+      <left>20</left>
+      <leftRatio>0.0375275938189845</leftRatio>
+      <sizeRatio>0.23938679245283</sizeRatio>
+      <top>7</top>
+      <topRatio>0.0134874759152216</topRatio>
+      <width>489</width>
+      <widthRatio>0.93598233995585</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel5">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>AEDCFE</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>60</height>
+      <heightRatio>0.115606936416185</heightRatio>
+      <left>68</left>
+      <leftRatio>0.129840546697039</leftRatio>
+      <sizeRatio>0.163934426229508</sizeRatio>
+      <text><![CDATA[单个订单时长均为2小时起，可选2/3/4小时</br>首次充值赠送200积分]]></text>
+      <top>209</top>
+      <topRatio>0.402697495183044</topRatio>
+      <vAlign>top</vAlign>
+      <width>435</width>
+      <widthRatio>0.83371298405467</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel7">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>AEDCFE</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <hAlign>right</hAlign>
+      <height>36</height>
+      <heightRatio>0.0690909090909091</heightRatio>
+      <left>20</left>
+      <leftRatio>0.0387243735763098</leftRatio>
+      <sizeRatio>0.808510638297872</sizeRatio>
+      <text>注：</text>
+      <top>209</top>
+      <topRatio>0.403636363636364</topRatio>
+      <vAlign>top</vAlign>
+      <width>56</width>
+      <widthRatio>0.107061503416856</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel8">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>F0F5FF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>23</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>42</height>
+      <heightRatio>0.0809248554913295</heightRatio>
+      <left>21</left>
+      <leftRatio>0.0411522633744856</leftRatio>
+      <sizeRatio>0.0941704035874439</sizeRatio>
+      <text><![CDATA[请<font color="#FFAE29" size="4px">向左滑动</font>选择需要充值的套餐]]></text>
+      <top>264</top>
+      <topRatio>0.508670520231214</topRatio>
+      <width>479</width>
+      <widthRatio>0.917695473251029</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel8/panel10">
+      <backgroundColor>81C2FC</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0476190476190476</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00240673886883273</sizeRatio>
+      <top>40</top>
+      <topRatio>0.952380952380952</topRatio>
+      <width>479</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel22">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>E0E0E0</backgroundColor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>188</height>
+      <heightRatio>0.36223506743738</heightRatio>
+      <left>43</left>
+      <leftRatio>0.0831295843520782</leftRatio>
+      <sizeRatio>0.548104956268222</sizeRatio>
+      <top>333</top>
+      <topRatio>0.641618497109827</topRatio>
+      <width>438</width>
+      <widthRatio>0.838630806845966</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel22/panel23">
+      <backgroundImg>卡样式2-1@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>188</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>pay1();
+</onClick>
+      <sizeRatio>0.46078431372549</sizeRatio>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel22/panel24">
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <backgroundImg>卡样式2-2@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>188</height>
+      <heightRatio>1</heightRatio>
+      <layerName>card2</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>pay1();</onClick>
+      <sizeRatio>0.46078431372549</sizeRatio>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel22/panel25">
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <backgroundImg>卡样式2-3@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>188</height>
+      <heightRatio>1</heightRatio>
+      <layerName>card3</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>pay1();</onClick>
+      <sizeRatio>0.46078431372549</sizeRatio>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel22/panel26">
+      <backgroundImg>卡样式2-4@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>188</height>
+      <heightRatio>1</heightRatio>
+      <layerName>card4</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>pay1();</onClick>
+      <sizeRatio>0.46078431372549</sizeRatio>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3/panel22/panel27">
+      <backgroundImg>卡样式2-5@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>188</height>
+      <heightRatio>1</heightRatio>
+      <layerName>card5</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <onClick>pay1();</onClick>
+      <sizeRatio>0.46078431372549</sizeRatio>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel18">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>205</height>
+      <heightRatio>0.28236914600551</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.466970387243736</sizeRatio>
+      <top>520</top>
+      <topRatio>0.716253443526171</topRatio>
+      <width>522</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel18/panel19">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>606060</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>23</fontSizeAuto>
+      <height>38</height>
+      <heightRatio>0.185365853658537</heightRatio>
+      <left>43</left>
+      <leftRatio>0.082004555808656</leftRatio>
+      <sizeRatio>0.31404958677686</sizeRatio>
+      <text>自定义金额：</text>
+      <top>6</top>
+      <topRatio>0.0292682926829268</topRatio>
+      <width>144</width>
+      <widthRatio>0.275626423690205</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel18/panel20">
+      <backgroundImg>金额输入框@2x.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>60</height>
+      <heightRatio>0.292682926829268</heightRatio>
+      <left>43</left>
+      <leftRatio>0.082004555808656</leftRatio>
+      <sizeRatio>0.163934426229508</sizeRatio>
+      <top>51</top>
+      <topRatio>0.248780487804878</topRatio>
+      <width>435</width>
+      <widthRatio>0.83371298405467</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel2/panel18/panel20/edit1">
+      <backgroundSkin>empty</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>878787</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>60</height>
+      <heightRatio>1</heightRatio>
+      <inputFontSize>15</inputFontSize>
+      <left>0</left>
+      <sizeRatio>0.0794701986754967</sizeRatio>
+      <text>请输入充值金额</text>
+      <top>0</top>
+      <width>435</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel18/panel21">
+      <backgroundImg>确定@2x.png</backgroundImg>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>60</height>
+      <heightRatio>0.292682926829268</heightRatio>
+      <left>31</left>
+      <leftRatio>0.058679706601467</leftRatio>
+      <onClick><![CDATA[var text=ee.getEditText(ee.getControl("edit1")); 
+if(text.length>0){       
+    var result=/^[0-9]*$/.test(text);
+    if(result==false){
+        alert("请输入一个正整数");
+        return;
+    } 
+    if(text<5){
+        alert("最少充值5元");
+        return;
+    }
+    
+    var a = confirm("温馨提示：“自定义金额”充值不赠送积分，“选择套餐”充值可获得相应积分赠送，确认充值？") ;
+    if (!a) {
+        return;
+    }
+}
+pay();]]></onClick>
+      <sizeRatio>0.166666666666667</sizeRatio>
+      <top>127</top>
+      <topRatio>0.619512195121951</topRatio>
+      <width>459</width>
+      <widthRatio>0.880195599022005</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43">
+      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImg>dialogMask.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <layerName>确认充值</layerName>
+      <layerVisible>false</layerVisible>
+      <left>0</left>
+      <sizeRatio>0.900662251655629</sizeRatio>
+      <top>0</top>
+      <width>522</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1">
+      <backgroundSkin>button3a000</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>543</height>
+      <heightRatio>0.665441176470588</heightRatio>
+      <left>45</left>
+      <leftRatio>0.0861244019138756</leftRatio>
+      <sizeRatio>1.55587392550143</sizeRatio>
+      <top>152</top>
+      <topRatio>0.186274509803922</topRatio>
+      <width>436</width>
+      <widthRatio>0.834928229665072</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel9">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>70</height>
+      <heightRatio>0.128668171557562</heightRatio>
+      <left>12</left>
+      <leftRatio>0.0270618556701031</leftRatio>
+      <sizeRatio>0.0785123966942149</sizeRatio>
+      <text>充值确认</text>
+      <top>78</top>
+      <topRatio>0.144469525959368</topRatio>
+      <width>408</width>
+      <widthRatio>0.935567010309278</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel46">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>41</height>
+      <heightRatio>0.0748299319727891</heightRatio>
+      <left>94</left>
+      <leftRatio>0.214723926380368</leftRatio>
+      <sizeRatio>0.0741573033707865</sizeRatio>
+      <text>去支付宝充值</text>
+      <top>348</top>
+      <topRatio>0.64172335600907</topRatio>
+      <width>238</width>
+      <widthRatio>0.54601226993865</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel46/panel15">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>41</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.099273607748184</sizeRatio>
+      <text><![CDATA[<a id="linkAlipay" href = "www.baidu.com" target="_blank">　　　　　　　　　　　　</a>]]></text>
+      <top>0</top>
+      <width>238</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel47">
+      <backgroundSkin>button3000</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.0744920993227991</heightRatio>
+      <left>94</left>
+      <leftRatio>0.21523178807947</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel43"), false);</onClick>
+      <sizeRatio>0.1</sizeRatio>
+      <text>关 闭</text>
+      <top>460</top>
+      <topRatio>0.846501128668172</topRatio>
+      <width>238</width>
+      <widthRatio>0.54635761589404</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel13">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>48A1DD</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>58</height>
+      <heightRatio>0.106094808126411</heightRatio>
+      <left>19</left>
+      <leftRatio>0.0438144329896907</leftRatio>
+      <sizeRatio>0.254054054054054</sizeRatio>
+      <text>确认充值</text>
+      <top>12</top>
+      <topRatio>0.0225733634311512</topRatio>
+      <width>104</width>
+      <widthRatio>0.23840206185567</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel14">
+      <backgroundColor>48A1DD</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>3</height>
+      <heightRatio>0.0050125313283208</heightRatio>
+      <left>18</left>
+      <leftRatio>0.040650406504065</leftRatio>
+      <sizeRatio>0.0044543429844098</sizeRatio>
+      <top>64</top>
+      <topRatio>0.117794486215539</topRatio>
+      <width>398</width>
+      <widthRatio>0.91260162601626</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel50">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>404040</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>152</height>
+      <heightRatio>0.279909706546275</heightRatio>
+      <left>56</left>
+      <leftRatio>0.128865979381443</leftRatio>
+      <sizeRatio>0.221033868092692</sizeRatio>
+      <text>用户信息：</text>
+      <top>141</top>
+      <topRatio>0.259593679458239</topRatio>
+      <vAlign>top</vAlign>
+      <width>315</width>
+      <widthRatio>0.722938144329897</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel16">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.0744920993227991</heightRatio>
+      <left>94</left>
+      <leftRatio>0.21523178807947</leftRatio>
+      <onClick>//alert(money)     
+//payNews();
+window.location.href = ee.pageRoot + "/student/sMain";
+</onClick>
+      <sizeRatio>0.1</sizeRatio>
+      <text>充值完成</text>
+      <top>403</top>
+      <topRatio>0.742663656884876</topRatio>
+      <width>238</width>
+      <widthRatio>0.54635761589404</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel43/panel1/panel33">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>25</fontSizeAuto>
+      <height>40</height>
+      <heightRatio>0.0744920993227991</heightRatio>
+      <left>94</left>
+      <leftRatio>0.21523178807947</leftRatio>
+      <onClick>payWechat();</onClick>
+      <sizeRatio>0.1</sizeRatio>
+      <text>去微信充值</text>
+      <top>292</top>
+      <topRatio>0.5372460496614</topRatio>
+      <width>238</width>
+      <widthRatio>0.54635761589404</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="4">
+    <taskSetItem name="pay1">
+      <script1><![CDATA[var text=ee.getEditText(ee.getControl("edit1")); 
+//var re="^[0-9]*$";
+/*
+if(g5.current==-1&amp;&amp;text==""){
+    alert("请选择或输入充值金额");
+    return;
+}  */
+     
+eio.appendString8(eb.getCookie("pjToken"));   
+/*
+if(text.length>0){       
+    var result=/^[0-9]*$/.test(text);
+    if(result==false){
+        alert("请输入一个正整数");
+        return;
+    } 
+    if(text<5){
+        alert("最少充值5元");
+        return;
+    }
+    eio.appendInt32(0);
+    eio.appendString16(text);
+}
+else{  
+*/             
+    eio.appendInt32(1);
+    eio.appendInt32(g5.card);
+//}]]></script1>
+      <script2><![CDATA[/*
+合作者身份ID：  2088021117176475
+收款支付宝账号：2088021117176475
+商户私钥：MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBANnl98xj15FcCWsrCMjiQm89xfuF6et58vYTxhx3sHzx+Exx4i+0fK2A/4W0XWhHDo9nOh1zu3Q44F8UwvOHPjybpXPMcXauH49vtZh1Nmai0ZkkLWMBxp66NJRE2FbAQDAJqVm8jETLgSgHtC7H9g6djDjQocbmEF2G6MF2HYfjAgMBAAECgYAfVGh3s9dX6CLWjN57e8TPl9MyogOLPwKHDTrL9w2iOWxZGXrLHylaDRUwVUmk56qZRd9eQriuMktYgHSzbTuuWSyCRtRYk2BXXleKBBFO6h5QhIoyM/Cwjfv3wxjcmwD0cSd59uwu7OROrUrxFsoqQ5ZaSfhxqnndwkf2yzwqwQJBAPrDK1nmUQxn8nPFE/WtVAH9pfYIjwD6/Wu0FAN6aOkGlY+1Z5cbJimhXYV5P0f+07zZLJ9kJ65gehY28LV9jKECQQDecxLrCr33wlnxdJHEQrWRVhC3IWl5savwIoIS5Lcn86l4TEOxRPMGvbUcjWfp8ISk9+TDb8h8u4l1DIaiR6IDAkAtE8qGNZ3aMhFmeEX3Qvo4BWXBDZbPYU8O/mcenPGg+hsGo2CEzE+W6jgKl1ol0gw0BYI9AN8VPKiVt7ibl38hAkA3vLOfywhAXSU2N9QSTfi6mssDZ87K3DbNq4fV/hLaYtYyu0E22KTgKoaHyfKgjlBeGXLreUXN4xuVBXdyj+pLAkAGIbGy8OerUxRakzWa+kC86MX16KZj4T5ivM2q/2qEqcKJ99IngpgWARotD676ifdxvKp5/CX1T/bfVnDPa3G9
+支付宝公钥：MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB
+签名方式：RSA
+支付宝消息验证地址：https://mapi.alipay.com/gateway.do?service=notify_verify
+支付宝提供给商户的服务接入网关URL：https://mapi.alipay.com/gateway.do
+md5秘钥kj9othli5f3o0pjubgycbz8u7ggdu3du
+
+//回叫地址参数截取
+https://www.baidu.com/?
+is_success=T
+&amp;notify_id=RqPnCoPT3K9%252Fvwbh3InUFZVR%252BaRqPyDOCO0dds4OkrpZi3wZtEPr4cYvlwiONKA4i2uv
+&amp;notify_time=2016-01-21+14%3A58%3A57
+&amp;notify_type=trade_status_sync
+&amp;out_trade_no=112233445566
+&amp;payment_type=1
+&amp;seller_id=2088021117176475
+&amp;service=alipay.wap.create.direct.pay.by.user
+&amp;subject=1%E9%99%AA%E9%A9%BE%E5%85%85%E5%80%BC
+&amp;total_fee=0.01
+&amp;trade_no=2016012121001004180040512062
+&amp;trade_status=TRADE_SUCCESS
+&amp;sign=dec35ea571ef002525a4f8080cefae20
+&amp;sign_type=MD5
+//充值成功回调
+payment_type=1
+&amp;subject=1%u966a%u9a7e%u5145%u503c
+&amp;trade_no=2016012121001004180033798750
+&amp;buyer_email=tam3000%40163.com
+&amp;gmt_create=2016-01-21+19%3a25%3a29
+&amp;notify_type=trade_status_sync
+&amp;quantity=1
+&amp;out_trade_no=112233445573
+&amp;notify_time=2016-01-21+19%3a25%3a30
+&amp;seller_id=2088021117176475
+&amp;trade_status=TRADE_SUCCESS
+&amp;is_total_fee_adjust=N
+&amp;total_fee=0.01
+&amp;gmt_payment=2016-01-21+19%3a25%3a30
+&amp;seller_email=mosquito%401peijia.com
+&amp;price=0.01
+&amp;buyer_id=2088002167604181
+&amp;notify_id=a02fe26a8bab82594f7625223c94473he0
+&amp;use_coupon=N
+&amp;sign_type=MD5
+&amp;sign=6266f08c80899c19d41708582eebfdbe
+*/
+var token = eio.readString8();
+//var payIndex = eio.readInt32();
+var sql,sqlResult;
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id"); 
+/*
+es.logWarning(userId);
+es.logWarning(sql);   
+es.logWarning(token); 
+  */
+
+sql = "select count(*) as c from log where userId= '"+userId+"' and logType='充值'";
+//es.logWarning(sql);
+sqlResult = db.executeQuery("PJ", sql);
+db.read(sqlResult);
+var count = db.getInt32(sqlResult, "c");
+
+//发起充值请求，获取本地订单序号
+if (userId.length<=0) {
+    eio.appendString8("F");
+    eio.appendString8("会话丢失，请稍后再试");
+    return;
+}
+var flag = eio.readInt32();
+if(flag==0){
+    var money = eio.readString16(); 
+    var moneyFree = "0";  
+}  
+if(flag==1){
+var payIndex = eio.readInt32(); 
+var money = "300,600,1200,2000,3000".split(",");   
+    money = money[payIndex];
+var moneyFree = "35,80,175,300,465".split(",");
+    moneyFree = moneyFree[payIndex];
+if (payIndex<0) { //||(payIndex>=money.length)
+    eio.appendString8("F");
+    eio.appendString8("用户输入数据非法");
+    return;
+} 
+}
+
+//var qian = 200;
+/*if(count<1){
+    moneyFree[payIndex]=parseInt(moneyFree[payIndex])+0+200; 
+    es.logWarning(moneyFree[payIndex]);
+}
+*/  
+
+
+sql = "exec createPay " + userId + ",'支付宝'," +
+    money + "," + moneyFree;
+sqlResult = db.executeQuery("PJ", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var localTicket = db.getString(sqlResult, "ticket");
+//es.logWarning(sql);
+//产生支付url
+var url = "https://mapi.alipay.com/gateway.do";
+var key = "";
+key += "_input_charset=utf-8";
+key += "&amp;notify_url=http://m.1peijia.com:88/EEngine/ee.aspx";
+key += "&amp;out_trade_no=" + localTicket;
+key += "&amp;partner=2088021117176475";
+key += "&amp;payment_type=1";
+key += "&amp;return_url=http://m.1peijia.com:88/EEngine/ee.aspx";
+key += "&amp;seller_id=2088021117176475";
+key += "&amp;service=alipay.wap.create.direct.pay.by.user";
+key += "&amp;subject=1陪驾充值" ;
+key += "&amp;total_fee=" + money;
+
+var sign = "";
+sign += "&amp;sign=" + es.getMd5(key + "kj9othli5f3o0pjubgycbz8u7ggdu3du").toLowerCase();
+sign += "&amp;sign_type=MD5";
+
+url = url + "?" + es.urlEncodeHz(key) + sign;
+
+eio.appendString8("T");
+eio.appendString16(url);
+eio.appendString16(money);
+eio.appendString16(moneyFree);
+eio.appendInt32(count);   //充值记录有无
+//es.logWarning("adasdsadsddasd");
+//es.logWarning("scscs");
+]]></script2>
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    alert("暂时无法进行充值："+eio.readString8());
+    window.history.back();
+    return;
+}
+var url = eio.readString16();
+var money = eio.readString16();
+var moneyFree = eio.readString16();
+var count = eio.readInt32();
+//window.open(url);
+//window.open(encodeURI(url), '_blank', 'location=yes');
+g5.payMoney=money;   
+var s = "";
+s = "您将进入支付系统支付￥"+money;
+if (moneyFree!="0") {
+    s += ",充值完成您将获得我们赠予的 "+moneyFree+"积分奖励";    
+}
+
+if(count<1){
+    s += ",首次充值将获得额外的200积分奖励";
+}     
+
+ee.setText(ee.getControl("panel50"),s);     
+$g("linkAlipay").href = url;
+ee.showAni(ee.getControl("panel43"));  
+//ee.setVisible(ee.getControl("panel43"));
+
+]]></script3>
+    </taskSetItem>
+    <taskSetItem name="payNews">
+      <script1>if(g5.payMoney==null){
+ window.location.href = ee.pageRoot + "/student/sMain";
+ return;   
+}    
+eio.appendString8(eb.getCookie("pjToken"));
+eio.appendString16(g5.payMoney);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var payMoney = eio.readString16(); 
+
+var sql,sqlResult;
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id");
+
+sql="select logType from log where id="+userId;
+
+sql="INSERT INTO sendNews (userId,title,newsContent,status) VALUES ('" + db.encode(userId) + "','充值通知','已成功充值"+payMoney+"元','未读')"
+sqlResult = db.executeQuery("PJ", sql); 
+db.read(sqlResult);
+//es.logWarning(sql);
+eio.appendString8("T");
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("系统异常，请稍候再试");
+    window.history.back();
+    return;
+}
+window.location.href = ee.pageRoot + "/student/sMain";
+</script3>
+    </taskSetItem>
+    <taskSetItem name="payWechat">
+      <script1><![CDATA[//微信生成预处理订单 
+var text=ee.getEditText(ee.getControl("edit1"));  
+/*
+if(g5.current==-1&amp;&amp;text==""){
+    alert("请选择充值金额");
+    return;
+}   
+*/
+
+//var re="^[0-9]*$";
+      
+  
+if(text.length>0){
+    var result=/^[0-9]*$/.test(text);
+    if(result==false){
+        alert("请输入一个正整数");
+        return;
+    }   
+    if(text<5){
+        alert("最少充值5元");
+        return;
+    }
+    eio.appendInt32(0);
+    eio.appendString16(text);
+}
+else{               
+    eio.appendInt32(1);
+    eio.appendInt32(g5.card);  
+    //alert("g5.current"+g5.current);
+}
+eio.appendString8(eb.getCookie("pjToken"));
+//alert("123");]]></script1>
+      <script2><![CDATA[
+var flag = eio.readInt32();
+//es.logWarning(flag);  
+if(flag==0){
+    var money = eio.readString16(); 
+    var moneyFree = "0";   
+    var payMoney = money*100;
+}
+                             
+if(flag==1){
+var payIndex = eio.readInt32();  
+
+  
+
+var money = "300,600,1200,2000,3000".split(",");  
+    money = money[payIndex];   
+    //es.logWarning("money"+money);
+if (payIndex<0) {//||(payIndex>=money.length)
+    eio.appendString8("F");
+    eio.appendString8("用户输入数据非法");
+    return;
+}      
+var moneyFree = "35,80,175,300,465".split(","); 
+    moneyFree = moneyFree[payIndex];
+var payMoney =money*100; //支付金额，分为单位
+}
+var token = eio.readString8();
+//var payIndex = eio.readInt32();
+var sql,sqlResult;
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);     
+var a=db.getString(sqlResult, "sessionId");
+//es.logWarning("aaaaaaa="+a);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id");
+if (userId.length<=0) {
+    eio.appendString8("F");
+    eio.appendString8("会话丢失，请稍后再试");
+    return;
+} 
+//产生支付订单
+sql = "exec createPay " + userId + ",'微信支付'," + money + "," + moneyFree;
+sqlResult = db.executeQuery("PJ", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var localTicket = db.getString(sqlResult, "ticket");
+
+var data = "";
+var sign = "";
+var randString = "A" + (new Date()).getTime();
+randString = es.getMd5(randString).toUpperCase();
+//计算sign
+sign += "appid=wx9b5794aacbbdf257";
+sign += "&amp;attach=充值";
+sign += "&amp;body=1陪驾充值";
+sign += "&amp;mch_id=1264325101";
+sign += "&amp;nonce_str=" + randString;
+sign += "&amp;notify_url=http://m.1peijia.com:88/eengine/ee.aspx";
+sign += "&amp;out_trade_no=" + localTicket;
+sign += "&amp;spbill_create_ip=127.0.0.1";
+sign += "&amp;total_fee=" + payMoney;
+sign += "&amp;trade_type=APP";
+sign += "&amp;key=YIpeijia123456789012345678901234";
+sign = es.getMd5(sign).toUpperCase();
+//产生递交数据
+data =
+    "<xml>\n" + 
+    "   <appid>wx9b5794aacbbdf257</appid>\n" + //不解释
+    "   <attach>充值</attach>\n" + //附加数据，在查询API和支付通知中原样返回，该字段主要用于商户携带订单的自定义数据
+    "   <body>1陪驾充值</body>\n" + //商品或支付单简要描述
+    "   <mch_id>1264325101</mch_id>\n" + //微信支付分配的商户号
+    "   <nonce_str>" + randString + "</nonce_str>\n" + //随机字符串，不长于32位
+    "   <notify_url>http://m.1peijia.com:88/eengine/ee.aspx</notify_url>\n" + //接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
+    "   <out_trade_no>" + localTicket + "</out_trade_no>\n" + //商户系统内部的订单号,32个字符内、可包含字母
+    "   <spbill_create_ip>127.0.0.1</spbill_create_ip>\n" + //用户端实际ip
+    "   <total_fee>" + payMoney + "</total_fee>\n" + //订单总金额，单位（分）
+    "   <trade_type>APP</trade_type>\n" + //支付类型
+    "   <sign>" + sign + "</sign>\n" +
+    "</xml>\n";
+//post   
+
+
+var result = es.post("https://api.mch.weixin.qq.com/pay/unifiedorder", data);
+/* 返回消息
+<xml><return_code><![CDATA[SUCCESS]]]]><![CDATA[></return_code>
+<return_msg><![CDATA[OK]]]]><![CDATA[></return_msg>
+<appid><![CDATA[wx9b5794aacbbdf257]]]]><![CDATA[></appid>
+<mch_id><![CDATA[1264325101]]]]><![CDATA[></mch_id>
+<nonce_str><![CDATA[heGKmfwAQ2zSjfAI]]]]><![CDATA[></nonce_str>
+<sign><![CDATA[48BB46F9CCF2901D97F884EB44A7C5DF]]]]><![CDATA[></sign>
+<result_code><![CDATA[SUCCESS]]]]><![CDATA[></result_code>
+<prepay_id><![CDATA[wx20160520184034d34c9c543c0304138885]]]]><![CDATA[></prepay_id>
+<trade_type><![CDATA[APP]]]]><![CDATA[></trade_type>
+</xml>
+*/    
+//es.logWarning("result:"+result);
+if (result.indexOf("<return_code><![CDATA[SUCCESS]]]]><![CDATA[>")<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试1");
+    return;
+} 
+//es.logWarning("111");
+//从返回值中提取prepay_id
+var r = result.indexOf("<prepay_id><![CDATA[");
+if (r<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试2");
+    return;
+}     
+//es.logWarning("222");
+r += "<prepay_id><![CDATA[".length;
+var r1 = result.indexOf("]", r);
+if (r1<0) {
+    eio.appendString8("F");
+    eio.appendString16("微信支付接口暂时无法使用，请稍后再试3");
+    return;
+}   
+//es.logWarning("333");
+var prepayId = result.substring(r, r1); 
+eio.appendString8("T");
+eio.appendString16(prepayId);
+eio.appendString16(randString);
+]]></script2>
+      <script3>var r = eio.readString8();
+if (r!="T") {
+    alert(eio.readString16());
+    return;
+}
+var prepayId = eio.readString16();
+var nonceStr = eio.readString16(); 
+g5.tamPlugin.payWechat(prepayId,nonceStr,
+    function() {
+        //g5.log("success");
+    },
+    function(msg) {
+        //g5.log("fail:" + msg);
+    }
+);
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="pay">
+      <script1><![CDATA[var text=ee.getEditText(ee.getControl("edit1")); 
+//var re="^[0-9]*$";
+/*
+if(g5.current==-1&amp;&amp;text==""){
+    alert("请选择或输入充值金额");
+    return;
+}  */
+     
+eio.appendString8(eb.getCookie("pjToken"));  
+if(text.length>0){       
+    var result=/^[0-9]*$/.test(text);
+    if(result==false){
+        alert("请输入一个正整数");
+        return;
+    } 
+    if(text<5){
+        alert("最少充值5元");
+        return;
+    }
+    eio.appendInt32(0);
+    eio.appendString16(text);
+}
+else{               
+    eio.appendInt32(1);
+    eio.appendInt32(g5.card);
+}]]></script1>
+      <script2><![CDATA[/*
+合作者身份ID：  2088021117176475
+收款支付宝账号：2088021117176475
+商户私钥：MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBANnl98xj15FcCWsrCMjiQm89xfuF6et58vYTxhx3sHzx+Exx4i+0fK2A/4W0XWhHDo9nOh1zu3Q44F8UwvOHPjybpXPMcXauH49vtZh1Nmai0ZkkLWMBxp66NJRE2FbAQDAJqVm8jETLgSgHtC7H9g6djDjQocbmEF2G6MF2HYfjAgMBAAECgYAfVGh3s9dX6CLWjN57e8TPl9MyogOLPwKHDTrL9w2iOWxZGXrLHylaDRUwVUmk56qZRd9eQriuMktYgHSzbTuuWSyCRtRYk2BXXleKBBFO6h5QhIoyM/Cwjfv3wxjcmwD0cSd59uwu7OROrUrxFsoqQ5ZaSfhxqnndwkf2yzwqwQJBAPrDK1nmUQxn8nPFE/WtVAH9pfYIjwD6/Wu0FAN6aOkGlY+1Z5cbJimhXYV5P0f+07zZLJ9kJ65gehY28LV9jKECQQDecxLrCr33wlnxdJHEQrWRVhC3IWl5savwIoIS5Lcn86l4TEOxRPMGvbUcjWfp8ISk9+TDb8h8u4l1DIaiR6IDAkAtE8qGNZ3aMhFmeEX3Qvo4BWXBDZbPYU8O/mcenPGg+hsGo2CEzE+W6jgKl1ol0gw0BYI9AN8VPKiVt7ibl38hAkA3vLOfywhAXSU2N9QSTfi6mssDZ87K3DbNq4fV/hLaYtYyu0E22KTgKoaHyfKgjlBeGXLreUXN4xuVBXdyj+pLAkAGIbGy8OerUxRakzWa+kC86MX16KZj4T5ivM2q/2qEqcKJ99IngpgWARotD676ifdxvKp5/CX1T/bfVnDPa3G9
+支付宝公钥：MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB
+签名方式：RSA
+支付宝消息验证地址：https://mapi.alipay.com/gateway.do?service=notify_verify
+支付宝提供给商户的服务接入网关URL：https://mapi.alipay.com/gateway.do
+md5秘钥kj9othli5f3o0pjubgycbz8u7ggdu3du
+
+//回叫地址参数截取
+https://www.baidu.com/?
+is_success=T
+&amp;notify_id=RqPnCoPT3K9%252Fvwbh3InUFZVR%252BaRqPyDOCO0dds4OkrpZi3wZtEPr4cYvlwiONKA4i2uv
+&amp;notify_time=2016-01-21+14%3A58%3A57
+&amp;notify_type=trade_status_sync
+&amp;out_trade_no=112233445566
+&amp;payment_type=1
+&amp;seller_id=2088021117176475
+&amp;service=alipay.wap.create.direct.pay.by.user
+&amp;subject=1%E9%99%AA%E9%A9%BE%E5%85%85%E5%80%BC
+&amp;total_fee=0.01
+&amp;trade_no=2016012121001004180040512062
+&amp;trade_status=TRADE_SUCCESS
+&amp;sign=dec35ea571ef002525a4f8080cefae20
+&amp;sign_type=MD5
+//充值成功回调
+payment_type=1
+&amp;subject=1%u966a%u9a7e%u5145%u503c
+&amp;trade_no=2016012121001004180033798750
+&amp;buyer_email=tam3000%40163.com
+&amp;gmt_create=2016-01-21+19%3a25%3a29
+&amp;notify_type=trade_status_sync
+&amp;quantity=1
+&amp;out_trade_no=112233445573
+&amp;notify_time=2016-01-21+19%3a25%3a30
+&amp;seller_id=2088021117176475
+&amp;trade_status=TRADE_SUCCESS
+&amp;is_total_fee_adjust=N
+&amp;total_fee=0.01
+&amp;gmt_payment=2016-01-21+19%3a25%3a30
+&amp;seller_email=mosquito%401peijia.com
+&amp;price=0.01
+&amp;buyer_id=2088002167604181
+&amp;notify_id=a02fe26a8bab82594f7625223c94473he0
+&amp;use_coupon=N
+&amp;sign_type=MD5
+&amp;sign=6266f08c80899c19d41708582eebfdbe
+*/
+var token = eio.readString8();
+//var payIndex = eio.readInt32();
+var sql,sqlResult;
+
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id");
+/* 
+es.logWarning(userId);
+es.logWarning(sql);   
+es.logWarning(token); 
+  */
+
+sql = "select count(*) as c from log where userId= '"+userId+"' and logType='充值'";
+//es.logWarning(sql);
+sqlResult = db.executeQuery("PJ", sql);
+db.read(sqlResult);
+var count = db.getInt32(sqlResult, "c");
+
+//发起充值请求，获取本地订单序号
+if (userId.length<=0) {
+    eio.appendString8("F");
+    eio.appendString8("会话丢失，请稍后再试");
+    return;
+}
+var flag = eio.readInt32();
+if(flag==0){
+    var money = eio.readString16(); 
+    var moneyFree = "0";  
+}  
+if(flag==1){
+var payIndex = eio.readInt32(); 
+var money = "300,600,1200,2000,3000".split(",");   
+    money = money[payIndex];
+var moneyFree = "35,80,175,300,465".split(",");
+    moneyFree = moneyFree[payIndex];
+if (payIndex<0) { //||(payIndex>=money.length)
+    eio.appendString8("F");
+    eio.appendString8("用户输入数据非法");
+    return;
+} 
+}
+
+//var qian = 200;
+/*if(count<1){
+    moneyFree[payIndex]=parseInt(moneyFree[payIndex])+0+200; 
+    es.logWarning(moneyFree[payIndex]);
+}
+*/  
+
+
+sql = "exec createPay " + userId + ",'支付宝'," +
+    money + "," + moneyFree;
+sqlResult = db.executeQuery("PJ", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+var localTicket = db.getString(sqlResult, "ticket");
+//.logWarning(sql);
+//产生支付url
+var url = "https://mapi.alipay.com/gateway.do";
+var key = "";
+key += "_input_charset=utf-8";
+key += "&amp;notify_url=http://m.1peijia.com:88/EEngine/ee.aspx";
+key += "&amp;out_trade_no=" + localTicket;
+key += "&amp;partner=2088021117176475";
+key += "&amp;payment_type=1";
+key += "&amp;return_url=http://m.1peijia.com:88/EEngine/ee.aspx";
+key += "&amp;seller_id=2088021117176475";
+key += "&amp;service=alipay.wap.create.direct.pay.by.user";
+key += "&amp;subject=1陪驾充值" ;
+key += "&amp;total_fee=" + money;
+
+var sign = "";
+sign += "&amp;sign=" + es.getMd5(key + "kj9othli5f3o0pjubgycbz8u7ggdu3du").toLowerCase();
+sign += "&amp;sign_type=MD5";
+
+url = url + "?" + es.urlEncodeHz(key) + sign;
+
+eio.appendString8("T");
+eio.appendString16(url);
+eio.appendString16(money);
+eio.appendString16(moneyFree);
+eio.appendInt32(count);   //充值记录有无
+//es.logWarning("adasdsadsddasd");
+//es.logWarning("scscs");
+]]></script2>
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    alert("暂时无法进行充值："+eio.readString8());
+    window.history.back();
+    return;
+}
+var url = eio.readString16();
+var money = eio.readString16();
+var moneyFree = eio.readString16();
+var count = eio.readInt32();
+//window.open(url);
+//window.open(encodeURI(url), '_blank', 'location=yes');
+g5.payMoney=money;   
+var s = "";
+s = "您将进入支付系统支付￥"+money;
+if (moneyFree!="0") {
+    s += ",充值完成您将获得我们赠予的 "+moneyFree+"积分奖励";    
+}
+
+if(count<1){
+    s += ",首次充值将获得额外的200积分奖励";
+}     
+
+ee.setText(ee.getControl("panel50"),s);     
+$g("linkAlipay").href = url;
+ee.showAni(ee.getControl("panel43"));  
+//ee.setVisible(ee.getControl("panel43"));
+
+]]></script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

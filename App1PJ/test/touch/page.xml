@@ -1,69 +1,417 @@
 <page>
-  <controls count="2">
+  <controls count="16">
     <control type="DivRoot" pathname="/divRoot">
-      <left>0</left>
-      <top>0</top>
-      <width>998</width>
-      <height>819</height>
-      <dockX>fill</dockX>
-      <dockY>fill</dockY>
       <backgroundColor>E0E0E0</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
-      <text>..</text>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
       <fontSize>18</fontSize>
+      <fontSizeAuto>50</fontSizeAuto>
       <hAlign>left</hAlign>
-      <vAlign>top</vAlign>
+      <height>816</height>
+      <left>0</left>
       <onControlLoad><![CDATA[g5.log = function(value) {
     var c = ee.getControl("divRoot");
     ee.setText(c, ee.getText(c) + value + "</br>");
 }
+                       
 
-g5.initMouse = function (c) {
-    if ("ontouchstart" in window) {
-        eb.addEvent(c, "touchstart", function (event) {
-            var sender = event.target ? event.target : (event.srcElement ? event.srcElement : null);
-            if (sender == null) return;
-            g5.log("touchstart:" + this.id);        
-        }, false);
-        eb.addEvent(c, "touchend", function (event) {
-            var sender = event.target ? event.target : (event.srcElement ? event.srcElement : null);
-            if (sender == null) return;
-            g5.log("touchend:" + this.id);        
-        }, false);
-        eb.addEvent(c, "touchmove", function (event) {
-            var sender = event.target ? event.target : (event.srcElement ? event.srcElement : null);
-            if (sender == null) return;
-            g5.log("touchmove:" + this.id);        
-        }, false);
+//滚动数字选择
+g5.rollY = function(div, text) {
+    this.div = div;
+    this.speed = 0;
+    this.lastTick = 0;
+    this.currentPos = 0;
+    this.mouseDown = false;
+    this.text = text.split(",");
+    this.lastX = 0;
+    this.lastY = 0;
+    this.lastTime = 0;
+    var timerSender = this;
+    this.timer = null;
+    this.onStop = null;
+    this.startAni = function() {
+        var h = parseInt(eb.getDivRect(div).h / (div.eeChildren.length - 1));
+        this.sy = this.currentPos;
+        this.dy = this.speed*500 + this.currentPos;
+        var adj = (this.dy+10000*h)%h;
+        if (adj>=h/2) {
+            this.dy += h - adj;
+        } else {
+            this.dy += - adj;
+        }    
+        this.T = 1000;
+        this.startTime = (new Date()).getTime(); 
+        if (this.timer==null) {
+            this.timer = setInterval(function(){
+                var time = (new Date()).getTime() - timerSender.startTime;
+                timerSender.currentPos = eb.getInterpolation("slowDown", time/timerSender.T);
+                timerSender.currentPos = (timerSender.dy-timerSender.sy)*timerSender.currentPos + timerSender.sy; 
+                if (time>=timerSender.T) {
+                    timerSender.stopAni();
+                    timerSender.currentPos = timerSender.dy;
+                    if (timerSender.onStop) {
+                        timerSender.onStop(timerSender);
+                    }
+                } 
+                timerSender.refresh();
+            },1);
+        }    
     }
+    this.stopAni = function() {
+        if (this.timer==null) return;
+        clearInterval(this.timer);
+        this.timer = null;
+    }
+    div.rollY = this;
+    this.refresh = function() {
+        var dt = new Date();
+        var time = dt.getTime() - this.lastTick;
+        this.lastTick = dt.getTime();
+        if (this.mouseDown) {
+        
+        }
+        var h = parseInt(eb.getDivRect(div).h / (div.eeChildren.length - 1));
+        var w = eb.getDivRect(div).w;
+        var count = div.eeChildren.length - 1;
+        while (this.currentPos<0) this.currentPos += this.text.length * h;
+        this.currentPos = this.currentPos % (this.text.length * h);
+        this.currentPos = parseInt(this.currentPos);
+        var startIndex = (this.text.length - parseInt(this.currentPos/h)) - 1;
+        for (var i=0; i<=count; i++) {
+            ee.setRect(div.eeChildren[i], 0, (this.currentPos % h - h) + i * h, w, h + 1);
+            ee.setText(div.eeChildren[i], this.text[(startIndex+i)%this.text.length]);
+        }
+    }
+    this.getSelectIndex = function() {
+        this.refresh();
+        var h = parseInt(eb.getDivRect(div).h / (div.eeChildren.length - 1));
+        return (this.text.length*2-parseInt(this.currentPos/h+0.5)+parseInt((this.div.eeChildren.length-1)/2))%this.text.length;
+    }
+    this.getSelectText = function() {
+        return this.text[this.getSelectIndex()];
+    }    
+    div.eeMouseDown = function(sender, event, x, y) {
+        var r = sender.rollY;
+        r.stopAni();
+        r.mouseDown = true;
+        r.lastTime = new Date();
+        r.lastX = x;
+        r.lastY = y;
+        r.mousePos = new Array();
+        r.mouseTime = new Array();
+        r.mousePos.push(y);
+        r.mouseTime.push((new Date()).getTime());
+        event.preventDefault();    
+    }
+    div.eeMouseUp = function(sender, event, x, y) {
+        var r = sender.rollY;
+        r.mouseDown = false;
+        for (var i=r.mousePos.length-1; i>=0; i--) {
+            var time = (new Date()).getTime() - r.mouseTime[i];
+            if ((time>=100)||(i==0)) {
+                r.speed = (y-r.mousePos[i])/time;
+                break;
+            }
+        }
+        if (isNaN(r.speed)) r.speed = 0;
+        r.startAni();
+    }
+    div.eeMouseMove = function(sender, event, x, y) {
+        var r = sender.rollY;
+        if (!r.mouseDown) return;
+        r.currentPos += y - r.lastY;
+        r.lastTime = new Date();
+        r.lastY = y;
+        r.lastX = x;
+        r.mousePos.push(y);
+        r.mouseTime.push((new Date()).getTime());  
+        r.refresh();
+    }
+    for (var i=0; i<div.eeChildren.length; i++) {
+        div.eeChildren[i].rollY = this;
+        div.eeChildren[i].eeMouseDown = div.eeMouseDown;
+        div.eeChildren[i].eeMouseUp = div.eeMouseUp;
+        div.eeChildren[i].eeMouseMove = div.eeMouseMove;
+        eb.initMouseEvent(div.eeChildren[i]);
+    }
+    eb.initMouseEvent(div);
+    setTimeout(function() {timerSender.refresh()}, 300);
 }
 
-g5.initMouse(ee.getControl("panel1"));
-]]></onControlLoad>
+g5.r = new g5.rollY(ee.getControl("panel10"), "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23");
+g5.r2 = new g5.rollY(ee.getControl("panel3"), "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18");
+
+c = createPanel($g("ee_divRoot"), "ee_panel11", "808080", 445, 690, 426, 100);
+eb.setDock(c,"ratio","ratio");
+c.leftRatio=0.463541666666667;
+c.widthRatio=0.44375;
+c.topRatio=0.845588235294118;
+c.heightRatio=0.122549019607843;
+c = createPanel($g("ee_panel11"), "ee_panel17", "FFFFFF", 256, 2, 100, 100);]]></onControlLoad>
+      <text>..</text>
+      <top>0</top>
+      <vAlign>top</vAlign>
+      <width>538</width>
     </control>
-    <control type="Panel" pathname="/divRoot/panel1">
-      <left>41</left>
-      <top>509</top>
-      <width>404</width>
-      <height>175</height>
-      <leftRatio>0.0414201183431953</leftRatio>
-      <topRatio>0.621039290240811</topRatio>
-      <widthRatio>0.404339250493097</widthRatio>
-      <heightRatio>0.214195183776933</heightRatio>
-      <sizeRatio>0.412195121951219</sizeRatio>
+    <control type="Panel" pathname="/divRoot/panel10">
+      <bgColorEnabled>true</bgColorEnabled>
       <dockX>ratio</dockX>
       <dockY>ratio</dockY>
-      <backgroundSkin>skin1</backgroundSkin>
-      <text>我是教练员</text>
-      <fontSizeAuto>20</fontSizeAuto>
-      <fontColor>FFFFFF</fontColor>
-      <cursor>pointer</cursor>
-      <onClick>g5.log("saldkjfasdf");
+      <height>652</height>
+      <heightRatio>0.799019607843137</heightRatio>
+      <left>6</left>
+      <leftRatio>0.0120240480961924</leftRatio>
+      <sizeRatio>3.06103286384977</sizeRatio>
+      <top>19</top>
+      <topRatio>0.0232843137254902</topRatio>
+      <width>230</width>
+      <widthRatio>0.42685370741483</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel10/panel12">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>123</top>
+      <topRatio>0.188650306748466</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel10/panel13">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>229</top>
+      <topRatio>0.351226993865031</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel10/panel14">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>334</top>
+      <topRatio>0.512269938650307</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel10/panel15">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>440</top>
+      <topRatio>0.674846625766871</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel10/panel16">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>545</top>
+      <topRatio>0.835889570552147</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel10/panel1">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>58</left>
+      <leftRatio>0.141463414634146</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>6</top>
+      <topRatio>0.00920245398773006</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <backgroundSkin>button1</backgroundSkin>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>78</height>
+      <heightRatio>0.0955882352941176</heightRatio>
+      <left>33</left>
+      <leftRatio>0.060530679933665</leftRatio>
+      <onClick>g5.log(g5.r.getSelectText());
+g5.log(g5.r.getSelectIndex());
+g5.log(g5.r2.getSelectText()); 
 
-//window.location.href = ee.pageRoot + "/regNewUser/regCoach1";
-</onClick>
+console.log("ri::"+g5.r.getSelectIndex());
+console.log(g5.r.getSelectText());        
+console.log("r2i::"+ g5.r2.getSelectIndex());
+console.log(g5.r2.getSelectText());</onClick>
+      <sizeRatio>0.296577946768061</sizeRatio>
+      <top>712</top>
+      <topRatio>0.872549019607843</topRatio>
+      <width>117</width>
+      <widthRatio>0.218076285240464</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <height>652</height>
+      <heightRatio>0.799019607843137</heightRatio>
+      <left>241</left>
+      <leftRatio>0.448590381426202</leftRatio>
+      <sizeRatio>1.26601941747573</sizeRatio>
+      <top>17</top>
+      <topRatio>0.0208333333333333</topRatio>
+      <width>230</width>
+      <widthRatio>0.427031509121061</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3/panel4">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>123</top>
+      <topRatio>0.188650306748466</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3/panel5">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>229</top>
+      <topRatio>0.351226993865031</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3/panel6">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>334</top>
+      <topRatio>0.512269938650307</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3/panel7">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>440</top>
+      <topRatio>0.674846625766871</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3/panel8">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>83</left>
+      <leftRatio>0.202439024390244</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>545</top>
+      <topRatio>0.835889570552147</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3/panel9">
+      <backgroundColor>FFFFC0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>10</fontSizeAuto>
+      <height>88</height>
+      <heightRatio>0.134969325153374</heightRatio>
+      <left>58</left>
+      <leftRatio>0.141463414634146</leftRatio>
+      <sizeRatio>0.350597609561753</sizeRatio>
+      <text>7</text>
+      <top>6</top>
+      <topRatio>0.00920245398773006</topRatio>
+      <width>251</width>
+      <widthRatio>0.61219512195122</widthRatio>
     </control>
   </controls>
-  <taskSet count="0" />
+  <taskSet count="2">
+    <taskSetItem name="save">
+      <script1 />
+      <script2>session.set("test","aaaaaaa");
+eio.appendString8(session.get("test"));</script2>
+      <script3>var get = eio.readString8();
+alert(get);</script3>
+    </taskSetItem>
+    <taskSetItem name="reset">
+      <script1 />
+      <script2>session.set("test","ccccc");
+eio.appendString8(session.get("test"));</script2>
+      <script3> var get = eio.readString8();
+alert(get);</script3>
+    </taskSetItem>
+  </taskSet>
   <gridLines count="0" />
 </page>
