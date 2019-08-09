@@ -1,6 +1,7 @@
 <page>
   <controls count="37">
     <control type="DivRoot" pathname="/divRoot">
+      <autoScroll>true</autoScroll>
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
       <dockX>fill</dockX>
@@ -8,22 +9,22 @@
       <height>816</height>
       <left>0</left>
       <onControlLoad>getCont();
-setInterval(function(){getCont();},1000);</onControlLoad>
+setInterval(function(){getCont();},60000);</onControlLoad>
       <top>0</top>
-      <width>975</width>
+      <width>1045</width>
     </control>
     <control type="TableTitle" pathname="/divRoot/tabletitle1">
       <columnCount>1</columnCount>
       <height>24</height>
-      <heightRatio>0.0293040293040293</heightRatio>
+      <heightRatio>0.0294117647058824</heightRatio>
       <left>364</left>
-      <leftRatio>0.286840031520883</leftRatio>
+      <leftRatio>0.270430906389302</leftRatio>
       <sizeRatio>0.069164265129683</sizeRatio>
       <tableBody>tablebody1</tableBody>
       <top>43</top>
-      <topRatio>0.0525030525030525</topRatio>
+      <topRatio>0.0526960784313725</topRatio>
       <width>347</width>
-      <widthRatio>0.27344365642238</widthRatio>
+      <widthRatio>0.257800891530461</widthRatio>
     </control>
     <control type="TableTitleItem" pathname="/divRoot/tabletitle1/tabletitleitem1">
       <backgroundColor>f0f0f0</backgroundColor>
@@ -37,17 +38,18 @@ setInterval(function(){getCont();},1000);</onControlLoad>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/panel3">
+      <autoScroll>true</autoScroll>
       <dockX>center</dockX>
       <dockY>center</dockY>
       <height>519</height>
-      <heightRatio>0.633699633699634</heightRatio>
-      <left>104</left>
-      <leftRatio>0.19779353821907</leftRatio>
+      <heightRatio>0.636029411764706</heightRatio>
+      <left>139</left>
+      <leftRatio>0.215453194650817</leftRatio>
       <sizeRatio>0.677545691906005</sizeRatio>
       <top>148</top>
-      <topRatio>0.183150183150183</topRatio>
+      <topRatio>0.181372549019608</topRatio>
       <width>766</width>
-      <widthRatio>0.603624901497242</widthRatio>
+      <widthRatio>0.569093610698366</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/panel3/layoutx1">
       <fieldCount>2</fieldCount>
@@ -473,7 +475,7 @@ db.read(sqlResult);
 var count = db.getInt32(sqlResult, "c");
 //es.logWarning(count); 
 
-sql = "select count(*) as c from userInfo where autoStatus='VCN'";//认证申请
+sql = "select count(*) as c from userInfo where autoStatus='VCN' and userType='教练'";//认证申请
 //es.logWarning(sql);
 sqlResult = db.executeQuery("PJ", sql);
 db.read(sqlResult);
@@ -612,7 +614,8 @@ db.read(sqlResult);
 var pay2 = db.getString(sqlResult, "pay");
 if(pay2.length<=0){
     pay2="0";
-}   
+} 
+ 
 
 sql="select count(*) as c from log "+//今日代金券使用数
 "where CONVERT(varchar,regDatetime,10)=CONVERT(varchar,GETDATE(),10) and logType='财卡充值'";
@@ -757,7 +760,10 @@ var payFree=eio.readString8();//今日代金券充值总免费赠送金额
 var count20=eio.readInt32();//提现大于等于200的个数
 var pay4=eio.readString8();//提现大于等于200的金额总计
 var count21=eio.readInt32();//提现小于等于200的个数
-var pay5=eio.readString8();//提现小于等于200的金额总计
+var pay5=eio.readString8();//提现小于等于200的金额总计  
+
+var cc = parseInt(count20)+ parseInt(count21);  //提现总数，当天
+var money = parseInt(pay4) + parseInt(pay5);    //提现总价格，当天
 
 ee.setText(ee.getControl("layoutxitem2"),"教练"+count8+"人，学员"+count9+"人，其它"+count10+"人");
 ee.setText(ee.getControl("layoutxitem4"),"教练"+count13+"人，学员"+count12+"人，其它"+count14+"人");
@@ -766,8 +772,10 @@ ee.setText(ee.getControl("layoutxitem8"),"今天用户充值"+count16+"笔，总
 ee.setText(ee.getControl("layoutxitem10"),"今日代金券使用"+count17+"笔，总计"+pay3+"元，免费赠送金额"+payFree+"元");
 ee.setText(ee.getControl("layoutxitem12"),"今日发送短信共计"+count19+"条");
 ee.setText(ee.getControl("layoutxitem14"),"今日保单生成共计"+count18+"笔，总计"+(count18*5)+"元");
-ee.setText(ee.getControl("layoutxitem16"),"大于200元"+count20+"个共计"+pay4+"元，小于200元"+count21+"个共计"+pay5+"元");
-ee.setText(ee.getControl("layoutxitem18"),"审核申请"+count1+"个，认证申请"+count2+"个");
+ee.setText(ee.getControl("layoutxitem16"),"提现 "+cc+" 笔，总计："+money+"元");   
+//ee.setText(ee.getControl("layoutxitem16"),"大于200元"+count20+"个共计"+pay4+"元，小于200元"+count21+"个共计"+pay5+"元");
+//ee.setText(ee.getControl("layoutxitem18"),"审核申请"+count1+"个，认证申请"+count2+"个");   
+ee.setText(ee.getControl("layoutxitem18"),"认证申请"+count2+"个"); 
 ee.setText(ee.getControl("layoutxitem20"),count3+"条未处理用户意见"); 
 ee.setText(ee.getControl("layoutxitem22"),count4+"个未分配"+count5+"个已分配"+count6+"个正在陪练");
 </script3>

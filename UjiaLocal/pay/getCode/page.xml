@@ -1,0 +1,50 @@
+<page>
+  <controls count="1">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onPageCreate>//获取insert_id 和　back＿url
+var url = window.location.href;
+var index = url.indexOf("=/");
+url = url.substring(index + 1);
+var arr = url.split("red_url");     
+
+var url_orig = arr[0];  // "/Ujia/pay&amp;insert_id=1430&amp;back_url=/Ujia/shoplist%26id%3D2170%26token%3Ddemo%26"
+var url_red = arr[1];   // "%3D/simulation/path%23id%3D13%23token%3Ddemo"
+
+var arr_orig = url_orig.split("&amp;back_url=");
+var url_use = arr_orig[0];
+var url_back = arr_orig[1];  
+
+var index2 = url_use.indexOf("insert_id=");
+var insert_id = url_use.substring(index2 + 10);
+//console.log(insert_id);
+url_back = unescape(url_back);   
+var index3 = url_back.indexOf("/shoplist");
+url_back = url_back.substring(index3);
+//console.log(url_back);           
+
+url_red = unescape(url_red); 
+var back_url = url_back + "red_url" + url_red; 
+//console.log(back_url);
+
+g5.insert_id = insert_id;
+g5.back_url = back_url;           
+
+eb.setCookie("insert_id",insert_id);
+eb.setCookie("back_url",back_url);           
+
+
+window.location.href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxeeb9b2f6e1f01d23&amp;response_type=code&amp;redirect_uri=http%3A%2F%2Fm.1peijia.com%2FEEngine%2FujiaPay.htm&amp;scope=snsapi_base&amp;state=STATE#wechat_redirect";
+</onPageCreate>
+      <top>0</top>
+      <width>427</width>
+    </control>
+  </controls>
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

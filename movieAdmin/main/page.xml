@@ -1,0 +1,717 @@
+<page>
+  <controls count="23">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>799</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[g5.token = eb.getCookie("maLoginToken");
+if (eb.isEmpty(g5.token)) {
+    window.location.href = ee.getUrl("/login");
+    return; 
+}  
+
+//滚动式菜单v2
+g5.GMenuControl_name = "";
+g5.GMenuControl_aniEnabled = false;
+g5.GMenuControl = function () {
+    this.menuBar = new Array();
+    this.addMenu = function(menu) {
+        this.menuBar.push(menu);
+    }
+    this.addSubMenu = function(subMenu, subMenuHeight) {
+        this.menuBar[this.menuBar.length-1].subMenu = subMenu;
+        this.menuBar[this.menuBar.length-1].subMenuHeight = subMenuHeight
+    }
+    this.init = function() {
+        var i;
+        for (i = 0; i < this.menuBar.length; i++) {
+            ee.setRect(this.menuBar[i].subMenu,null,null,null,1);
+            this.menuBar[i].open = false;
+            this.menuBar[i].aniEnabled = false;
+            this.menuBar[i].aniStartH = 0;
+            this.menuBar[i].aniEndH = 0;
+        }
+    }
+    this.click = function (index) {
+        if ((index<0)||(index>=this.menuBar.length)) return;
+        if (this.menuBar[index].open) { 
+            this.startAni(index, 1);
+        } else {
+            this.startAni(index, this.menuBar[index].subMenuHeight);
+        }
+        this.menuBar[index].open = !this.menuBar[index].open;
+        ee.setRect(this.menuBar[index].parentNode, null, null, null, null, true);
+    }
+    this.startAni = function (index, endH) {
+        this.menuBar[index].aniEnabled = true;
+        this.menuBar[index].aniStartH = eb.getDivRect(this.menuBar[index].subMenu).h;
+        this.menuBar[index].aniEndH = endH;
+        this.menuBar[index].aniStartTime = new Date();
+        //判断动画是否已经开始
+        if (!g5.GMenuControl_aniEnabled) {
+            g5.GMenuControl_aniEnabled = true;
+            setTimeout(this.timer, 1);
+        }
+    }
+    this.menusName = "";
+    this.timer = function () {
+        eval("var menu = " + g5.GMenuControl_name + ";");
+        var i, mIndex;
+        for (mIndex = 0; mIndex < menu.length; mIndex++) {
+            //动画处理
+            for (i = 0; i < menu[mIndex].menuBar.length; i++) {
+                if (!menu[mIndex].menuBar[i].aniEnabled) continue;
+                var time = (new Date()).getTime() - menu[mIndex].menuBar[i].aniStartTime.getTime();
+                time = time / 600;
+                time = Math.min(Math.max(0, time), 1);
+                var pos = eb.getInterpolation("bonus", time);
+                pos = parseInt(pos*(menu[mIndex].menuBar[i].aniEndH - menu[mIndex].menuBar[i].aniStartH)+menu[mIndex].menuBar[i].aniStartH);
+                ee.setRect(menu[mIndex].menuBar[i].subMenu,null,null,null, pos);
+                //动画是否结束
+                if (time >= 1) {
+                    menu[mIndex].menuBar[i].aniEnabled = false;
+                }   
+            }                            
+            ee.setRect(menu[mIndex].menuBar[0].parentNode, null, null, null, null, true);
+
+        }
+        //判断是否所有的动画都结束了
+        for (mIndex = 0; mIndex < menu.length; mIndex++) {
+            for (i = 0; i < menu[mIndex].menuBar.length; i++) {
+                if (menu[mIndex].menuBar[i].aniEnabled) {
+                    setTimeout(menu[mIndex].timer, 1);
+                    return;
+                }
+            }
+            g5.GMenuControl_aniEnabled = false;
+        }
+    }
+}
+
+/*
+g5.menu = new Array();
+g5.menu.push(new g5.GMenuControl()); 
+g5.GMenuControl_name = "g5.menu";
+
+g5.menu[0].self = g5.menu[0];
+//首页  
+g5.menu[0].addMenu(ee.getControl("layoutyitem7"));
+g5.menu[0].addSubMenu(ee.getControl("layoutyitem8"), 261);
+g5.menu[0].addMenu(ee.getControl("layoutyitem9"));
+g5.menu[0].addSubMenu(ee.getControl("layoutyitem10"), 128); 
+g5.menu[0].addMenu(ee.getControl("layoutyitem13"));
+g5.menu[0].addSubMenu(ee.getControl("layoutyitem14"), 205); 
+g5.menu[0].init(); 
+*/
+
+//工单
+//g5.menu[0].addMenu(ee.getControl("layoutyitem9"));
+//g5.menu[0].addSubMenu(ee.getControl("layoutyitem10"), 110);
+//台账
+//g5.menu[0].addMenu(ee.getControl("layoutyitem13"));
+//g5.menu[0].addSubMenu(ee.getControl("layoutyitem14"), 80);
+//GIS
+//g5.menu[0].addMenu(ee.getControl("layoutyitem15"));
+//g5.menu[0].addSubMenu(ee.getControl("layoutyitem16"), 50);
+//系统管理
+//g5.menu[0].addMenu(ee.getControl("layoutyitem17"));
+//g5.menu[0].addSubMenu(ee.getControl("layoutyitem18"), 190);
+//门户信息
+//g5.menu[0].addMenu(ee.getControl("layoutyitem19"));
+//g5.menu[0].addSubMenu(ee.getControl("layoutyitem20"), 80);
+//g5.menu[0].init(); 
+
+//创建新页面
+g5.pages = new Array();
+
+//g5.divTab = ee.getControl("layoutyitem11");
+//g5.divFrame = ee.getControl("layoutyitem12");
+
+g5.appendPage = function (title, url,canClose) {
+    for (var i = 0; i < g5.pages.length; i++) {
+        if (g5.pages[i].title == title) {
+            g5.activePage(i);
+            return;
+        }
+    }
+    var page = new Object();
+    page.title = title;
+    page.url = url;
+    page.active = true;
+    page.divTab = createPanel(g5.divTab, "", "", 120 * g5.pages.length, 0, 120, 32);
+    page.divTab.style.cursor = "pointer";
+    page.img1 = eb.createImg(page.divTab, "");
+    page.img1.style.width = "100%";
+    page.img1.style.height = "100%";
+    page.divText = createPanel(page.divTab, "", "", 0, 0, 120, 32);
+    page.text = addText(page.divText, title, "center", "middle", "微软雅黑", 9, "000000", "normal");
+    page.divClose = createPanel(page.divTab, "", "", 103, 12, 8, 8); ;
+    page.divCloseImg = eb.createImg(page.divClose, "");
+    page.divCloseImg.style.width = "100%";
+    page.divCloseImg.style.height = "100%";
+    if(canClose==undefined){
+        canClose=true;
+    }
+    if(!canClose){
+        ee.setVisible(page.divClose, false);
+    }
+    page.divFrame = document.createElement("iframe");
+    page.divFrame.style.position = "absolute";
+    page.divFrame.style.width = "100%";
+    page.divFrame.style.height = "100%";
+    page.divFrame.style.scrolling = "auto";
+    page.divFrame.style.overflow = "auto";
+    page.divFrame.style.overflowX = "hidden";
+    page.divFrame.setAttribute("frameborder", "0", 0);
+    g5.divFrame.appendChild(page.divFrame);
+    page.divFrame.src = url;
+    page.divTab.onclick = function () {
+        var index = -1;
+        for (var i = 0; i < g5.pages.length; i++) {
+            if (g5.pages[i].divTab == this) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) return;
+        g5.activePage(index);
+    }
+    page.divClose.onclick = function () {
+        var i;
+        var index = -1;
+        for (i = 0; i < g5.pages.length; i++) {
+            if (g5.pages[i].divClose == this) {
+                index = i;
+                break;
+            }
+        }
+        if (index <= 0) return;
+        if (g5.pages[index].active) {
+            if (index + 1 < g5.pages.length) {
+                g5.activePage(index + 1);
+            } else if (index - 1 >= 0) {
+                g5.activePage(index - 1);
+            }
+        }
+        g5.pages[index].divTab.parentNode.removeChild(g5.pages[index].divTab);
+        g5.pages[index].divFrame.parentNode.removeChild(g5.pages[index].divFrame);
+        g5.pages.splice(index, 1);
+        for (i = 0; i < g5.pages.length; i++) {
+            g5.pages[i].divTab.style.left = i * 120 + "px";
+        }
+    }
+    g5.pages.push(page);
+    g5.activePage(g5.pages.length - 1);
+}
+//激活一个tab页面
+g5.activePage = function (index) {
+    for (var i = 0; i < g5.pages.length; i++) {
+        if (!g5.pages[i].active) {
+            continue;
+        }
+        g5.pages[i].active = false;
+        g5.pages[i].img1.src = "cache" + ee.pageUrl + "/p2e3c1.png";
+        g5.pages[i].divCloseImg.src = "cache" + ee.pageUrl + "/p2d3d1.png";
+        ee.setTextColor(g5.pages[i].divText, "#000000");
+        g5.pages[i].divFrame.style.zIndex = 10;
+        ee.setVisible(g5.pages[i].divFrame, false);
+    }
+    g5.pages[index].active = true;
+    g5.pages[index].img1.src = "cache" + ee.pageUrl + "/p2e3c2.png";
+    g5.pages[index].divCloseImg.src = "cache" + ee.pageUrl + "/p2d3d2.png";
+    ee.setTextColor(g5.pages[index].divText, "#000000");
+    g5.pages[index].divFrame.style.zIndex = 1000;
+    ee.setVisible(g5.pages[index].divFrame, true);
+}
+
+//第一个菜单
+
+//ee.setVisible(ee.getControl("panel2"), true);
+//g5.appendPage("主页", "http://www.baidu.com", false);
+//g5.menu[0].click(0);  
+
+ 
+]]></onControlLoad>
+      <pageTitle>影视项目管理系统V1.0</pageTitle>
+      <top>0</top>
+      <width>1076</width>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>799</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.742565055762082</sizeRatio>
+      <top>0</top>
+      <width>1076</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1">
+      <heavyEnabled>false</heavyEnabled>
+      <height>799</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>12.1060606060606</sizeRatio>
+      <top>0</top>
+      <width>66</width>
+      <widthRatio>0.0613382899628253</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layoutx1/layoutxitem1/layouty1">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+      <height>799</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>12.1060606060606</sizeRatio>
+      <top>0</top>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1">
+      <backgroundColor>743683</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>707</height>
+      <heightRatio>0.884856070087609</heightRatio>
+      <left>0</left>
+      <sizeRatio>10.7121212121212</sizeRatio>
+      <top>0</top>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel14">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>300</aniDelay>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundImg>T0_84a.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <imgTitle>项目管理/my project</imgTitle>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>80</top>
+      <topRatio>0.113154172560113</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel2">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImg>CPY0003.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>58</height>
+      <heightRatio>0.082036775106082</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.878787878787879</sizeRatio>
+      <top>0</top>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel3">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>400</aniDelay>
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <backgroundImg>T0_09a.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>130</top>
+      <topRatio>0.183875530410184</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel4">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>500</aniDelay>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundImg>T1_37.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>180</top>
+      <topRatio>0.254596888260255</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel5">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>600</aniDelay>
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <backgroundImg>T0_30.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>230</top>
+      <topRatio>0.325318246110325</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel6">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>700</aniDelay>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundImg>T3_01.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <imgTitle>日程安排/schedule</imgTitle>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>280</top>
+      <topRatio>0.396039603960396</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel7">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>800</aniDelay>
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <backgroundImg>T0_43.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <imgTitle>通知/brodcast</imgTitle>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>330</top>
+      <topRatio>0.466760961810467</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel8">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>900</aniDelay>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundImg>T0_87.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <imgTitle>计算器/calculater</imgTitle>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>380</top>
+      <topRatio>0.537482319660538</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel9">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>1000</aniDelay>
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <backgroundImg>T1_15.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <imgTitle>统计信息/report</imgTitle>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>430</top>
+      <topRatio>0.608203677510608</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel10">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>2</height>
+      <heightRatio>0.00282885431400283</heightRatio>
+      <left>7</left>
+      <leftRatio>0.106060606060606</leftRatio>
+      <outerLeft>7</outerLeft>
+      <outerRight>7</outerRight>
+      <sizeRatio>0.0384615384615385</sizeRatio>
+      <top>481</top>
+      <topRatio>0.68033946251768</topRatio>
+      <width>52</width>
+      <widthRatio>0.787878787878788</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel11">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>1100</aniDelay>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundImg>T0_34.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <imgTitle>文字信息/message</imgTitle>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>494</top>
+      <topRatio>0.698727015558699</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel12">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>1200</aniDelay>
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <backgroundImg>T0_51.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <imgTitle>设置/setup</imgTitle>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>537</top>
+      <topRatio>0.75954738330976</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel13">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>2</height>
+      <heightRatio>0.00282885431400283</heightRatio>
+      <left>7</left>
+      <leftRatio>0.106060606060606</leftRatio>
+      <outerLeft>7</outerLeft>
+      <outerRight>7</outerRight>
+      <sizeRatio>0.0384615384615385</sizeRatio>
+      <top>585</top>
+      <topRatio>0.827439886845827</topRatio>
+      <width>52</width>
+      <widthRatio>0.787878787878788</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel15">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>1200</aniDelay>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundImg>T3_48.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <imgTitle>帮助和使用手册/help center</imgTitle>
+      <layerName>button</layerName>
+      <left>0</left>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>600</top>
+      <topRatio>0.848656294200849</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem1/panel16">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniAutoStart>true</aniAutoStart>
+      <aniDelay>1200</aniDelay>
+      <aniPos>rightFlyIn:右侧飞入</aniPos>
+      <backgroundImg>T3_19.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <height>36</height>
+      <heightRatio>0.0509193776520509</heightRatio>
+      <imgTitle>退出本账户/logout and exit</imgTitle>
+      <layerName>button</layerName>
+      <left>0</left>
+      <onClick>eb.setCookie("maLoginToken", "", 0);
+window.location.href = ee.getUrl("/login");
+</onClick>
+      <sizeRatio>0.545454545454545</sizeRatio>
+      <top>645</top>
+      <topRatio>0.912305516265912</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layoutx1/layoutxitem1/layouty1/layoutyitem2">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+      <height>92</height>
+      <heightRatio>0.11514392991239</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.39393939393939</sizeRatio>
+      <top>707</top>
+      <topRatio>0.884856070087609</topRatio>
+      <width>66</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem2">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+      <height>799</height>
+      <heightRatio>1</heightRatio>
+      <left>66</left>
+      <leftRatio>0.0613382899628253</leftRatio>
+      <sizeRatio>99.875</sizeRatio>
+      <top>0</top>
+      <width>8</width>
+      <widthRatio>0.00743494423791822</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem3">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>799</height>
+      <heightRatio>1</heightRatio>
+      <left>74</left>
+      <leftRatio>0.0687732342007435</leftRatio>
+      <sizeRatio>0.797405189620758</sizeRatio>
+      <top>0</top>
+      <width>1002</width>
+      <widthRatio>0.931226765799256</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="2">
+    <taskSetItem name="getUserInfo">
+      <script1>eio.appendString8(g5.token);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}      
+var photo1=db.getString(sqlResult,"photo1");
+es.logWarning(photo1);
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult,"photo1"));  
+eio.appendString8(db.getString(sqlResult,"nickName"));
+eio.appendInt32(parseInt(db.getMoney(sqlResult, "balance")*100));
+//eio.appendInt32(parseInt(db.getMoney(sqlResult, "balanceFree")*100)); 
+//eio.appendString8(db.getString(sqlResult,"photo4"));
+
+
+
+]]></script2>
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    window.location.href = ee.pageRoot + "/login";
+    return;
+}
+g5.photo1 = eio.readString8();
+g5.nickName = eio.readString8();
+g5.balance = eio.readInt32()/100;
+//g5.balanceFree = eio.readInt32()/100;
+//g5.photo4 = eio.readString8();
+if (g5.photo1.length>0) {
+    ee.setImage(ee.getControl("panel4"), "url:/userRes/"+g5.photo1,"fill");
+}else {
+    ee.setImage(ee.getControl("panel4"), "url:/userRes/face.png","fill");    
+}  
+
+ee.setText(ee.getControl("panel23"), g5.nickName);
+ee.setText(ee.getControl("panel24"),"余额"+g5.balance+"元");
+/*
+var s;
+s = (g5.balance + 0.001) + "";
+s = s.substring(0,s.indexOf(".")+3);
+ee.setText(ee.getControl("panel3"), "余额<br/>￥" + s);
+s = (g5.balanceFree + 0.001) + "";
+s = s.substring(0,s.indexOf(".")+3);
+ee.setText(ee.getControl("panel4"), "赠送<br/>￥" + s);
+*/
+//getNewsList();
+//getTask();
+
+]]></script3>
+    </taskSetItem>
+    <taskSetItem name="news">
+      <script1>eio.appendString8(eb.getCookie("pjToken"));
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+
+sql = "select count(*) as c from sendNews where status='未读' and userId="+userId;
+sqlResult = db.executeQuery("PJ", sql); 
+db.read(sqlResult)  
+var count = db.getInt32(sqlResult, "c"); 
+//es.logWarning(count);
+if(count<=0){               
+    eio.appendString8("F");
+    return;
+}  
+eio.appendString8("T");
+]]></script2>
+      <script3>var result = eio.readString8(); 
+if(result=="F"){
+   ee.setVisible(ee.getControl("panel8"),false);
+   return;
+}   
+else {
+   ee.setVisible(ee.getControl("panel8"),true); 
+}
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

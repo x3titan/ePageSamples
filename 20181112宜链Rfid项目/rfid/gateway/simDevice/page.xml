@@ -1,0 +1,711 @@
+<page>
+  <controls count="28">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>484</height>
+      <left>0</left>
+      <onPageLoad><![CDATA[g5.init = function(data) {
+    g5.params = data.split("&amp;");
+    for (var i = 0; i < g5.params.length; i++) {
+        g5.params[i] = g5.params[i].split("=");
+    }
+}
+
+g5.getParam = function(key) {
+    for (var i = 0; i < g5.params.length; i++) {
+        if (g5.params[i].length != 2) continue;
+        if (g5.params[i][0].toLowerCase() == key.toLowerCase()) return g5.params[i][1];
+    }
+    return "";
+}
+
+g5.log = function(text) {
+    text = ee.getText(ee.getControl("panel3")) + "\r\n" + text.trim();
+    ee.setText(ee.getControl("panel3"), text);
+}
+
+g5.post = function(url, params) {
+    g5.ajax = new TamAjax("g5.ajax");
+    g5.ajax.createHandle();
+    g5.ajax.onReceive = function(name) {  
+    //debugger;
+        var result = g5.ajax.responseText; 
+        g5.log("接收:" + result);
+        g5.init(result);
+        g5.onPost();    
+    }
+    g5.ajax.post(url, params);
+    g5.log("发送:" + url + " -> " + params);
+}        
+
+
+]]></onPageLoad>
+      <pageTitle>RFID终端设备模拟器</pageTitle>
+      <top>0</top>
+      <width>681</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>29</height>
+      <heightRatio>0.0364321608040201</heightRatio>
+      <left>263</left>
+      <leftRatio>0.217355371900826</leftRatio>
+      <onClick>g5.onPost = function() {
+    ee.setText(ee.getControl("panel2"), g5.getParam("sessionId").trim());
+    g5.sessionId = g5.getParam("sessionId").trim();
+} 
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "func=login&amp;username=device001&amp;password=111111&amp;deviceId=A0009"
+);
+</onClick>
+      <sizeRatio>0.152631578947368</sizeRatio>
+      <text>登录并获取sessionId</text>
+      <top>386</top>
+      <topRatio>0.484924623115578</topRatio>
+      <width>190</width>
+      <widthRatio>0.15702479338843</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <backgroundSkin>body2</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <fontFamily>微软雅黑</fontFamily>
+      <hAlign>left</hAlign>
+      <height>378</height>
+      <heightRatio>0.78099173553719</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.555066079295154</sizeRatio>
+      <text>======日志=======</text>
+      <top>0</top>
+      <vAlign>bottom</vAlign>
+      <width>681</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel6">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>29</height>
+      <heightRatio>0.0364321608040201</heightRatio>
+      <left>95</left>
+      <leftRatio>0.0785123966942149</leftRatio>
+      <onClick>g5.url = 
+    "http://139.199.23.13/eEngine/ee.aspx?_L_=/rfid/gateway/mQueryCode" + 
+    "&amp;func=queryRfid" +
+    "&amp;sessionId=" + g5.sessionId +
+    "&amp;code=EPCTEST0001";
+var sh = parseInt((window.screen.height - 175) / 1);
+if (isNaN(sh)) {
+    window.open(g5.url);
+} else {
+    if (eb.isEmpty(g5.lastPos)) g5.lastPos = 0;
+    var w = parseInt(sh/16*9);
+    //var x = (g5.lastPos % 3) * (w + 27);
+    //var y = parseInt(g5.lastPos / 3) * (sh + 68);
+    var x = 300;
+    var y = 10;
+    window.open(g5.url, "货品查询" + g5.actionId,
+        "height=" + sh + ", width=" + w + ", top=" + y + ", left=" + x + ", toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no");
+    g5.lastPos = (g5.lastPos + 1) % 6;
+}</onClick>
+      <sizeRatio>0.152631578947368</sizeRatio>
+      <text>模拟RFID扫码查询</text>
+      <top>580</top>
+      <topRatio>0.728643216080402</topRatio>
+      <width>190</width>
+      <widthRatio>0.15702479338843</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel11">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>29</height>
+      <heightRatio>0.0364321608040201</heightRatio>
+      <left>95</left>
+      <leftRatio>0.0785123966942149</leftRatio>
+      <onClick><![CDATA[g5.post = function (URL, PARAMS) { 
+    var temp = document.createElement("form"); 
+    temp.action = URL;
+    temp.target = "query"; 
+    temp.method = "post"; 
+    temp.style.display = "none"; 
+    temp.innerHTML = "RRRRRRRRRRRRRR";
+    var opt = document.createElement("textarea"); 
+    opt.name = "{ 'kjf"; 
+    opt.value = "29': 'sldkjflsadjf' }"; 
+    temp.appendChild(opt); 
+    /*
+    for (var x in PARAMS) { 
+        var opt = document.createElement("textarea"); 
+        opt.name = x; 
+        opt.value = PARAMS[x]; // alert(opt.name) 
+        temp.appendChild(opt); 
+    } 
+    */
+    document.body.appendChild(temp);
+    temp.submit();
+    return temp; 
+}
+
+g5.url = "http://139.199.23.13/eEngine/ee.aspx?_L_=/rfid/gateway/mQueryCode";
+g5.params = "{ " +
+    "'func': " + "'queryRfid'," +
+    "'sessionId': '" + g5.sessionId + "'," +
+    "'code': '" + "EPCTEST0001' }";
+g5.log("发送:" + g5.url + " -> " + g5.params);
+var sh = parseInt((window.screen.height - 175) / 1);
+if (isNaN(sh)) {
+    window.open(g5.url);
+} else {
+    if (eb.isEmpty(g5.lastPos)) g5.lastPos = 0;
+    var w = parseInt(sh/16*9);
+    //var x = (g5.lastPos % 3) * (w + 27);
+    //var y = parseInt(g5.lastPos / 3) * (sh + 68);
+    var x = 300;
+    var y = 10;
+    window.open("", "query",
+        "height=" + sh + ", width=" + w + ", top=" + y + ", left=" + x + ", toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no");
+    g5.lastPos = (g5.lastPos + 1) % 6;
+}
+g5.post(g5.url, g5.params);
+return;
+
+]]></onClick>
+      <sizeRatio>0.152631578947368</sizeRatio>
+      <text>模拟RFID扫码查询(post版)</text>
+      <top>619</top>
+      <topRatio>0.777638190954774</topRatio>
+      <width>190</width>
+      <widthRatio>0.15702479338843</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel12">
+      <backgroundSkin>button3</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>29</height>
+      <heightRatio>0.0364321608040201</heightRatio>
+      <left>463</left>
+      <leftRatio>0.382644628099174</leftRatio>
+      <onClick>g5.onPost = function() {
+    ee.setText(ee.getControl("panel2"), g5.getParam("sessionId").trim());
+    g5.sessionId = g5.getParam("sessionId").trim();
+} 
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{ 'func':'login','username':'device001','password':'111111','deviceId':'A0009' }"
+);
+</onClick>
+      <sizeRatio>0.152631578947368</sizeRatio>
+      <text>JSON版：登录并获取sessionId</text>
+      <top>386</top>
+      <topRatio>0.484924623115578</topRatio>
+      <width>190</width>
+      <widthRatio>0.15702479338843</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15">
+      <backgroundSkin>body3</backgroundSkin>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>17</fontSize>
+      <height>181</height>
+      <heightRatio>0.227386934673367</heightRatio>
+      <left>325</left>
+      <leftRatio>0.268595041322314</leftRatio>
+      <sizeRatio>0.485254691689008</sizeRatio>
+      <text>标准形式</text>
+      <top>422</top>
+      <topRatio>0.530150753768844</topRatio>
+      <vAlign>bottom</vAlign>
+      <width>373</width>
+      <widthRatio>0.308264462809917</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15/panel4">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>23</left>
+      <leftRatio>0.0616621983914209</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "func=storeInRfid&amp;sessionId=" + g5.sessionId + "&amp;storeId=1&amp;rfid=EPCTEST0001"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>入库(RFID)</text>
+      <top>18</top>
+      <topRatio>0.0994475138121547</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15/panel5">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>192</left>
+      <leftRatio>0.514745308310992</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "func=storeOutRfid&amp;sessionId=" + g5.sessionId + "&amp;rfid=EPCTEST0001"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>出库(RFID)</text>
+      <top>18</top>
+      <topRatio>0.0994475138121547</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15/panel7">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>23</left>
+      <leftRatio>0.0616621983914209</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "func=vhcInRfid&amp;sessionId=" + g5.sessionId + "&amp;vhcId=1&amp;rfid=EPCTEST0001"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>上车(RFID)</text>
+      <top>58</top>
+      <topRatio>0.320441988950276</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15/panel8">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>192</left>
+      <leftRatio>0.514745308310992</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "func=vhcOutRfid&amp;sessionId=" + g5.sessionId + "&amp;rfid=EPCTEST0001"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>下车(RFID)</text>
+      <top>58</top>
+      <topRatio>0.320441988950276</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15/panel9">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>23</left>
+      <leftRatio>0.0616621983914209</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "func=frgInRfid&amp;sessionId=" + g5.sessionId + "&amp;frgId=1&amp;rfid=EPCTEST0001"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>进冰箱(RFID)</text>
+      <top>97</top>
+      <topRatio>0.535911602209945</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel15/panel10">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>192</left>
+      <leftRatio>0.514745308310992</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "func=frgOutRfid&amp;sessionId=" + g5.sessionId + "&amp;rfid=EPCTEST0001"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>出冰箱(RFID)</text>
+      <top>97</top>
+      <topRatio>0.535911602209945</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel14">
+      <backgroundSkin>body3</backgroundSkin>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>17</fontSize>
+      <height>181</height>
+      <heightRatio>0.227386934673367</heightRatio>
+      <left>708</left>
+      <leftRatio>0.585123966942149</leftRatio>
+      <sizeRatio>0.485254691689008</sizeRatio>
+      <text>JSON形式</text>
+      <top>423</top>
+      <topRatio>0.531407035175879</topRatio>
+      <vAlign>bottom</vAlign>
+      <width>373</width>
+      <widthRatio>0.308264462809917</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel14/panel16">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>23</left>
+      <leftRatio>0.0616621983914209</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{ 'func':'storeInRfid','sessionId':'" + g5.sessionId + "','storeId':'1','rfid':'EPCTEST0001' }"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>入库(RFID)</text>
+      <top>18</top>
+      <topRatio>0.0994475138121547</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel14/panel17">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>192</left>
+      <leftRatio>0.514745308310992</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{ 'func':'storeOutRfid','sessionId':'" + g5.sessionId + "','rfid':'EPCTEST0001' }"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>出库(RFID)</text>
+      <top>18</top>
+      <topRatio>0.0994475138121547</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel14/panel18">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>23</left>
+      <leftRatio>0.0616621983914209</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{ 'func':'vhcInRfid','sessionId':'" + g5.sessionId + "','vhcId':'1','rfid':'EPCTEST0001' }"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>上车(RFID)</text>
+      <top>58</top>
+      <topRatio>0.320441988950276</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel14/panel19">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>192</left>
+      <leftRatio>0.514745308310992</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{ 'func':'vhcOutRfid','sessionId':'" + g5.sessionId + "','rfid':'EPCTEST0001' }"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>下车(RFID)</text>
+      <top>58</top>
+      <topRatio>0.320441988950276</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel14/panel20">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>23</left>
+      <leftRatio>0.0616621983914209</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{ 'func':'frgInRfid','sessionId':'" + g5.sessionId + "','frgId':'1','rfid':'EPCTEST0001' }"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>进冰箱(RFID)</text>
+      <top>97</top>
+      <topRatio>0.535911602209945</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel14/panel21">
+      <backgroundSkin>skin1004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>33</height>
+      <heightRatio>0.18232044198895</heightRatio>
+      <left>192</left>
+      <leftRatio>0.514745308310992</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{ 'func':'frgOutRfid','sessionId':'" + g5.sessionId + "','rfid':'EPCTEST0001' }"
+);
+</onClick>
+      <sizeRatio>0.212903225806452</sizeRatio>
+      <text>出冰箱(RFID)</text>
+      <top>97</top>
+      <topRatio>0.535911602209945</topRatio>
+      <width>155</width>
+      <widthRatio>0.415549597855228</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel26">
+      <backgroundSkin>body3</backgroundSkin>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>12</fontSize>
+      <height>149</height>
+      <heightRatio>0.187185929648241</heightRatio>
+      <left>61</left>
+      <leftRatio>0.0504132231404959</leftRatio>
+      <sizeRatio>0.58203125</sizeRatio>
+      <text>7月24日紧急补充接口</text>
+      <top>420</top>
+      <topRatio>0.527638190954774</topRatio>
+      <vAlign>bottom</vAlign>
+      <width>256</width>
+      <widthRatio>0.211570247933884</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel26/panel22">
+      <backgroundSkin>App1PJ004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>36</height>
+      <heightRatio>0.241610738255034</heightRatio>
+      <left>19</left>
+      <leftRatio>0.07421875</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+var epc = ee.getEditText(ee.getControl("edit3"));
+if (epc == "") {
+    epc = "EPCCode123456";
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{'link':{'epc':'" + epc + "','qr':'qr0012','sn':'sn0010'}}"
+);
+</onClick>
+      <sizeRatio>0.356435643564356</sizeRatio>
+      <text>关联</text>
+      <top>18</top>
+      <topRatio>0.120805369127517</topRatio>
+      <width>101</width>
+      <widthRatio>0.39453125</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel26/panel24">
+      <backgroundSkin>App1PJ004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>36</height>
+      <heightRatio>0.241610738255034</heightRatio>
+      <left>19</left>
+      <leftRatio>0.07421875</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+var epc = ee.getEditText(ee.getControl("edit3"));
+if (epc == "") {
+    epc = "EPCCode123456";
+}
+var t = parseInt((Math.random() * 10 - 5) * 10)/10;
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{'temp':'" + t + "','epc':'" + epc + "'}"
+);
+</onClick>
+      <sizeRatio>0.356435643564356</sizeRatio>
+      <text>汇报温度</text>
+      <top>63</top>
+      <topRatio>0.422818791946309</topRatio>
+      <width>101</width>
+      <widthRatio>0.39453125</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel26/panel23">
+      <backgroundSkin>App1PJ004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>36</height>
+      <heightRatio>0.241610738255034</heightRatio>
+      <left>125</left>
+      <leftRatio>0.48828125</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+var epc = ee.getEditText(ee.getControl("edit3"));
+if (epc == "") {
+    epc = "EPCCode123456";
+}
+
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{'prod_Info':{'prod_Name':'品名ABC','manufact':'厂家ABC','batch':'批号xxx0000'," +
+    "'produce_Date':'20180123','valid_Date':'20210123', 'sn':'序列号123456','epc':'" + epc + "','codeLabel':'0000000011111'}}"
+);
+</onClick>
+      <sizeRatio>0.356435643564356</sizeRatio>
+      <text>赋码</text>
+      <top>18</top>
+      <topRatio>0.120805369127517</topRatio>
+      <width>101</width>
+      <widthRatio>0.39453125</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel26/panel25">
+      <backgroundSkin>App1PJ004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>36</height>
+      <heightRatio>0.241610738255034</heightRatio>
+      <left>125</left>
+      <leftRatio>0.48828125</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{'query':{'epc':'EPCCode123456'}}"
+);
+</onClick>
+      <sizeRatio>0.356435643564356</sizeRatio>
+      <text>查询赋码信息</text>
+      <top>63</top>
+      <topRatio>0.422818791946309</topRatio>
+      <width>101</width>
+      <widthRatio>0.39453125</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel13">
+      <backgroundSkin>App1PJ004</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>FFFFFF</fontColor>
+      <height>36</height>
+      <heightRatio>0.0452261306532663</heightRatio>
+      <left>331</left>
+      <leftRatio>0.273553719008264</leftRatio>
+      <onClick>g5.onPost = function() {
+    //
+}
+g5.post(
+    "http://139.199.23.13/eEngine/ee.aspx",
+    "{'prod_Info':{'prod_Name':'品名ABC','manufact':'厂家ABC','batch':'批号xxx0000'," +
+    "'produce_Date':'20180123','valid_Date':'20210123', 'sn':'序列号123456','epc':'EPCCode123456a','codeLabel':'0000000011111'}}"
+);
+</onClick>
+      <sizeRatio>0.356435643564356</sizeRatio>
+      <text>赋码2</text>
+      <top>608</top>
+      <topRatio>0.763819095477387</topRatio>
+      <width>101</width>
+      <widthRatio>0.0834710743801653</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/edit3">
+      <backgroundSkin>edit2</backgroundSkin>
+      <fontBold>true</fontBold>
+      <fontColor>C0C0C0</fontColor>
+      <height>29</height>
+      <heightRatio>0.0364321608040201</heightRatio>
+      <inputFontBold>true</inputFontBold>
+      <inputFontColor>198DC9</inputFontColor>
+      <left>62</left>
+      <leftRatio>0.0512396694214876</leftRatio>
+      <sizeRatio>0.152631578947368</sizeRatio>
+      <text>这里可以指定EPC码</text>
+      <top>386</top>
+      <topRatio>0.484924623115578</topRatio>
+      <width>190</width>
+      <widthRatio>0.15702479338843</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <backgroundSkin>skin1002</backgroundSkin>
+      <dockX>center</dockX>
+      <fontColor>FFFFFF</fontColor>
+      <height>29</height>
+      <heightRatio>0.0364321608040201</heightRatio>
+      <left>170</left>
+      <leftRatio>0.359504132231405</leftRatio>
+      <onClick>g5.url = "http://139.199.23.13/eEngine/ee.aspx";
+g5.postData = "func=login&amp;username=device001&amp;password=111111&amp;deviceId=A0009";
+g5.onPost = function(result) {
+    alert(result);
+}
+post();
+</onClick>
+      <sizeRatio>0.0852941176470588</sizeRatio>
+      <text>---</text>
+      <top>9</top>
+      <topRatio>0.0113065326633166</topRatio>
+      <width>340</width>
+      <widthRatio>0.28099173553719</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

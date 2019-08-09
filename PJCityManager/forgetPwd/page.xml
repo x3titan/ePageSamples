@@ -1,0 +1,731 @@
+<page>
+  <controls count="28">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>DCDCDC</backgroundColor>
+      <backgroundImg>1_1920x1080.jpg</backgroundImg>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad>//onControlLoad
+/*onkeydown=function (e) {
+    if(e.keyCode==13)login();
+} */   
+
+
+onkeydown=function (e) {
+    if(e.keyCode==13)login();
+}  
+
+ee.setVisible(ee.getControl("panel14"),true);  //显示 获取验证码    
+
+setTimeout(function(){
+    ee.autoResize = false;
+},1000);   
+
+  
+var flag=1;
+var wait=60;                               
+g5.time = function(o) { 
+       var mobile = ee.getEditText(ee.getControl("edit1"));
+            //手机号码检测
+           if (mobile.length!=11) {
+               alert("对不起，您输入的不是一个有效的手机号码");
+               return;
+           }
+           if (!(/^\d+$/.test(mobile))) {
+               alert("对不起，您输入的不是一个有效的手机号码");
+               return;
+        }   
+        if (wait == 0) {  
+            ee.setVisible(ee.getControl("panel15"),false); 
+            ee.setVisible(ee.getControl(o),true);            
+            //ee.getControl(o).removeAttribute("disabled");           
+              
+           
+            wait = 60;  
+            flag=1;
+        } else {    
+            if(flag==1){
+               getSmsCode();;   
+              console.log("send sms");
+            }    
+            flag=0;
+            ee.setVisible(ee.getControl("panel15"),true);
+            ee.setVisible(ee.getControl(o),false);   
+            //ee.getControl(o).setAttribute("disabled", true);  
+            ee.setText(ee.getControl("panel15"),"重新发送(" + wait + ")");   
+            //ee.setTextColor(ee.getControl(o),"rgb(181, 181, 181)")
+            wait--;  
+            setTimeout(function() {  
+                g5.time(o)  
+            },  
+            1000)  
+        }  
+    }  
+
+
+</onControlLoad>
+      <top>0</top>
+      <width>1311</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel8">
+      <backgroundImg>bg11.jpg</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>center</dockY>
+      <height>90</height>
+      <heightRatio>0.110294117647059</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.068649885583524</sizeRatio>
+      <top>363</top>
+      <topRatio>0.444852941176471</topRatio>
+      <width>1311</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5">
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>448</height>
+      <heightRatio>0.549019607843137</heightRatio>
+      <left>182</left>
+      <leftRatio>0.138825324180015</leftRatio>
+      <sizeRatio>0.473572938689218</sizeRatio>
+      <top>184</top>
+      <topRatio>0.225490196078431</topRatio>
+      <width>946</width>
+      <widthRatio>0.721586575133486</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel9">
+      <backgroundColor>DCDCDC</backgroundColor>
+      <fontBold>true</fontBold>
+      <fontColor>008080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>22</fontSize>
+      <height>39</height>
+      <heightRatio>0.0870535714285714</heightRatio>
+      <left>64</left>
+      <leftRatio>0.0676532769556025</leftRatio>
+      <outerTop>200</outerTop>
+      <sizeRatio>0.10655737704918</sizeRatio>
+      <text>1陪驾 城市负责人系统</text>
+      <top>194</top>
+      <topRatio>0.433035714285714</topRatio>
+      <width>366</width>
+      <widthRatio>0.386892177589852</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel7">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+      <backgroundSkin>button3a000</backgroundSkin>
+      <height>221</height>
+      <heightRatio>0.493303571428571</heightRatio>
+      <left>476</left>
+      <leftRatio>0.503171247357294</leftRatio>
+      <sizeRatio>0.508045977011494</sizeRatio>
+      <top>106</top>
+      <topRatio>0.236607142857143</topRatio>
+      <width>435</width>
+      <widthRatio>0.459830866807611</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel7/panel3">
+      <fontBold>true</fontBold>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>21</height>
+      <heightRatio>0.0950226244343891</heightRatio>
+      <left>24</left>
+      <leftRatio>0.0551724137931034</leftRatio>
+      <sizeRatio>0.228260869565217</sizeRatio>
+      <text>手机号</text>
+      <top>42</top>
+      <topRatio>0.190045248868778</topRatio>
+      <width>92</width>
+      <widthRatio>0.211494252873563</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel7/panel2">
+      <fontBold>true</fontBold>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>21</height>
+      <heightRatio>0.0950226244343891</heightRatio>
+      <left>24</left>
+      <leftRatio>0.0551724137931034</leftRatio>
+      <sizeRatio>0.228260869565217</sizeRatio>
+      <text>验证码</text>
+      <top>85</top>
+      <topRatio>0.384615384615385</topRatio>
+      <width>92</width>
+      <widthRatio>0.211494252873563</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel5/panel7/edit1">
+      <backgroundSkin>edit1</backgroundSkin>
+      <height>30</height>
+      <heightRatio>0.135746606334842</heightRatio>
+      <left>127</left>
+      <leftRatio>0.291954022988506</leftRatio>
+      <sizeRatio>0.114942528735632</sizeRatio>
+      <top>36</top>
+      <topRatio>0.16289592760181</topRatio>
+      <width>261</width>
+      <widthRatio>0.6</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel5/panel7/edit2">
+      <backgroundSkin>edit1</backgroundSkin>
+      <height>30</height>
+      <heightRatio>0.135746606334842</heightRatio>
+      <inputPassword>true</inputPassword>
+      <left>127</left>
+      <leftRatio>0.291954022988506</leftRatio>
+      <sizeRatio>0.222222222222222</sizeRatio>
+      <top>80</top>
+      <topRatio>0.361990950226244</topRatio>
+      <width>135</width>
+      <widthRatio>0.310344827586207</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel7/panel4">
+      <backgroundSkin>LRBtn7</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <height>37</height>
+      <heightRatio>0.167420814479638</heightRatio>
+      <left>260</left>
+      <leftRatio>0.597701149425287</leftRatio>
+      <onClick>checkSmsCode();</onClick>
+      <sizeRatio>0.2890625</sizeRatio>
+      <text>确认</text>
+      <top>138</top>
+      <topRatio>0.624434389140272</topRatio>
+      <width>128</width>
+      <widthRatio>0.294252873563218</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel7/panel1">
+      <backgroundSkin>ProjectAdmin001</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <height>37</height>
+      <heightRatio>0.167420814479638</heightRatio>
+      <left>118</left>
+      <leftRatio>0.271264367816092</leftRatio>
+      <onClick>ee.setEditText(ee.getControl("edit1"),"");
+ee.setEditText(ee.getControl("edit2"),"");
+
+</onClick>
+      <sizeRatio>0.2890625</sizeRatio>
+      <text>重 置</text>
+      <top>138</top>
+      <topRatio>0.624434389140272</topRatio>
+      <width>128</width>
+      <widthRatio>0.294252873563218</widthRatio>
+    </control>
+    <control type="CheckBox" pathname="/divRoot/panel5/panel7/checkbox1">
+      <backgroundImg>c1.png</backgroundImg>
+      <backgroundImg1>c2.png</backgroundImg1>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundImgMode1>fill</backgroundImgMode1>
+      <cursor>pointer</cursor>
+      <height>29</height>
+      <heightRatio>0.131221719457014</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0114942528735632</leftRatio>
+      <onValueChange>if (value=="1") {
+    ee.getControl("divRoot").dockX = "disabled";
+    ee.getControl("divRoot").dockY = "disabled";
+    ee.setRect(ee.getControl("divRoot"),0,0,1920,1080);    
+} else {
+    ee.getControl("divRoot").dockX = "fill";
+    ee.getControl("divRoot").dockY = "fill";    
+}
+
+
+
+</onValueChange>
+      <sizeRatio>0.617021276595745</sizeRatio>
+      <top>180</top>
+      <topRatio>0.81447963800905</topRatio>
+      <width>47</width>
+      <widthRatio>0.108045977011494</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel7/panel12">
+      <bindBottom>bottom</bindBottom>
+      <bindControl>checkbox1</bindControl>
+      <bindLeft>right</bindLeft>
+      <bindTop>top</bindTop>
+      <cursor>pointer</cursor>
+      <hAlign>left</hAlign>
+      <height>29</height>
+      <heightRatio>0.131221719457014</heightRatio>
+      <left>52</left>
+      <leftRatio>0.119540229885057</leftRatio>
+      <onClick>var c = ee.getControl("checkbox1");
+ee.setCheckBoxValue(c, (c.checkValue+1)%2);
+</onClick>
+      <sizeRatio>0.381578947368421</sizeRatio>
+      <text>锁定屏幕</text>
+      <top>180</top>
+      <topRatio>0.81447963800905</topRatio>
+      <width>76</width>
+      <widthRatio>0.174712643678161</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel7/panel13">
+      <cursor>pointer</cursor>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>008080</fontColor>
+      <height>29</height>
+      <heightRatio>0.131221719457014</heightRatio>
+      <left>307</left>
+      <leftRatio>0.705747126436782</leftRatio>
+      <onClick>forgetPWD();</onClick>
+      <sizeRatio>0.29</sizeRatio>
+      <text><![CDATA[返回登录页 >>]]></text>
+      <top>180</top>
+      <topRatio>0.81447963800905</topRatio>
+      <widthRatio>0.229885057471264</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel7/panel14">
+      <backgroundSkin>line1000</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>008080</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>12</fontSize>
+      <height>30</height>
+      <heightRatio>0.135746606334842</heightRatio>
+      <layerName>获取验证码</layerName>
+      <layerVisible>false</layerVisible>
+      <left>271</left>
+      <leftRatio>0.622988505747126</leftRatio>
+      <onClick>var e1 = ee.getEditText(ee.getControl("edit1"));
+if (e1.length != 11 || !(/^\d+$/.test(e1))){
+    alert("请输入正确的手机号");
+    return;    
+}  
+
+//getSmsCode();  
+g5.time("panel14");
+</onClick>
+      <sizeRatio>0.256410256410256</sizeRatio>
+      <text>获取验证码</text>
+      <top>80</top>
+      <topRatio>0.361990950226244</topRatio>
+      <width>117</width>
+      <widthRatio>0.268965517241379</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel7/panel15">
+      <backgroundSkin>line1000</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontColor>B5B5B5</fontColor>
+      <fontFamily>Arial</fontFamily>
+      <fontSize>12</fontSize>
+      <height>30</height>
+      <heightRatio>0.135746606334842</heightRatio>
+      <layerName>读秒</layerName>
+      <layerVisible>false</layerVisible>
+      <left>271</left>
+      <leftRatio>0.622988505747126</leftRatio>
+      <sizeRatio>0.256410256410256</sizeRatio>
+      <text>60</text>
+      <top>80</top>
+      <topRatio>0.361990950226244</topRatio>
+      <width>117</width>
+      <widthRatio>0.268965517241379</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel6">
+      <fontBold>true</fontBold>
+      <fontColor>008080</fontColor>
+      <height>27</height>
+      <heightRatio>0.0602678571428571</heightRatio>
+      <left>73</left>
+      <leftRatio>0.0771670190274841</leftRatio>
+      <sizeRatio>0.0789473684210526</sizeRatio>
+      <text>源自腾讯气质不凡，本系统由ePage中间件开发</text>
+      <top>230</top>
+      <topRatio>0.513392857142857</topRatio>
+      <width>342</width>
+      <widthRatio>0.361522198731501</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel10">
+      <backgroundColor>DCDCDC</backgroundColor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>22</fontSize>
+      <hAlign>left</hAlign>
+      <height>39</height>
+      <heightRatio>0.0870535714285714</heightRatio>
+      <left>11</left>
+      <leftRatio>0.0116279069767442</leftRatio>
+      <outerTop>200</outerTop>
+      <sizeRatio>0.278571428571429</sizeRatio>
+      <text>忘记密码</text>
+      <top>139</top>
+      <topRatio>0.310267857142857</topRatio>
+      <width>140</width>
+      <widthRatio>0.147991543340381</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel11">
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>Arial</fontFamily>
+      <hAlign>left</hAlign>
+      <height>25</height>
+      <heightRatio>0.0558035714285714</heightRatio>
+      <left>149</left>
+      <leftRatio>0.157505285412262</leftRatio>
+      <sizeRatio>0.14792899408284</sizeRatio>
+      <text>User ForgetPassword</text>
+      <top>148</top>
+      <topRatio>0.330357142857143</topRatio>
+      <width>169</width>
+      <widthRatio>0.178646934460888</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel16">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+      <backgroundSkin>button3a000</backgroundSkin>
+      <height>221</height>
+      <heightRatio>0.493303571428571</heightRatio>
+      <layerName>resetPWD</layerName>
+      <left>476</left>
+      <leftRatio>0.503171247357294</leftRatio>
+      <sizeRatio>0.508045977011494</sizeRatio>
+      <top>106</top>
+      <topRatio>0.236607142857143</topRatio>
+      <width>435</width>
+      <widthRatio>0.459830866807611</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel16/panel17">
+      <fontBold>true</fontBold>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>21</height>
+      <heightRatio>0.0950226244343891</heightRatio>
+      <left>24</left>
+      <leftRatio>0.0551724137931034</leftRatio>
+      <sizeRatio>0.228260869565217</sizeRatio>
+      <text>新的密码</text>
+      <top>42</top>
+      <topRatio>0.190045248868778</topRatio>
+      <width>92</width>
+      <widthRatio>0.211494252873563</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel16/panel18">
+      <fontBold>true</fontBold>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>21</height>
+      <heightRatio>0.0950226244343891</heightRatio>
+      <left>24</left>
+      <leftRatio>0.0551724137931034</leftRatio>
+      <sizeRatio>0.228260869565217</sizeRatio>
+      <text>确认密码</text>
+      <top>85</top>
+      <topRatio>0.384615384615385</topRatio>
+      <width>92</width>
+      <widthRatio>0.211494252873563</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel5/panel16/edit3">
+      <backgroundSkin>edit1</backgroundSkin>
+      <height>30</height>
+      <heightRatio>0.135746606334842</heightRatio>
+      <left>127</left>
+      <leftRatio>0.291954022988506</leftRatio>
+      <sizeRatio>0.114942528735632</sizeRatio>
+      <top>36</top>
+      <topRatio>0.16289592760181</topRatio>
+      <width>261</width>
+      <widthRatio>0.6</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel5/panel16/edit4">
+      <backgroundSkin>edit1</backgroundSkin>
+      <height>30</height>
+      <heightRatio>0.135746606334842</heightRatio>
+      <inputPassword>true</inputPassword>
+      <left>127</left>
+      <leftRatio>0.291954022988506</leftRatio>
+      <sizeRatio>0.114942528735632</sizeRatio>
+      <top>80</top>
+      <topRatio>0.361990950226244</topRatio>
+      <width>261</width>
+      <widthRatio>0.6</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel16/panel19">
+      <backgroundSkin>LRBtn7</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <height>37</height>
+      <heightRatio>0.167420814479638</heightRatio>
+      <left>260</left>
+      <leftRatio>0.597701149425287</leftRatio>
+      <onClick>modifyPassword();</onClick>
+      <sizeRatio>0.2890625</sizeRatio>
+      <text>确定</text>
+      <top>138</top>
+      <topRatio>0.624434389140272</topRatio>
+      <width>128</width>
+      <widthRatio>0.294252873563218</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel16/panel20">
+      <backgroundSkin>ProjectAdmin001</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <height>37</height>
+      <heightRatio>0.167420814479638</heightRatio>
+      <left>118</left>
+      <leftRatio>0.271264367816092</leftRatio>
+      <onClick>ee.setEditText(ee.getControl("edit3"),"");
+ee.setEditText(ee.getControl("edit4"),"");
+
+</onClick>
+      <sizeRatio>0.2890625</sizeRatio>
+      <text>重 置</text>
+      <top>138</top>
+      <topRatio>0.624434389140272</topRatio>
+      <width>128</width>
+      <widthRatio>0.294252873563218</widthRatio>
+    </control>
+    <control type="CheckBox" pathname="/divRoot/panel5/panel16/checkbox2">
+      <backgroundImg>c1.png</backgroundImg>
+      <backgroundImg1>c2.png</backgroundImg1>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <backgroundImgMode1>fill</backgroundImgMode1>
+      <cursor>pointer</cursor>
+      <height>29</height>
+      <heightRatio>0.131221719457014</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0114942528735632</leftRatio>
+      <onValueChange>if (value=="1") {
+    ee.getControl("divRoot").dockX = "disabled";
+    ee.getControl("divRoot").dockY = "disabled";
+    ee.setRect(ee.getControl("divRoot"),0,0,1920,1080);    
+} else {
+    ee.getControl("divRoot").dockX = "fill";
+    ee.getControl("divRoot").dockY = "fill";    
+}
+
+
+
+</onValueChange>
+      <sizeRatio>0.617021276595745</sizeRatio>
+      <top>180</top>
+      <topRatio>0.81447963800905</topRatio>
+      <width>47</width>
+      <widthRatio>0.108045977011494</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5/panel16/panel21">
+      <bindBottom>bottom</bindBottom>
+      <bindControl>checkbox1</bindControl>
+      <bindLeft>right</bindLeft>
+      <bindTop>top</bindTop>
+      <cursor>pointer</cursor>
+      <hAlign>left</hAlign>
+      <height>29</height>
+      <heightRatio>0.131221719457014</heightRatio>
+      <left>52</left>
+      <leftRatio>0.119540229885057</leftRatio>
+      <onClick>var c = ee.getControl("checkbox1");
+ee.setCheckBoxValue(c, (c.checkValue+1)%2);
+</onClick>
+      <sizeRatio>0.381578947368421</sizeRatio>
+      <text>锁定屏幕</text>
+      <top>180</top>
+      <topRatio>0.81447963800905</topRatio>
+      <width>76</width>
+      <widthRatio>0.174712643678161</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="3">
+    <taskSetItem name="getSmsCode">
+      <script1>var mobile = ee.getEditText(ee.getControl("edit1"));
+
+eio.appendString8(mobile);</script1>
+      <script2><![CDATA[var mobile = eio.readString8();
+while (true) {
+    //后台手机号验证
+    if (mobile.length!=11) {
+        eio.appendString8("F");
+        eio.appendString8("手机号非法");
+        break;
+    }
+    if (!(/^\d+$/.test(mobile))) {
+        eio.appendString8("F");
+        eio.appendString8("手机号非法");
+        break;
+    }
+    //产生验证码
+    var code = 0;
+    var seed = (new Date()).getTime();
+    while (code<1000) {
+        seed = ( seed * 9301 + 49297 ) % 233280;
+        var rand = seed / 233280.0;
+        code = Math.floor(rand * 10000);
+    } 
+    var sql = "select * from userInfo where mobile='"+db.encode(mobile)+"'";
+    var sqlResult = db.executeQuery("PJ",sql);
+    db.read(sqlResult);
+    var id = db.getString(sqlResult,"id");
+    if (id == ""){
+        eio.appendString8("F");
+        eio.appendString8("用户不存在，请您先注册用户帐号");
+        break;
+    
+    }  
+    var userType = db.getString( sqlResult,"userType");
+    if (userType !="城市负责人" ){
+        eio.appendString8("F");
+        eio.appendString8("账户类型不匹配");
+    }
+    //存储验证码和手机号
+    session.set("mobileCode", code + "");
+    session.set("mobile", mobile);
+    //发送验证码
+    var sql = "insert into sms (mobile, message) values (" +
+        "'" + db.encode(mobile) + "'," +
+        "'您的验证码是：" + code + "')";
+    if (!db.executeNoneQuery("PJ", sql)) {
+        eio.appendString8("F");
+        eio.appendString8("系统繁忙请稍后再试");
+        break;
+    }
+    eio.appendString8("T");
+    break;
+}
+              ]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("发送验证码失败：" + eio.readString8());
+    return;
+}
+alert("验证码已经以短信的形式发送到您的手机上，请注意查收。验证码是一个4位的数字，请将它填写在下面的栏目中");
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="checkSmsCode">
+      <script1>var mobileCode = ee.getEditText(ee.getControl("edit2"));
+eio.appendString8(mobileCode);
+</script1>
+      <script2><![CDATA[var mobileCode = eio.readString8();
+while (true) {
+    var mobileCodeS = session.get("mobileCode");
+    if (mobileCodeS.length<=0) {
+        eio.appendString8("F");
+        eio.appendString8("请点击发送按钮，收到短信后填写验证码");
+        break;
+    }
+    /*
+    if (mobileCodeS!=mobileCode) {
+        session.set("mobileCode", "");
+        eio.appendString8("F");
+        eio.appendString8("您输入的验证码不正确，请重新发送并输入一次验证码");
+        break;
+    }*/
+    
+    if(mobileCodeS!=mobileCode){
+        var flag = session.get("codeFlag11"); 
+       //  eio.appendString8("flag::"+flag);  
+        if(flag == "" || flag == null){
+            flag = 0;
+        }
+        flag = parseInt(flag)+1;
+       // flag +=1;  
+       //  eio.appendString8("flag++::"+flag);
+        session.set("codeFlag11",flag);
+        eio.appendString8("F");  
+       
+        if(flag ==1){
+           eio.appendString8("输入的验证码不正确，您还有 2 次机会重新输入验证码");
+        }else if(flag ==2){
+           eio.appendString8("输入的验证码不正确，您还有 1 次机会重新输入验证码");
+        }else if(flag ==3){
+            session.set("codeFlag11",0);           
+            session.set("mobileCode",""); 
+            eio.appendString8("您输入的验证码不正确，请重新获取并输入验证码");
+        }
+        break;
+        
+    }    
+    eio.appendString8("T");  
+   
+    session.set("mobileCheck", "true");  
+    session.set("logined","F"); //标记
+    break;
+}
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("验证失败：" + eio.readString8());  
+    
+    return;
+} 
+
+//window.location.href = ee.pageRoot + "/modifyPassword/resetPassword2";  
+ee.setVisible(ee.getControl("panel16"),true);
+
+ 
+</script3>
+    </taskSetItem>
+    <taskSetItem name="modifyPassword">
+      <script1><![CDATA[var password1 = ee.getEditText(ee.getControl("edit3"));
+var password2 = ee.getEditText(ee.getControl("edit4"));
+if (password1.length < 6) {
+    alert("新密码的长度至少需要6位，请重新输入");
+    return;
+}
+if (password1.length > 15) {
+    alert("新密码的长度最多为15位，请重新输入");
+    return;
+}
+if (password1 != password2) {
+    alert("对不起，您两次输入的密码不一致，请重新输入。");
+    return;
+} 
+eio.appendString8(password1);
+
+]]></script1>
+      <script2>if (session.get("mobileCheck") != "true") {
+    eio.appendString8("F");
+    eio.appendString8("没有通过手机验证");
+    return;
+}
+var mobile = session.get("mobile");
+if (mobile.length!=11) {
+    eio.appendString8("F");
+    eio.appendString8("没有通过手机验证");
+    return;
+}
+session.set("mobileCheck", "false"); //手机验证仅一次有效
+
+var password = eio.readString8();
+var passwordMd5 = es.getMd5(password);
+var sql,sqlResult;
+sql = "update userInfo set password = '" + 
+    db.encode(passwordMd5) + 
+    "' where mobile='" + db.encode(mobile) + "'";
+var sqlResult = db.executeNoneQuery("PJ", sql);
+if (!sqlResult) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+
+eio.appendString8("T");
+eio.appendString8(mobile);
+</script2>
+      <script3>if (eio.readString8()!="T") {
+    alert("无法修改密码：" + eio.readString8());
+    return;
+}
+g5.username = eio.readString8();
+alert("密码修改成功，请牢记您的新密码"); 
+
+window.location.href = ee.pageRoot + "/login";
+
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

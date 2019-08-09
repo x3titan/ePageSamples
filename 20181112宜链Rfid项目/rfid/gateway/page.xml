@@ -1,0 +1,330 @@
+<page>
+  <controls count="1">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>800000</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>40</fontSize>
+      <height>484</height>
+      <left>0</left>
+      <onPageLoad><![CDATA[<%
+function main() { 
+var postData = request.getPostData().trim() + " "; 
+var postDataType = "common"; 
+var params;
+if (postData.substr(0, 1) == "{") {
+    postDataType = "json";
+}
+if (postDataType == "json") {
+    params = eval("(" + postData + ")");
+} else {
+    params = postData.trim().split("&amp;");
+    for (var i = 0; i < params.length; i++) {
+        params[i] = params[i].split("=");
+    }
+}  
+function getParam(key) {
+    if (postDataType == "json") {
+        if (key == "func") {   
+            if (params.link != undefined) return "link";
+            if (params.prod_Info != undefined) return "prod_Info";
+            if (params.temp != undefined) return "temp";
+            if (params.query != undefined) return "query";
+            //if (params.sessionId != undefined) return "sessionId";
+        }
+        var r = eval("params." + key);
+        if (r == undefined) return "";
+        return r;
+    } else {
+        for (var i = 0; i < params.length; i++) {
+            if (params[i].length != 2) continue;
+            if (params[i][0].toLowerCase() == key.toLowerCase()) return params[i][1];
+        }
+        return "";
+    }
+}
+function encodeResult(resultCode, resultString, sessionId) {
+    var r = "";
+    if (postDataType == "json") {
+        r = "{ 'resultCode':'" + resultCode + "','resultString':'" + resultString + "'";
+        if (sessionId != undefined) r += ",'sessionId':'" + sessionId + "'";
+        r += " }";
+    } else {
+        r = "resultCode=" + resultCode + "&amp;resultString=" + resultString;
+        if (sessionId != undefined) r += "&amp;sessionId=" + sessionId;
+    }     
+    return r;
+}
+function linkBlock(key, packet) {
+    //创建链条
+    //var r = es.post(
+    //    "https://maas-proxy.cfapps.eu10.hana.ondemand.com/798e439e-8058-40b1-a0bf-9969ea1f3f60/rpc",
+    //    "{\"method\": \"create\", \"params\": [\"stream\", \"S02\", true]}");
+    //{"result":"af5ed0f4b65a6157d800c3391c1f8cca312e06302da98598a9ffd295eeaa44cb","error":null,"id":null}
+    //uplink
+    es.setEncoding("utf-8");
+    es.setPostHttpsProtocol("tls12");
+    es.addPostHeader("apikey", "NNYAdhT3bfNHrBBHDY9pGX8H3bacLutkBKZCY8wQ5X72Gu54Uq6DM7h3Sbv38Fwm");
+    var r = es.post(
+        "https://maas-proxy.cfapps.eu10.hana.ondemand.com/798e439e-8058-40b1-a0bf-9969ea1f3f60/rpc",
+        "{\"method\": \"publish\", \"params\": [\"S02\", \"" + key + "\", " +
+        "\"" + es.stringEncodeX2(packet) + "\"]}"
+        );
+    es.logCommon("加入区块链结果：" + r);
+} 
+function linkBlockV1(key, packet) {
+    //创建链条
+    //var r = es.post(
+    //    "https://maas-proxy.cfapps.eu10.hana.ondemand.com/798e439e-8058-40b1-a0bf-9969ea1f3f60/rpc",
+    //    "{\"method\": \"create\", \"params\": [\"stream\", \"S02\", true]}");
+    //{"result":"af5ed0f4b65a6157d800c3391c1f8cca312e06302da98598a9ffd295eeaa44cb","error":null,"id":null}
+    //uplink
+    es.setEncoding("utf-8");
+    es.setPostHttpsProtocol("tls12");
+    es.addPostHeader("apikey", "NNYAdhT3bfNHrBBHDY9pGX8H3bacLutkBKZCY8wQ5X72Gu54Uq6DM7h3Sbv38Fwm");
+    var r = es.post(
+        "https://maas-proxy.cfapps.eu10.hana.ondemand.com/798e439e-8058-40b1-a0bf-9969ea1f3f60/rpc",
+        "{\"method\": \"publish\", \"params\": [\"Demo_iLian\", \"" + key + "\", " +
+        "\"" + es.stringEncodeX2(packet) + "\"]}"
+        );
+    es.logCommon("加入区块链结果：" + r);
+}
+
+var func = getParam("func");
+if (func == "login") {
+    //设备登录请求
+    //func=login&amp;username=device001&amp;password=111111&amp;deviceId=A0009
+    var username = getParam("username");
+    var password = getParam("password");
+    var passwordMd5 = es.getMd5(password);
+    var deviceId = params.deviceId;  
+    var sql,sqlResult;  
+    sql = "exec login '" + db.encode(username) + "'," +
+       "'" + passwordMd5 + "',"+
+        "'" + deviceId + "'"; 
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-1,"database connection error");
+    }
+    db.read(sqlResult);
+    if (db.getInt32(sqlResult, "errorCode")!=0) {
+        return "resultCode=-2&amp;resultString=invalid username or password";
+    } 
+    return encodeResult(0, "login success", db.getString(sqlResult, "errorString"));
+} else if (func == "storeInRfid") {
+    //Rfid形式入库
+    //func=storeInRfid&amp;sessionId=xxxxxx&amp;storeId=xxx&amp;rfid=xxxxxx
+    var sql,sqlResult;  
+    sql = "exec storeInRfid '" + db.encode(getParam("sessionId")) + "'," +
+        getParam("storeId") + "," +
+        getParam("rfid");
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-10, "database connection error");
+    }
+    db.read(sqlResult);
+    return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+} else if (func == "storeOutRfid") {
+    //Rfid形式出库
+    //func=storeOutRfid&amp;sessionId=xxxxxx&amp;rfid=xxxxxx
+    var sql,sqlResult;  
+    sql = "exec storeOutRfid '" + db.encode(getParam("sessionId")) + "'," +
+        getParam("rfid");
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-10, "database connection error");
+    }
+    db.read(sqlResult);
+    return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+} else if (func == "vhcInRfid") {
+    //Rfid形式上车
+    //func=vhcInRfid&amp;sessionId=xxxxxx&amp;vhcId=xxx&amp;rfid=xxxxxx
+    var sql,sqlResult;  
+    sql = "exec vhcInRfid '" + db.encode(getParam("sessionId")) + "'," +
+        getParam("vhcId") + "," +
+        getParam("rfid");
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-10, "database connection error");
+    }
+    db.read(sqlResult);
+    return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+} else if (func == "vhcOutRfid") {
+    //Rfid形式下车
+    //func=vhcOutRfid&amp;sessionId=xxxxxx&amp;rfid=xxxxxx
+    var sql,sqlResult;  
+    sql = "exec vhcOutRfid '" + db.encode(getParam("sessionId")) + "'," +
+        getParam("rfid");
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-10, "database connection error");
+    }
+    db.read(sqlResult);
+    return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+} else if (func == "frgInRfid") {
+    //Rfid形式进冰箱
+    //func=frgInRfid&amp;sessionId=xxxxxx&amp;frgId=xxx&amp;rfid=xxxxxx
+    var sql,sqlResult;  
+    sql = "exec frgInRfid '" + db.encode(getParam("sessionId")) + "'," +
+        getParam("frgId") + "," +
+        getParam("rfid");
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-10, "database connection error");
+    }
+    db.read(sqlResult);
+    return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+} else if (func == "frgOutRfid") {
+    //Rfid形式出冰箱
+    //func=frgOutRfid&amp;sessionId=xxxxxx&amp;rfid=xxxxxx
+    var sql,sqlResult;  
+    sql = "exec frgOutRfid '" + db.encode(getParam("sessionId")) + "'," +
+        getParam("rfid");
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-10, "database connection error");
+    }
+    db.read(sqlResult);
+    return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+} else if (func == "link") {
+    //关联
+    //{'link':{'epc':'epc0011','qr':'qr0012','sn':'sn0010'}}
+    var sql,sqlResult;  
+    sql = "exec cmdLink " + 
+        "'" + db.encode("") + "'," +  
+        "'" + db.encode(params.link.epc) + "'," +
+        "'" + db.encode(params.link.qr) + "'," +
+        "'" + db.encode(params.link.sn) + "'";
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-10, "database connection error");
+    }
+    db.read(sqlResult);
+    //linkBlock("link", postData);
+    linkBlock(db.encode(params.link.epc),postData)
+    es.logCommon("关联指令执行完成：" + postData);
+    return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+} else if (func == "prod_Info") {    
+    //赋码
+    //"{'prod_Info':{'prod_Name':'品名ABC','manufact':'厂家ABC','batch':'批号xxx0000'," +
+    //"'produce_Date':'20180123','valid_Date':'20210123', 'sn':'序列号123456','epc':'EPC编码123456','codeLabel':'0000000011111'}}"
+    var sql,sqlResult;  
+    sql = 
+        "exec cmdLink " + 
+        "'" + db.encode("") + "'," +
+        "'" + db.encode(params.prod_Info.epc) + "'," + 
+        "'" + db.encode("") + "'," +
+        "'" + db.encode("") + "'; " +
+        "update unionCode set " + 
+        "prodName='" + db.encode(params.prod_Info.prod_Name) + "'," +  
+        "position='赋码'," +
+        "manufact='" + db.encode(params.prod_Info.manufact) + "'," +
+        "batch='" + db.encode(params.prod_Info.batch) + "'," +
+        "produceDate='" + db.encode(params.prod_Info.produce_Date) + "'," +
+        "validDate='" + db.encode(params.prod_Info.valid_Date) + "'," +
+        "codeLabel='" + db.encode(params.prod_Info.codeLabel) + "'," +
+        "sn='" + db.encode(params.prod_Info.sn) + "' " +
+        "where codeEpc='" +db.encode(params.prod_Info.epc)+ "'";
+       sql += 
+            "declare @unionCodeid as bigint; "+
+            "select @unionCodeid = id from unionCode where codeEpc = '"+db.encode(params.prod_Info.epc)+"'; "+
+            "insert into log (userId, logType, logSubType, epc, intParam1, intParam2, note) values (2, 'setInfo', 'rfid', " +
+                "'" + db.encode(params.prod_Info.epc) + "', 0, @unionCodeid," +
+                "'赋码：" + db.encode(params.prod_Info.epc) + "');"; 
+    sqlResult = db.executeNoneQuery("DB", sql);
+    if (!sqlResult) {
+        return encodeResult(-10, "database connection error");
+    }
+    //linkBlock("prodInfo", postData);   
+    linkBlock(db.encode(params.prod_Info.epc),postData)
+    es.logCommon("赋码指令执行完成：" + postData);
+    return encodeResult(0, "success");
+} else if (func == "temp") {    
+    //汇报温度
+    //"{'temp':'" + t + "','epc'='EPCCode123456'}"
+    if (params.epc == undefined) encodeResult(-2, "epc字段是必填项");
+    if (params.epc == "") encodeResult(-3, "epc字段不能为空");
+    params.temp = parseFloat(params.temp);
+    var sql,sqlResult;  
+    sql = "insert into [logTemperature] ([codeEpc],[temperature]) values (" + 
+        "'" + db.encode(params.epc) + "'," +
+        "" + params.temp + ")";
+    sqlResult = db.executeNoneQuery("DB", sql);
+    if (!sqlResult) {
+        return encodeResult(-10, "database connection error");
+    }
+    //linkBlock("temp", postData); 
+    linkBlockV1(params.epc, "温度:" + params.temp);  
+    //linkBlock(db.encode(params.epc),postData)
+    es.logCommon("汇报温度指令执行完成：" + postData);
+    return encodeResult(0, "success");
+} else if (func == "query") {    
+    //根据epc查询赋码信息
+    "{'query':{'epc':'EPCCode123456'}}"
+    if (params.query.epc == undefined) encodeResult(-2, "query.epc字段是必填项");
+    if (params.query.epc == "") encodeResult(-3, "query.epc字段不能为空");
+    var sql,sqlResult;  
+    sql = "select * from unionCode where codeEpc = '" + db.encode(params.query.epc) + "'";
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-10, "database connection error");
+    }
+    if (!db.read(sqlResult)) {
+        return encodeResult(-2, "epc代码" + params.query.epc + "不存在");
+    }
+    return "{'query':{" +
+        "'prod_Name':'" + db.getString(sqlResult,"prodName") + "'" + 
+        ",'manufact':'" + db.getString(sqlResult,"manufact") + "'" + 
+        ",'batch':'" + db.getString(sqlResult,"batch") + "'" + 
+        ",'produce_Date':'" + db.getString(sqlResult,"produceDate") + "'" + 
+        ",'valid_Date':'" + db.getString(sqlResult,"validDate") + "'" + 
+        ",'sn':'" + db.getString(sqlResult,"sn") + "'" + 
+        ",'codeLabel':'" + db.getString(sqlResult,"codeLabel") + "'" + 
+        ",'epc':'" + db.getString(sqlResult,"codeEpc") + "'" + 
+        "}}";
+} 
+//else if(func == "sessionId"){ 
+////es.logWarning("sessionId");   
+// //"{'sessionId':{'sessionId':'EPCCode123456'}}"
+//    var sql,sqlResult;
+//    sql = "exec getUserInfoBySession '" + db.encode(params.query.sessionId) + "'";
+//    sqlResult = db.executeQuery("DB", sql);  
+//    var result;
+//    if (sqlResult == null) {
+//        result=false;
+//    } 
+//    else{
+//        db.read(sqlResult);
+//        if (db.getString(sqlResult, "sessionId").length < 5) {
+//            result=false;
+//        } 
+//        result=true; 
+//    }
+//    return "{'result':'" +result + "'}";
+//}
+ else {
+    return encodeResult(-100, "unknow command: " + func);
+}
+
+                  
+
+} 
+
+main();
+
+%>]]></onPageLoad>
+      <pageTitle>string</pageTitle>
+      <text>设备接口网关
+后台运行，无界面
+可以通过simDevice页面进行测试</text>
+      <top>0</top>
+      <width>941</width>
+    </control>
+  </controls>
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

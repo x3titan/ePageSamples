@@ -1,0 +1,814 @@
+<page>
+  <controls count="20">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[//onControlLoad
+<%
+if (session.get("username").length == 0) {
+    response.redirect("ee.aspx?_L_=/App1PJAdmin/login");
+}
+%>
+g5.pages = new Array();
+
+//创建新页面
+g5.divTab = ee.getControl("layoutyitem4");
+g5.divFrame = ee.getControl("layoutyitem5");
+
+g5.appendPage = function (title, url,canClose) {
+    for (var i = 0; i < g5.pages.length; i++) {
+        if (g5.pages[i].title == title) {
+            g5.activePage(i);
+            return;
+        }
+    }
+    var page = new Object();
+    page.title = title;
+    page.url = url;
+    page.active = true;
+    page.divTab = createPanel(g5.divTab, "", "", 120 * g5.pages.length, 4, 120, 32);
+    page.divTab.style.cursor = "pointer";
+    page.img1 = eb.createImg(page.divTab, "");
+    page.img1.style.width = "100%";
+    page.img1.style.height = "100%";
+    page.divText = createPanel(page.divTab, "", "", 0, 0, 120, 32);
+    page.text = addText(page.divText, title, "center", "middle", "宋体", 9, "000000", "normal");
+    page.divClose = createPanel(page.divTab, "", "", 103, 12, 8, 8); ;
+    page.divCloseImg = eb.createImg(page.divClose, "");
+    page.divCloseImg.style.width = "100%";
+    page.divCloseImg.style.height = "100%";
+    if(canClose==undefined){
+        canClose=true;
+    }
+    if(!canClose){
+        ee.setVisible(page.divClose, false);
+    }
+    page.divFrame = document.createElement("iframe");
+    page.divFrame.style.position = "absolute";
+    page.divFrame.style.width = "100%";
+    page.divFrame.style.height = "100%";
+    page.divFrame.style.scrolling = "auto";
+    page.divFrame.style.overflow = "auto";
+    page.divFrame.setAttribute("frameborder", "0", 0);
+    g5.divFrame.appendChild(page.divFrame);
+    page.divFrame.src = url;
+    page.divTab.onclick = function () {
+        var index = -1;
+        for (var i = 0; i < g5.pages.length; i++) {
+            if (g5.pages[i].divTab == this) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) return;
+        g5.activePage(index);
+    }
+    page.divClose.onclick = function () {
+        var i;
+        var index = -1;
+        for (i = 0; i < g5.pages.length; i++) {
+            if (g5.pages[i].divClose == this) {
+                index = i;
+                break;
+            }
+        }
+        if (index <= 0) return;
+        if (g5.pages[index].active) {
+            if (index + 1 < g5.pages.length) {
+                g5.activePage(index + 1);
+            } else if (index - 1 >= 0) {
+                g5.activePage(index - 1);
+            }
+        }
+        g5.pages[index].divTab.parentNode.removeChild(g5.pages[index].divTab);
+        g5.pages[index].divFrame.parentNode.removeChild(g5.pages[index].divFrame);
+        g5.pages.splice(index, 1);
+        for (i = 0; i < g5.pages.length; i++) {
+            g5.pages[i].divTab.style.left = i * 120 + "px";
+        }
+    }
+    g5.pages.push(page);
+    g5.activePage(g5.pages.length - 1);
+}
+//激活一个tab页面
+g5.activePage = function (index) {
+    for (var i = 0; i < g5.pages.length; i++) {
+        if (!g5.pages[i].active) {
+            continue;
+        }
+
+        g5.pages[i].active = false;
+        g5.pages[i].img1.src = "cache/EBWeb/samples/JinTan/main/p2d3c1.png";
+        if(i>0){
+            g5.pages[i].divCloseImg.src = "cache/EBWeb/samples/JinTan/main/p2d3d1.png";
+        }
+        ee.setTextColor(g5.pages[i].divText, "#ffffff");
+        g5.pages[i].divFrame.style.zIndex = 10;
+    }
+    g5.pages[index].active = true;
+    g5.pages[index].img1.src = "cache/EBWeb/samples/JinTan/main/p2d3c2.png";
+    if(index>0){
+    g5.pages[index].divCloseImg.src = "cache/EBWeb/samples/JinTan/main/p2d3d2.png";
+    }
+    ee.setTextColor(g5.pages[index].divText, "#000000");
+    g5.pages[index].divFrame.style.zIndex = 1000;
+}
+
+/////////////////////菜单部分
+g5.menu1 = {
+    menu: new Array(),
+    currentRootDiv: null,
+    currentSubDiv: null,
+    mainY: 0,
+    subY: 0,
+    currentX: 0,
+    xCount: 1, //子菜单横向个数
+    xSize: 180, //子菜单的横向间距
+    appendMenu: function(parent, x, y) {
+        this.currentRootDiv = eb.createDiv(parent);
+        eb.setDivRect(this.currentRootDiv, x, y, 24 + this.xCount * this.xSize + 100, 1000);
+        this.mainY = 0;
+        this.currentRootDiv.onmouseleave = function () {
+            g5.menu1.close(this);
+        }
+        this.currentRootDiv.style.visibility = "hidden";
+        this.menu.push(this.currentRootDiv);
+        this.currentRootDiv.style.zIndex = 10000;
+        return this.currentRootDiv;
+    },
+    show: function(menuIndex) {
+        if (menuIndex<0) return;
+        if (menuIndex>=this.menu.length) return;
+        this.closeAll();
+        for (var i = 0; i < this.menu[menuIndex].children.length; i++) {
+            this.menu[menuIndex].children[i].style.visibility = "hidden";
+            ee.showAni(this.menu[menuIndex].children[i]);
+        }
+        this.menu[menuIndex].style.visibility = "visible";
+    },
+    addMainMenu: function (name, url) {
+        var c;
+        if (this.mainY != 0) {
+            if (this.currentX == 0) this.subY--;
+            this.currentSubDiv.style.height = (this.subY * 30 + 35+2) + "px";
+            c = createPanel(this.currentSubDiv, "", "", 0, 0, this.currentSubDiv.offsetWidth, this.currentSubDiv.offsetHeight);
+            addSkin(c, ee.pageUrl.substr(ee.pageUrl, ee.pageUrl.indexOf("/", 1)) + "/skins/body2.png", 96, 96, 12, 11, 72, 74);
+            c.style.zIndex = 0;
+            if ((this.subY == 0) &amp;&amp; (this.currentX == 0)) {
+            } else {
+                //this.mainY += (this.subY * 30 + 40);
+            }
+            this.mainY += (this.subY * 30 + 35);
+        }
+        this.currentX = 0;
+        this.subY = 0;
+        if (name == "") {
+            this.currentRootDiv.style.height = (this.mainY+2) + "px";
+            return;
+        }
+        if (this.mainY == 0) this.mainY += 1;
+        this.currentSubDiv = createPanel(this.currentRootDiv, "", "", 0, this.mainY, 24 + this.xCount * this.xSize + 100, 30);
+        c = createPanel(this.currentSubDiv, "", "", 0, 10, 100, 20);
+        addText(c, name, "center", "middle", "宋体", 12, "000000", "normal");
+        c.mainDiv = this.currentSubDiv;
+        c.text = name;
+        c.url = url;
+        c.style.zIndex = 100;
+        eb.setAni(this.currentSubDiv, "null", "topFlyIn", "null", this.mainY*3*0, true, false);
+        if (c.url.length > 0) {
+            c.style.cursor = "hand";
+            c.onclick = function () {
+                g5.menu1.closeByButton(this);
+                //菜单点击修改位置
+               g5.appendPage(this.text, this.url);
+                //window.open(this.url);
+            }
+        } else {
+            c.style.cursor = "auto";
+        }
+    },
+    addSubMenu: function (name, url) {
+        var c;
+        c = createPanel(this.currentSubDiv, "", "", 24 + this.currentX * this.xSize + 100, 11 + this.subY * 30, 18, 19);
+        ee.setImage(c, ee.pageUrl + "/dot.png","center","","");
+        c.style.zIndex = 100;
+        c = createPanel(this.currentSubDiv, "", "", 40 + this.currentX * this.xSize + 100, 11 + this.subY * 30, this.xSize - 13, 19);
+        addText(c, name, "left", "middle", "宋体",9, "000000", "normal");
+        c.mainDiv = this.currentRootDiv;
+        c.text = name;
+        c.url = url;
+        c.style.cursor = "hand";
+        c.style.zIndex = 100;
+        c.onclick = function () {
+            g5.menu1.closeByButton(this);
+            //菜单点击修改位置
+            g5.appendPage(this.text, this.url);
+            //window.open(this.url);
+        }
+        if ((this.currentX == 0) &amp;&amp; (this.subY != 0)) {
+            c = createPanel(this.currentSubDiv, "", "E0E0E0", 10 + 100, 33 + (this.subY - 1) * 30, this.xCount * this.xSize, 2);
+            c.style.zIndex = 100;
+        }
+        if (this.currentX == this.xCount - 1) {
+            this.subY++;
+        }
+        this.currentX = (this.currentX + 1) % this.xCount;
+    },
+    closeByButton: function(button) {
+        this.close(button.parentNode.parentNode);
+    },
+    close: function(root) {
+        for (var i = 0; i < root.children.length; i++) {
+            root.children[i].style.visibility = "";
+        }
+        root.style.visibility = "hidden";
+    },
+    closeAll: function() {
+        for (var i = 0; i < this.menu.length; i++) {
+            this.close(this.menu[i]);
+        }
+    }
+}
+//第一个菜单,下拉菜单链接地址
+//var url3="http://192.168.50.80:33819/web_jintanEpage/systen_lightErr.htm?UserId="+g5.userId+"";
+//var url5="http://114.80.168.38:53819/web_jintanEpage/system_materialList.htm?UserId="+g5.userId+"";
+var url6="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/account";      //提现管理
+var url7="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/charge";      //充值管理
+var url8="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/accountflows";      //账户流水管理 
+var url9="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/order";          //订单管理
+var url10="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/historyOrder";  //订单日志管理
+var url11="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/usercenter";      //用户管理
+var url12="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/activeuser";     //活跃用户统计管理 
+var url13="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/authentication";     //活跃用户统计管理 
+var url14="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/onlineuser";     //在线用户统计管理 
+var url15="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/charge";  //充值记录管理
+var url16="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/news";     //新闻管理
+var url17="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/idea";     //意见受理
+var url18="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/authentication";     //教练认证
+var url19="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/bankCard";     //银行卡管理
+var url20="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/messageManagement";     //消息管理  monitor
+var url21="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/monitorChange"; //主页  
+var url22="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/vouchers"; //代金券
+
+/*//台账管理
+//g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x+200, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.appendMenu($g("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.addMainMenu("台账报表","");
+    g5.menu1.addSubMenu("电源点情况","http://mail.163.com");
+    g5.menu1.addSubMenu("亮点率检查统计",url2);
+    g5.menu1.addSubMenu("设施完好率情况",url3);
+g5.menu1.addMainMenu("","");
+
+/*
+//订单管理
+//g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x+200, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.addMainMenu("订单管理","");
+    g5.menu1.addSubMenu("订单管理",url9);
+    g5.menu1.addSubMenu("订单日志管理",url10);
+g5.menu1.addMainMenu("","");
+
+*/
+
+//g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x+200, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.appendMenu($g("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.addMainMenu("陪驾管理","");
+    g5.menu1.addSubMenu("用户管理",url11);
+    g5.menu1.addSubMenu("充值记录管理",url15);
+    g5.menu1.addSubMenu("新闻管理",url16);
+    g5.menu1.addSubMenu("提现管理",url6); 
+    g5.menu1.addSubMenu("订单管理",url9);
+    g5.menu1.addSubMenu("账户流水管理",url8); 
+    g5.menu1.addSubMenu("订单日志管理",url10);
+    g5.menu1.addSubMenu("银行卡管理",url19);
+    g5.menu1.addSubMenu("代金券管理",url22);   
+    g5.menu1.addSubMenu("消息管理",url20);   
+g5.menu1.addMainMenu("","");  
+
+//陪驾受理
+//g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x+200, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.appendMenu($g("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.addMainMenu("陪驾受理","");
+    g5.menu1.addSubMenu("意见受理",url17);
+    g5.menu1.addSubMenu("教练认证",url18);   
+g5.menu1.addMainMenu("","");  
+
+//陪驾统计
+//g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x+200, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.appendMenu($g("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.addMainMenu("陪驾统计","");
+    g5.menu1.addSubMenu("活跃用户统计",url12);
+    g5.menu1.addSubMenu("在线用户统计",url14);   
+g5.menu1.addMainMenu("","");  
+
+
+
+
+var url="http://192.168.50.104/gismap/GIS_Main.htm?UserId="+g5.userId+"";
+g5.appendPage("主页", url21,false);
+
+
+
+]]></onControlLoad>
+      <onPageCreate><![CDATA[//onPageCreate 
+g5.userId = "<%
+    var userId = session.get("userid"); 
+    if (userId <=0) {
+       //response.redirect("ee.aspx?_L_=/web_jintan/login");
+    }
+    userId;
+%>";
+]]></onPageCreate>
+      <top>0</top>
+      <width>833</width>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>816</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.941379310344828</sizeRatio>
+      <top>0</top>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <backgroundColor>008080</backgroundColor>
+      <backgroundImg>主界面title2.png</backgroundImg>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>20</fontSize>
+      <hAlign>left</hAlign>
+      <heavyEnabled>false</heavyEnabled>
+      <height>80</height>
+      <heightRatio>0.0976800976800977</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0919540229885057</sizeRatio>
+      <top>0</top>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15">
+      <dockX>right</dockX>
+      <height>69</height>
+      <heightRatio>0.8625</heightRatio>
+      <left>-50</left>
+      <leftRatio>-0.0149425287356322</leftRatio>
+      <outerRight>50</outerRight>
+      <sizeRatio>0.0828331332533013</sizeRatio>
+      <top>1</top>
+      <topRatio>0.0125</topRatio>
+      <width>833</width>
+      <widthRatio>0.957471264367816</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel12">
+      <backgroundImg>首页.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>008B8B</fontColor>
+      <fontSize>14</fontSize>
+      <height>70</height>
+      <heightRatio>1.01449275362319</heightRatio>
+      <left>353</left>
+      <leftRatio>0.423769507803121</leftRatio>
+      <onClick><![CDATA[var url="http://192.168.50.104/gismap/GIS_Main.htm?UserId="+g5.userId+"";
+g5.appendPage("主页", url);
+//ee.setText(ee.getControl("panel3"), "<iframe src=\" "+url+"\" " +
+   // " frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"yes\" "+
+   // "style=\"width:1500px; height: 800px; position:absolute; top:0px; left:0px;\"></iframe>");]]></onClick>
+      <outerRight>400</outerRight>
+      <sizeRatio>1</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0289855072463768</topRatio>
+      <width>70</width>
+      <widthRatio>0.0840336134453782</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel10">
+      <backgroundImg>陪驾受理.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>008B8B</fontColor>
+      <fontSize>14</fontSize>
+      <height>70</height>
+      <heightRatio>1.01449275362319</heightRatio>
+      <left>453</left>
+      <leftRatio>0.543817527010804</leftRatio>
+      <onClick>eb.setDivRect(g5.menu1.menu[1],
+    eb.getDivRect(ee.getControl("panel14")).x + eb.getDivRect(ee.getControl("panel15")).x - 110,
+    eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10
+);
+g5.menu1.show(1); 
+
+//var url="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/idea";
+//g5.appendPage("意见受理", url);
+
+
+
+
+
+
+
+
+
+
+                     </onClick>
+      <outerRight>350</outerRight>
+      <sizeRatio>1</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0289855072463768</topRatio>
+      <width>70</width>
+      <widthRatio>0.0840336134453782</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel14">
+      <backgroundImg>陪驾管理.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>008B8B</fontColor>
+      <fontSize>14</fontSize>
+      <height>70</height>
+      <heightRatio>1.01449275362319</heightRatio>
+      <left>553</left>
+      <leftRatio>0.663865546218487</leftRatio>
+      <onClick>eb.setDivRect(g5.menu1.menu[0],
+    eb.getDivRect(ee.getControl("panel14")).x + eb.getDivRect(ee.getControl("panel15")).x - 10,
+    eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10
+);
+g5.menu1.show(0);</onClick>
+      <outerRight>250</outerRight>
+      <sizeRatio>1</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0289855072463768</topRatio>
+      <width>70</width>
+      <widthRatio>0.0840336134453782</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel6">
+      <backgroundImg>注销.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>008B8B</fontColor>
+      <fontSize>14</fontSize>
+      <height>70</height>
+      <heightRatio>1.01449275362319</heightRatio>
+      <left>753</left>
+      <leftRatio>0.903961584633854</leftRatio>
+      <onClick>window.location.href = ee.pageRoot + "/login"; </onClick>
+      <outerRight>150</outerRight>
+      <sizeRatio>1</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0289855072463768</topRatio>
+      <width>70</width>
+      <widthRatio>0.0840336134453782</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel9">
+      <backgroundImg>陪驾统计.png</backgroundImg>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontSize>10</fontSize>
+      <height>70</height>
+      <heightRatio>1.01449275362319</heightRatio>
+      <left>653</left>
+      <leftRatio>0.783913565426171</leftRatio>
+      <onClick>eb.setDivRect(g5.menu1.menu[2],
+    eb.getDivRect(ee.getControl("panel14")).x + eb.getDivRect(ee.getControl("panel15")).x + 70,
+    eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10
+);
+g5.menu1.show(2);
+
+//var url="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/news";
+//g5.appendPage("新闻管理", url);
+
+</onClick>
+      <outerRight>200</outerRight>
+      <sizeRatio>1</sizeRatio>
+      <top>2</top>
+      <topRatio>0.0289855072463768</topRatio>
+      <width>70</width>
+      <widthRatio>0.0840336134453782</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>714</height>
+      <heightRatio>0.875457875457875</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.824137931034483</sizeRatio>
+      <top>80</top>
+      <topRatio>0.0976800976800977</topRatio>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem2/layoutx1">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>1</fieldCount>
+      <height>714</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.824137931034483</sizeRatio>
+      <top>0</top>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <height>714</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.824137931034483</sizeRatio>
+      <top>0</top>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+      <height>714</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.824137931034483</sizeRatio>
+      <top>0</top>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4">
+      <backgroundColor>8080FF</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+      <height>36</height>
+      <heightRatio>0.0502092050209205</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0413793103448276</sizeRatio>
+      <top>0</top>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4/panel2">
+      <backgroundColor>45C1EB</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.0555555555555556</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00229885057471264</sizeRatio>
+      <top>34</top>
+      <topRatio>0.944444444444444</topRatio>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4/panel17">
+      <backgroundImg>shadowY.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>11</height>
+      <heightRatio>0.305555555555556</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0126436781609195</sizeRatio>
+      <top>0</top>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem5">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <backgroundImg>xz_bn.png</backgroundImg>
+      <height>678</height>
+      <heightRatio>0.949790794979079</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.782758620689655</sizeRatio>
+      <top>36</top>
+      <topRatio>0.0502092050209205</topRatio>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem3">
+      <backgroundColor>489EBC</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontColor>FFFFFF</fontColor>
+      <heavyEnabled>false</heavyEnabled>
+      <height>22</height>
+      <heightRatio>0.0268620268620269</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0252873563218391</sizeRatio>
+      <text>点亮城市生活梦想</text>
+      <top>794</top>
+      <topRatio>0.973137973137973</topRatio>
+      <width>833</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel1">
+      <dockX>left</dockX>
+      <dockY>center</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <height>25</height>
+      <heightRatio>1.13636363636364</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.112107623318386</sizeRatio>
+      <text>版权所有 上海云培信息技术有限公司</text>
+      <top>-1</top>
+      <topRatio>-0.0454545454545455</topRatio>
+      <width>223</width>
+      <widthRatio>0.25632183908046</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel3">
+      <dockX>right</dockX>
+      <dockY>center</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <height>25</height>
+      <heightRatio>1.13636363636364</heightRatio>
+      <left>493</left>
+      <leftRatio>0.609195402298851</leftRatio>
+      <sizeRatio>0.0735294117647059</sizeRatio>
+      <text>地址：上海市嘉定区金沙江西路388号  电话 400-026-9090   </text>
+      <top>-1</top>
+      <topRatio>-0.0454545454545455</topRatio>
+      <width>340</width>
+      <widthRatio>0.390804597701149</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="4">
+    <taskSetItem name="query">
+      <script1><![CDATA[var e1 = ee.getEditText(ee.getControl("edit1"));
+var e2 = ee.getEditText(ee.getControl("edit2"));
+
+//e2 = parseInt(e2); 
+  
+//var myreg = /^(13[0-9]{9}|15[0-9]{9}|18[0-9]{9}|14[57][0-9]{8}|177[0-9]{8})$/;
+//if (!myreg.test(e2)) {
+//           alert("请输入有效的手机号码");
+//        }
+
+//if ( e2 == "/^(13[0-9]{9}|15[0-9]{9}|18[0-9]{9}|14[57][0-9]{8}|177[0-9]{8})$/"){
+//      alert("手机号码格式不对");
+//}else{
+    
+//     if (e2<0){
+//          alert("手机号码不能为负数");
+//          return;
+//     }
+//}
+
+eio.appendInt32(g5.pageSize);
+eio.appendInt32(g5.pageCurrent);
+eio.appendString16(e1);
+eio.appendString16(e2);
+ ]]></script1>
+      <script2><![CDATA[var pageSize = eio.readInt32();
+var pageCurrent = eio.readInt32();
+var e1 = eio.readString16();
+var e2 = eio.readString16();
+
+//es.logWarning("123456789");
+//产生条件语句
+var condition = "where 1=1";
+if (e1!="") {
+   condition += " and userType like '%" + db.encode(e1) + "%'";
+}
+if (e2>0) {
+   condition += " and mobile = '" + e2 + "'";
+}
+
+var sql, sqlResult;
+
+//获取记录数量
+sql = "select count(*) as c from userInfo " + condition;
+//es.logWarning(sql);
+sqlResult = db.executeQuery("PJ", sql);
+db.read(sqlResult);
+//es.logWarning(sqlResult);
+var count = db.getInt32(sqlResult, "c");
+//es.logWarning("1111111111111");
+
+//读取表
+sql =
+    "SELECT id,userType ,mobile,nickName,balance from userInfo " +condition;
+//es.logWarning(sql);    
+var sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+
+}
+eio.appendInt32(count);
+eio.appendDataSet(sqlResult, "id,userType,mobile,nickName,balance", pageSize*(pageCurrent-1), pageSize);
+//es.logWarning("2222222222222");
+]]></script2>
+      <script3>g5.pageRecordCount = eio.readInt32();  
+g5.dataset1 = eio.readDataSet(); 
+g5.pageCount = parseInt((g5.pageRecordCount-1)/g5.pageSize)+1;
+ee.setTableData(ee.getControl("tablebody1"), g5.dataset1, 0);
+ee.setText(ee.getControl("layoutxitem11"), g5.pageCurrent + "/" + g5.pageCount);
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="insert">
+      <script1>var e0 = ee.getEditText(ee.getControl("edit3"));
+var e1 = ee.getEditText(ee.getControl("edit5"));
+var e2 = ee.getEditText(ee.getControl("edit6"));
+var e3 = ee.getEditText(ee.getControl("edit7"));
+var e4 = ee.getEditText(ee.getControl("edit8"));
+
+eio.appendInt32(e0);
+eio.appendString16(e1);
+eio.appendString16(e2);
+eio.appendString16(e3);
+eio.appendInt32(e4);
+</script1>
+      <script2>var id = eio.readInt32();
+var batchId = eio.readString16();
+var snStart = eio.readString16();
+var snEnd = eio.readString16();
+var note = eio.readInt32();
+
+var sql;
+
+sql = 
+    "insert into userInfo ( id,userType,mobile,nickName,balance) values ( '" + id + "'," +" '" + db.encode(batchId) + "'" + ",'" +snStart + "','" +snEnd + "', "+" '" + db.encode(note) + "')";
+    es.logWarning(sql);
+    db.executeNoneQuery("PJ", sql);
+    eio.appendString8("T");
+
+
+
+</script2>
+      <script3>var r = eio.readString8();
+if (r=="F") {
+    alert(eio.readString16());
+    return;
+}
+
+query();
+</script3>
+    </taskSetItem>
+    <taskSetItem name="modify">
+      <script1>var e0 = ee.getEditText(ee.getControl("edit3"));
+var e1 = ee.getEditText(ee.getControl("edit5"));
+var e2 = ee.getEditText(ee.getControl("edit6"));
+var e3 = ee.getEditText(ee.getControl("edit7"));
+var e4 = ee.getEditText(ee.getControl("edit8"));
+
+eio.appendInt32(e0);
+eio.appendString16(e1);
+eio.appendString16(e2);
+eio.appendString16(e3);
+eio.appendInt32(e4);
+</script1>
+      <script2>var id = eio.readInt32();
+var batchId = eio.readString16();
+var snStart = eio.readString16();
+var snEnd = eio.readString16();
+var note = eio.readInt32();
+
+var sql;
+sql = 
+        "update userInfo set " +
+        "userType='" + batchId + "'," +
+        "mobile='" + snStart + "'," +
+        "nickName='" + snEnd + "'," +
+        "balance = '" + note + "' " +
+        "where id=" + id;
+    es.logWarning(sql);    
+    db.executeNoneQuery("PJ", sql);
+    eio.appendString8("T");
+</script2>
+      <script3>var r = eio.readString8();
+if (r=="F") {
+    alert(eio.readString16());
+    return;
+}
+
+query();
+ </script3>
+    </taskSetItem>
+    <taskSetItem name="del">
+      <script1><![CDATA[var e0 = ee.getEditText(ee.getControl("edit3"));
+
+
+e0 = parseInt(e0);
+if (!(e0>0)) {
+    alert("请选择一条记录后再进行操作");
+    return;
+}
+
+
+eio.appendInt32(e0);
+]]></script1>
+      <script2>var id = eio.readInt32();
+var sql ,sqlResult;
+
+
+sql = 
+    "delete userInfo where id= '" + id + "' ";
+es.logWarning(sql);
+db.executeNoneQuery("PJ", sql);
+eio.appendString8("T");
+ </script2>
+      <script3>query();
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

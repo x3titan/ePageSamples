@@ -1,0 +1,127 @@
+<page>
+  <controls count="1">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>520</height>
+      <left>0</left>
+      <onControlLoad>g5.init = function() {
+    //识别请求命令
+    g5.func = ee.getQueryString("func");
+    if (eb.isEmpty(g5.func)) {
+        //可能是普通页面调用
+        return;
+    }
+    if (g5.func.toLowerCase() == "queryrfid") {
+    } else if (g5.func.toLowerCase() == "queryrqr") {
+    } else if (g5.func.toLowerCase() == "queryrsn") {
+    } else if (g5.func == "") {
+        return;
+    } else {
+        alert("接收到未知指令：" + g5.func);
+        return;
+    }
+    //获取请求参数
+    g5.func = g5.func.toLowerCase();
+    g5.sessionId = ee.getQueryString("sessionId");
+    g5.code = ee.getQueryString("code");
+                            
+    //开始查询unionCode
+    
+
+
+
+}
+
+
+setTimeout(function() {
+    g5.init();
+}, 200);
+
+</onControlLoad>
+      <top>0</top>
+      <width>652</width>
+    </control>
+  </controls>
+  <taskSet count="1">
+    <taskSetItem name="query">
+      <script1>eio.appendString8(g5.sessionId);
+eio.appendString16(g5.func);
+eio.appendString16(g5.code);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var func = eio.readString16();
+
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var companyId = db.getString(sqlResult, "companyId");
+
+//获取记录数量
+var condition = "";
+if (searchText != "") {
+    condition +=
+        " and (" +
+        "(cast(id as varchar(15)) like '%" + db.encode(searchText) + "%') or " +
+        "([name] like '%" + db.encode(searchText) + "%') or " +
+        "([address] like '%" + db.encode(searchText) + "%') or " +
+        "([note] like '%" + db.encode(searchText) + "%')) ";
+}
+sql =
+    "SELECT count(*) as c " +
+    "FROM storeInfo " +
+    "WHERE ([status] <> 'DEL') " + condition;
+sqlResult = db.executeQuery("DB", sql);   
+db.read(sqlResult);
+var count = db.getInt32(sqlResult, "c");
+
+sql= 
+    "SELECT * " +
+    "FROM storeInfo " +
+    "WHERE (status <> 'DEL') " + condition +
+    "ORDER BY id DESC ";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendInt32(count);
+eio.appendDataSet(sqlResult,"id,regDatetime,name,address,note", pageSize*(pageCurrent-1), pageSize); 
+]]></script2>
+      <script3><![CDATA[if (eio.readString8() != "T") {
+    alert("无法获取您需要的数据：" + eio.readString8());
+    return;
+}
+g5.pageRecordCount = eio.readInt32();
+g5.dataset1 = eio.readDataSet();
+g5.user = eio.readString8();
+g5.pageCount = parseInt((g5.pageRecordCount-1)/g5.pageSize)+1;
+ee.setTableData(ee.getControl("tablebody2"), g5.dataset1,0);   
+ee.setText(ee.getControl("layoutxitem45"), g5.pageCurrent + "/" + g5.pageCount);
+ee.setText(ee.getControl("panel16"), "共找到" +
+    "<font color = '#d00000'>" + g5.pageRecordCount + "条</font>记录");
+
+ee.setAutoScroll(ee.getControl("layoutyitem2"), false);   
+setTimeout(function () { ee.setAutoScroll(ee.getControl("layoutyitem2"), true)}, 100); 
+]]></script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

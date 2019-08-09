@@ -1,0 +1,257 @@
+<page>
+  <controls count="1">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>484</height>
+      <left>0</left>
+      <onPageLoad><![CDATA[<%
+function main() { 
+var postData = request.getPostData().trim() + " "; 
+es.logCommon(postData) 
+var postDataType = "common";
+var params;
+if (postData.substr(0, 1) == "{") {
+    postDataType = "json";
+}
+if (postDataType == "json") {
+    params = eval("(" + postData + ")");
+} else {
+    params = postData.trim().split("&amp;");
+    for (var i = 0; i < params.length; i++) {
+        params[i] = params[i].split("=");
+    }
+}  
+function encodeResult(resultCode, resultString, sessionId) {
+    var r = "";
+    if (postDataType == "json") {
+        r = "{ \"resultCode\":" + resultCode + ",\"resultString\":\"" + resultString + "\"";
+        if (sessionId != undefined) r += ",\"sessionId\":\"" + sessionId + "\"";
+        r += " }";
+    } else {
+        r = "resultCode=" + resultCode + "&amp;resultString=" + resultString;
+        if (sessionId != undefined) r += "&amp;sessionId=" + sessionId;
+    }
+    return r;
+}
+
+function dbExec(sql) {
+    var sqlResult; 
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-2, "database connection error");
+    }
+    db.read(sqlResult);
+    return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+}
+
+function arrayToJson(value) {
+    var s = "[";
+    for (var i = 0; i < value.length; i++) {
+        if (s=="[") {
+            s += "\"";
+        } else s+= ",\"";
+        s += value[i] + "\"";
+    }
+    s += "]";
+    return s;
+}
+function array2ToJson(value) {
+    var s = "[";
+    for (var i = 0; i < value.length; i++) {
+        if (s=="[") {
+        } else s+= ",";
+        s += arrayToJson(value[i]);
+    }
+    s += "]";
+    return s;
+}
+
+var func = params.func;
+if (func == "getStoreCdrSn") { //查询某序列号后的所有出库记录出库
+    var deviceId = parseInt(params.deviceId);
+    if (isNaN(deviceId)) {
+        return encodeResult(-10, "deviceId must be Int64");
+    }
+    var sn = parseInt(params.sn);
+    if (isNaN(sn)) {
+        return encodeResult(-10, "sn must be Int64");
+    }
+    var sql =
+        "SELECT *,CONVERT(varchar(100), regDatetime, 120) as regDatetime2 FROM interfaceCache where deviceId = " + deviceId +
+        " and id >= " + sn +
+        " order by id ";
+    var sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-2, "database connection error");
+    }
+    var result =
+        "{" +
+        "\"resultCode\": 0, " +
+        "\"resultString\": \"success\", " +
+        "\"records\":";
+    var recordCount = 0;
+    while (db.read(sqlResult)) {
+        recordCount++;
+        if (recordCount == 1) {
+            result += "[";
+        } else {
+            result += ",";
+        }
+        result += "{" +
+            "\"func\": \"storeIn\", " +
+            "\"recordSn\": \"" + db.getString(sqlResult, "id") + "\", " +
+            "\"recordTime\": \"" + db.getString(sqlResult, "regDatetime2").replace(/-/g,"").replace(/:/g,"") + "\", " +
+            "\"type\": \"epc\", " +
+            "\"codeRfid\": \"" + db.getString(sqlResult, "codeEpc") + "\" }";
+    }
+    if (recordCount == 0) {
+        result += "[]";
+    } else {
+        result += "]";
+    }
+    result += ",\"recordCount\":" + recordCount + "}";
+    return result;
+} else if (func == "getStoreLastSn") { //查询最后一条出入库记录序列号
+    var deviceId = parseInt(params.deviceId);
+    if (isNaN(deviceId)) {
+        return encodeResult(-10, "deviceId must be Int64");
+    }
+    var sql =
+        "SELECT TOP 1 *" +
+        " FROM [rfid].[dbo].[interfaceCache] where deviceId = " + deviceId +
+        " order by id desc";
+    var sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-2, "database connection error");
+    }
+    var sn = 0;
+    if (db.read(sqlResult)) {
+        sn = parseInt(db.getString(sqlResult, "id"));
+    }
+    var result =
+        "{" +
+        "\"resultCode\": 0, " +
+        "\"resultString\": \"success\", " +
+        "\"sn\": \"" + sn + "\"}";
+    return result;
+} else if (func == "getTemp") { //查询温度历史记录
+    if (params.timeStart == undefined) params.timeStart = "19800101 000000";
+    if (params.timeEnd == undefined) params.timeEnd = "20301230 000000"; 
+    if (params.number == undefined) params.number = "50";
+    var sql =
+        "exec [dbo].[getTemp1] " +
+        "'" + db.encode(params.sessionId) + "'" +
+        ",'" + db.encode(params.type) + "'" +
+        ",'" + db.encode(params.codeRfid) + "'" +
+        ",'" + db.encode(params.timeStart) + "'" + 
+        ",'" + db.encode(params.timeEnd) + "'" +
+        ",'" + db.encode(params.number) + "'";     
+        es.logCommon(sql)
+    var sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-2, "database connection error");
+    }
+    var result =
+        "{" +
+        "\"resultCode\": 0, " +
+        "\"resultString\": \"success\", " +
+        "\"records\":";
+    var recordCount = 0;
+    while (db.read(sqlResult)) {
+        if (db.getString(sqlResult, "errorCode").length > 0) {
+            return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+        }
+        recordCount++;
+        if (recordCount == 1) {
+            result += "[";
+        } else {
+            result += ",";
+        }
+        //result += "{" +
+        //    "\"tempHi\": " + db.getString(sqlResult, "tempHi") + ", " +
+        //    "\"tempLow\": " + db.getString(sqlResult, "tempLow") + ", " +
+        //    "\"time\": \"" + db.getString(sqlResult, "timeHour") + "\" }";    
+          result += "{" +
+            "\"temp\": " + db.getString(sqlResult, "temperature") + ", " +
+            "\"time\": \"" + db.getString(sqlResult, "regDatetime") + "\" }";
+    }
+    if (recordCount == 0) {
+        result += "[]";
+    } else {
+        result += "]";
+    }
+    result += ",\"recordCount\":" + recordCount + "}";
+    return result;
+}else if (func == "scanRfid") { //盘询     
+//codeFrg                       
+ var result =
+        "{" +
+        "\"resultCode\": 0, " +
+        "\"resultString\": \"success\", " + 
+        "\"recordCount\": \""+params.codeFrg.length+"\", " +
+        "\"records\":[";
+    
+for (i = 0; i < params.codeFrg.length; i++) {
+      var sql =
+        "exec [dbo].[usp_getuploadStoreDetail] " +
+        "'" + db.encode(params.sessionId) + "'" +
+        ",'" + db.encode(params.type) + "'" +
+        ",'" + db.encode(params.codeFrg[i]) + "'";     
+        es.logCommon(sql)
+    var sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-2, "database connection error");
+    }    
+    if (i == 0) {
+            result += "{";
+        } else {
+            result += ",{";
+        }
+      
+    result +=  "\"codeFrg\": \""+params.codeFrg[i]+"\", " ;
+    result +=  "\"codeRfid\":[";
+    var num = 0;
+    while (db.read(sqlResult)) {
+        if (db.getString(sqlResult, "errorCode").length > 0) {
+            return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+        }
+        num++; 
+        //result +=  db.getString(sqlResult, "rfid") + ",";  
+        result += "\""+ db.getString(sqlResult, "rfid") + "\",";
+    }    
+       
+    if (num == 0) {
+        result += "]";
+    } else {
+        result =result.substr(0,result.length-1)+"]";
+    }
+    result += ",\"num\":" + num + "}";
+   
+}
+     result+="]}"
+es.logCommon(result)
+    return result;
+    
+} 
+else {
+    return encodeResult(-100, "unknow command: " + func);
+}
+
+                  
+
+} 
+
+main();
+
+%>]]></onPageLoad>
+      <pageTitle>string</pageTitle>
+      <top>0</top>
+      <width>768</width>
+    </control>
+  </controls>
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

@@ -1,0 +1,655 @@
+<page>
+  <controls count="38">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>484</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[
+g5.chartoption={ 
+    backgroundColor:'#fff',  
+    tooltip: {
+        trigger: 'axis',
+        tooltip: {
+            trigger: 'axis',
+            formatter:function(val){
+                return "时间"+'<br />' +"温度："+val[0].value +"℃"+'<br />'+"上报位置：2号车仓"
+            }
+        },
+        },
+    xAxis: {
+            axisLine:{
+                onZero :false
+            },
+            type: 'category',
+            boundaryGap: false,
+            data: ['0', '1', '2', '3', '4', '5', '6','7', '8', '9', '10', '11', '12'],
+            splitLine: {
+                show: true,
+                interval: 'auto'
+            }
+        },
+    yAxis: {
+        type: 'value',
+            min:-4,
+            max:8,
+            splitLine: {
+                show: true
+            },
+    }, 
+    // dataZoom: [{
+        //     startValue: '2014-06-01'
+        // }, {
+        //     type: 'inside'
+        // }],
+        visualMap: {
+            show:false,
+            top: 10,
+            right: 10,
+            pieces: [{
+                lte: -2,
+                color: 'red'
+            }, {
+                gt: -2,
+                lte: 4,
+                color: 'green'
+            }, {
+                gt: 4,
+                color: 'red'
+            }],
+            outOfRange: {
+                color: '#999'
+            }
+        },
+    series: [{
+        name: '温度',
+        type: 'line',
+        data: [1.2, 0.9, -3, 0.8, 1.1, 1.2, 4.2,1.7,4.6,1.45,1.36,-2.2,1.2 ],
+        itemStyle: {
+            normal: {
+                lineStyle: {
+                    //color: '#000'
+                }
+            }
+        },
+        markLine: {
+            silent: true,
+            data: [{
+                yAxis: -2
+            }, {
+                yAxis: 4
+            }]
+        }
+    }]
+}
+
+
+ setTimeout(function() {
+  g5.echart = echarts.init(ee.getControl("panel3"));      
+  g5.echart.setOption(g5.chartoption);  
+  
+},200)
+
+
+    function getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();  
+    var hour=date.getHours();
+    var minutes=date.getMinutes();
+    var seconds=date.getSeconds();
+    if (month >= 1 &amp;&amp; month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 &amp;&amp; strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    if (hour >= 0 &amp;&amp; hour <= 9) {
+        hour = "0" + hour
+    }
+    if (minutes >= 0 &amp;&amp; minutes <= 9) {
+        minutes = "0" + minutes
+    }
+    if (seconds >= 0 &amp;&amp; seconds <= 9) {
+        seconds = "0" + seconds
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            + " " + hour + seperator2 + minutes
+            + seperator2 + seconds;
+    return currentdate;
+}
+
+
+
+setInterval(function() {
+    ee.setText(ee.getControl("panel4"),getNowFormatDate()); 
+  },1000)
+]]></onControlLoad>
+      <pageHead><![CDATA[<script src="Scripts/echarts.min.js"></script>]]></pageHead>
+      <top>0</top>
+      <width>746</width>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty3">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>484</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.648793565683646</sizeRatio>
+      <top>0</top>
+      <width>746</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty3/layoutyitem7">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <heavy>20</heavy>
+      <height>69</height>
+      <heightRatio>0.142561983471074</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0924932975871314</sizeRatio>
+      <top>0</top>
+      <width>746</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty3/layoutyitem7/layoutx1">
+      <fieldCount>2</fieldCount>
+      <height>35</height>
+      <heightRatio>0.507246376811594</heightRatio>
+      <left>7</left>
+      <leftRatio>0.00938337801608579</leftRatio>
+      <sizeRatio>0.114754098360656</sizeRatio>
+      <top>15</top>
+      <topRatio>0.217391304347826</topRatio>
+      <width>305</width>
+      <widthRatio>0.408847184986595</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem7/layoutx1/layoutxitem1">
+      <backgroundColor>008080</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <height>35</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>//g5.pageJump(g5.pageCurrent-1);</onClick>
+      <sizeRatio>0.139442231075697</sizeRatio>
+      <text>上一页</text>
+      <top>0</top>
+      <width>251</width>
+      <widthRatio>0.822950819672131</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layouty3/layoutyitem7/layoutx1/layoutxitem1/edit3">
+      <backgroundSkin>edit2</backgroundSkin>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>C0C0C0</fontColor>
+      <height>35</height>
+      <heightRatio>1</heightRatio>
+      <inputFontBold>true</inputFontBold>
+      <inputFontColor>198DC9</inputFontColor>
+      <left>0</left>
+      <sizeRatio>0.139442231075697</sizeRatio>
+      <text>请输入批号进行查询</text>
+      <top>0</top>
+      <width>251</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem7/layoutx1/layoutxitem2">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <heavyEnabled>false</heavyEnabled>
+      <height>35</height>
+      <heightRatio>1</heightRatio>
+      <left>251</left>
+      <leftRatio>0.822950819672131</leftRatio>
+      <sizeRatio>0.648148148148148</sizeRatio>
+      <top>0</top>
+      <width>54</width>
+      <widthRatio>0.177049180327869</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/layouty3/layoutyitem7/layoutx1/layoutxitem2/button6">
+      <backgroundSkin>TCloud000</backgroundSkin>
+      <backgroundSkin1>LRBtn7</backgroundSkin1>
+      <backgroundSkin2>LRBtn7</backgroundSkin2>
+      <cursor>pointer</cursor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>FFFFFF</fontColor>
+      <fontColor1>FFFFFF</fontColor1>
+      <fontColor2>FFFFFF</fontColor2>
+      <height>35</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>query();</onClick>
+      <sizeRatio>0.648148148148148</sizeRatio>
+      <top>0</top>
+      <width>54</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem7/layoutx1/layoutxitem2/button6/panel119">
+      <backgroundImg>qb23.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>23</height>
+      <heightRatio>0.657142857142857</heightRatio>
+      <left>5</left>
+      <leftRatio>0.0925925925925926</leftRatio>
+      <outerBottom>8</outerBottom>
+      <outerLeft>5</outerLeft>
+      <outerRight>5</outerRight>
+      <outerTop>4</outerTop>
+      <sizeRatio>0.522727272727273</sizeRatio>
+      <top>4</top>
+      <topRatio>0.114285714285714</topRatio>
+      <width>44</width>
+      <widthRatio>0.814814814814815</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty3/layoutyitem7/layoutx2">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <fieldCount>7</fieldCount>
+      <height>31</height>
+      <heightRatio>0.449275362318841</heightRatio>
+      <left>349</left>
+      <leftRatio>0.467828418230563</leftRatio>
+      <sizeRatio>0.0809399477806789</sizeRatio>
+      <top>16</top>
+      <topRatio>0.231884057971014</topRatio>
+      <width>383</width>
+      <widthRatio>0.513404825737265</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem3">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.836363636363636</sizeRatio>
+      <top>0</top>
+      <width>71</width>
+      <widthRatio>0.143603133159269</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem3/panel1">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>10</fontSize>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.563636363636364</sizeRatio>
+      <text>温度阈值</text>
+      <top>0</top>
+      <width>71</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem4">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>71</left>
+      <leftRatio>0.143603133159269</leftRatio>
+      <sizeRatio>0.851851851851852</sizeRatio>
+      <top>0</top>
+      <width>71</width>
+      <widthRatio>0.140992167101828</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem4/edit1">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>C0C0C0</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <hAlign>left</hAlign>
+      <height>29</height>
+      <heightRatio>0.935483870967742</heightRatio>
+      <inputFontColor>FFFFFF</inputFontColor>
+      <left>1</left>
+      <leftRatio>0.0185185185185185</leftRatio>
+      <outerBottom>1</outerBottom>
+      <outerLeft>1</outerLeft>
+      <outerRight>1</outerRight>
+      <outerTop>1</outerTop>
+      <sizeRatio>0.557692307692308</sizeRatio>
+      <text>-2</text>
+      <top>1</top>
+      <topRatio>0.032258064516129</topRatio>
+      <width>69</width>
+      <widthRatio>0.962962962962963</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem5">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>60</heavy>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>142</left>
+      <leftRatio>0.284595300261097</leftRatio>
+      <sizeRatio>0.563636363636364</sizeRatio>
+      <top>0</top>
+      <width>42</width>
+      <widthRatio>0.143603133159269</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem5/panel2">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>10</fontSize>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.885714285714286</sizeRatio>
+      <text>℃</text>
+      <top>0</top>
+      <width>42</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem6">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>60</heavy>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>184</left>
+      <leftRatio>0.407310704960835</leftRatio>
+      <sizeRatio>0.659574468085106</sizeRatio>
+      <top>0</top>
+      <width>43</width>
+      <widthRatio>0.122715404699739</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem6/panel3">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>10</fontSize>
+      <hAlign>left</hAlign>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.837837837837838</sizeRatio>
+      <text>～</text>
+      <top>0</top>
+      <width>43</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem10">
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>227</left>
+      <leftRatio>0.516971279373368</leftRatio>
+      <sizeRatio>0.508196721311475</sizeRatio>
+      <top>0</top>
+      <width>71</width>
+      <widthRatio>0.159268929503916</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem10/edit2">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontColor>C0C0C0</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <hAlign>left</hAlign>
+      <height>29</height>
+      <heightRatio>0.935483870967742</heightRatio>
+      <inputFontColor>FFFFFF</inputFontColor>
+      <left>1</left>
+      <leftRatio>0.0163934426229508</leftRatio>
+      <outerBottom>1</outerBottom>
+      <outerLeft>1</outerLeft>
+      <outerRight>1</outerRight>
+      <outerTop>1</outerTop>
+      <sizeRatio>0.491525423728814</sizeRatio>
+      <text>４</text>
+      <top>1</top>
+      <topRatio>0.032258064516129</topRatio>
+      <width>69</width>
+      <widthRatio>0.967213114754098</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem11">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>60</heavy>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>298</left>
+      <leftRatio>0.676240208877285</leftRatio>
+      <sizeRatio>0.5</sizeRatio>
+      <top>0</top>
+      <width>42</width>
+      <widthRatio>0.161879895561358</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem11/panel4">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>10</fontSize>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.5</sizeRatio>
+      <text>℃</text>
+      <top>0</top>
+      <width>42</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem12">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>60</heavy>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>340</left>
+      <leftRatio>0.856396866840731</leftRatio>
+      <sizeRatio>0.563636363636364</sizeRatio>
+      <top>0</top>
+      <width>43</width>
+      <widthRatio>0.143603133159269</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem7/layoutx2/layoutxitem12/panel5">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>10</fontSize>
+      <height>31</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.46969696969697</sizeRatio>
+      <text>修改</text>
+      <top>0</top>
+      <width>43</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty3/layoutyitem8">
+      <backgroundColor>F0F0F0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>346</height>
+      <heightRatio>0.714876033057851</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.788154897494305</sizeRatio>
+      <top>69</top>
+      <topRatio>0.142561983471074</topRatio>
+      <width>746</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty3/layoutyitem8/layoutx3">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>346</height>
+      <heightRatio>1.39884393063584</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.629388816644993</sizeRatio>
+      <top>0</top>
+      <width>746</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem7">
+      <backgroundColor>F0F0F0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>20</heavy>
+      <height>346</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>5.5</sizeRatio>
+      <top>0</top>
+      <width>93</width>
+      <widthRatio>0.125177809388336</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem7/panel11">
+      <fontFamily>Arial</fontFamily>
+      <fontSize>12</fontSize>
+      <height>38</height>
+      <heightRatio>0.0785123966942149</heightRatio>
+      <left>3</left>
+      <leftRatio>0.0340909090909091</leftRatio>
+      <sizeRatio>0.436781609195402</sizeRatio>
+      <text>温度监控</text>
+      <top>4</top>
+      <topRatio>0.00826446280991736</topRatio>
+      <width>87</width>
+      <widthRatio>0.988636363636364</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem7/panel11/panel12">
+      <heightRatio>2.63157894736842</heightRatio>
+      <left>83</left>
+      <leftRatio>0.954022988505747</leftRatio>
+      <sizeRatio>1</sizeRatio>
+      <top>18</top>
+      <topRatio>0.473684210526316</topRatio>
+      <widthRatio>1.14942528735632</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem8">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>346</height>
+      <heightRatio>1</heightRatio>
+      <left>93</left>
+      <leftRatio>0.125177809388336</leftRatio>
+      <sizeRatio>1.10250569476082</sizeRatio>
+      <top>0</top>
+      <width>466</width>
+      <widthRatio>0.624466571834993</widthRatio>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem8/layouty4">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>346</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.10250569476082</sizeRatio>
+      <top>0</top>
+      <width>466</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem8/layouty4/layoutyitem10">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <heavy>20</heavy>
+      <height>49</height>
+      <heightRatio>0.142561983471074</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.143451143451143</sizeRatio>
+      <top>0</top>
+      <width>466</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem8/layouty4/layoutyitem10/panel13">
+      <dockX>right</dockX>
+      <fontSize>12</fontSize>
+      <hAlign>right</hAlign>
+      <height>29</height>
+      <heightRatio>0.420289855072464</heightRatio>
+      <left>315</left>
+      <leftRatio>0.686070686070686</leftRatio>
+      <sizeRatio>0.19205298013245</sizeRatio>
+      <top>39</top>
+      <topRatio>0.565217391304348</topRatio>
+      <width>151</width>
+      <widthRatio>0.313929313929314</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem8/layouty4/layoutyitem11">
+      <backgroundColor>F0F0F0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <height>248</height>
+      <heightRatio>0.714876033057851</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.788154897494305</sizeRatio>
+      <top>49</top>
+      <topRatio>0.142561983471074</topRatio>
+      <width>466</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem8/layouty4/layoutyitem11/panel14">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>248</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.788154897494305</sizeRatio>
+      <top>0</top>
+      <width>466</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem8/layouty4/layoutyitem12">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>20</heavy>
+      <height>49</height>
+      <heightRatio>0.142561983471074</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.157175398633257</sizeRatio>
+      <top>297</top>
+      <topRatio>0.857438016528926</topRatio>
+      <width>466</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty3/layoutyitem8/layoutx3/layoutxitem9">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>40</heavy>
+      <height>346</height>
+      <heightRatio>1</heightRatio>
+      <left>559</left>
+      <leftRatio>0.749644381223329</leftRatio>
+      <sizeRatio>2.75</sizeRatio>
+      <top>0</top>
+      <width>187</width>
+      <widthRatio>0.250355618776671</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty3/layoutyitem9">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>20</heavy>
+      <height>69</height>
+      <heightRatio>0.142561983471074</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.157175398633257</sizeRatio>
+      <top>415</top>
+      <topRatio>0.857438016528926</topRatio>
+      <width>746</width>
+      <widthRatio>1</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

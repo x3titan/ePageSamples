@@ -1,0 +1,1464 @@
+<page>
+  <controls count="68">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>796</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[//鼠标点击行激活处理
+g5.userId = null;
+g5.tableClick = function(sender) {
+    var c, x, y;
+    for (y = 0; y < g5.pageSize; y++) {
+        for (x = 0; x < 5; x++) {
+            c = ee.getTableCell(ee.getControl("tablebody2"), x, y);
+            c.style.backgroundColor = "";    
+        }
+    }
+    for (x = 0; x < 5; x++) {
+        c = ee.getTableCell(ee.getControl("tablebody2"), x, sender.rowIndex);
+        c.style.backgroundColor = "#E0EEFF";
+    }
+    if (eb.isEmpty(g5.dataset1)) {
+        g5.userId = null;
+        return;
+    }
+    g5.id = parseInt(g5.dataset1.getData(0, sender.rowIndex));
+    g5.code1 = g5.dataset1.getData(2, sender.rowIndex);
+    g5.code2 = g5.dataset1.getData(3, sender.rowIndex);
+    g5.code3 = g5.dataset1.getData(4, sender.rowIndex);
+}
+
+//分页处理
+g5.pageSize = 15;
+g5.pageCurrent = 1;
+g5.pageCount = 1;
+g5.pageJump = function (pageNumber) {
+    if (pageNumber < 1) pageNumber = 1;
+    if (pageNumber > g5.pageCount) {
+        pageNumber = g5.pageCount;
+    }
+    if (g5.pageCurrent != pageNumber) {
+        g5.pageCurrent = pageNumber;
+        if (g5.pageCurrent > 0) {
+            query();
+        }
+    }
+}
+
+g5.init = function() {
+    var postData = "<% request.getPostData() %>".trim();
+    g5.mode = "common";
+    if (postData.length > 10) {
+        g5.mode = "json";
+        try {
+            g5.params = eval("(" + postData + ")");
+        } catch (err) {
+            g5.mode = "common";
+        }
+    }
+    //识别请求命令
+    if (g5.mode == "json") {
+        g5.func = g5.params.func;
+    } else {
+        g5.func = ee.getQueryString("func");
+    }
+    if (eb.isEmpty(g5.func)) {
+        //可能是普通页面调用
+        return;
+    }
+    if (g5.func.toLowerCase() == "queryrfid") {
+    } else if (g5.func.toLowerCase() == "queryrqr") {
+    } else if (g5.func.toLowerCase() == "queryrsn") {
+    } else if (g5.func == "") {
+        return;
+    } else {
+        alert("接收到未知指令：" + g5.func);
+        return;
+    }
+    //获取请求参数
+    g5.func = g5.func.toLowerCase();
+    if (g5.mode == "json") {
+        g5.sessionId = g5.params.sessionId;
+        g5.code = g5.params.code;
+    } else {
+        g5.sessionId = ee.getQueryString("sessionId");
+        g5.code = ee.getQueryString("code");
+    }
+                            
+    //开始查询unionCode
+    query();
+}
+
+setTimeout(function() {
+    g5.init();
+}, 200);
+
+
+       
+]]></onControlLoad>
+      <top>0</top>
+      <width>438</width>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <backgroundColor>000000</backgroundColor>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>4</fieldCount>
+      <height>796</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.689774696707106</sizeRatio>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontBold>true</fontBold>
+      <fontColor>3E9AD0</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>15</fontSizeAuto>
+      <heavy>10</heavy>
+      <height>62</height>
+      <heightRatio>0.0778894472361809</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0537261698440208</sizeRatio>
+      <text>冷链物流查询</text>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <autoScroll>true</autoScroll>
+      <backgroundColor>FF8000</backgroundColor>
+      <height>622</height>
+      <heightRatio>0.781407035175879</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.538994800693241</sizeRatio>
+      <top>62</top>
+      <topRatio>0.0778894472361809</topRatio>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="TableTitle" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <columnCount>2</columnCount>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>48</height>
+      <heightRatio>0.0771704180064309</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0415944540727903</sizeRatio>
+      <tableBody>tablebody2</tableBody>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem12">
+      <backgroundColor>F4F4F4</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontBold>true</fontBold>
+      <fontColor>646464</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>14</fontSize>
+      <heavy>35</heavy>
+      <height>48</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.160535117056856</sizeRatio>
+      <text>时间</text>
+      <top>0</top>
+      <width>114</width>
+      <widthRatio>0.259098786828423</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem12/panel18">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00334448160535117</sizeRatio>
+      <top>47</top>
+      <topRatio>0.979166666666667</topRatio>
+      <width>114</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem13">
+      <backgroundColor>F4F4F4</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontBold>true</fontBold>
+      <fontColor>646464</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>48</height>
+      <heightRatio>1</heightRatio>
+      <left>114</left>
+      <leftRatio>0.259098786828423</leftRatio>
+      <sizeRatio>0.056140350877193</sizeRatio>
+      <text>操作</text>
+      <top>0</top>
+      <width>324</width>
+      <widthRatio>0.740901213171577</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tabletitle2/tabletitleitem13/panel17">
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0208333333333333</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00116959064327485</sizeRatio>
+      <top>47</top>
+      <topRatio>0.979166666666667</topRatio>
+      <width>324</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="TableBody" pathname="/divRoot/layouty1/layoutyitem2/tablebody2">
+      <backgroundColor>FF0000</backgroundColor>
+      <backgroundImg>xz_bn.png</backgroundImg>
+      <height>574</height>
+      <heightRatio>0.922829581993569</heightRatio>
+      <left>0</left>
+      <rowCount>8</rowCount>
+      <sizeRatio>0.497400346620451</sizeRatio>
+      <tableTitle>tabletitle2</tableTitle>
+      <top>48</top>
+      <topRatio>0.0771704180064309</topRatio>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem12">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>0</left>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.240802675585284</sizeRatio>
+      <text>.</text>
+      <top>0</top>
+      <width>114</width>
+      <widthRatio>0.259098786828423</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem12/panel11">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00334448160535117</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>114</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem13">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>114</left>
+      <leftRatio>0.259098786828423</leftRatio>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.0842105263157895</sizeRatio>
+      <text>.</text>
+      <top>0</top>
+      <width>324</width>
+      <widthRatio>0.740901213171577</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/tablebodyitem13/panel12">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00116959064327485</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>324</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp85">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>0</left>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.240802675585284</sizeRatio>
+      <text>.</text>
+      <top>72</top>
+      <width>114</width>
+      <widthRatio>0.259098786828423</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp85/temp1">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00334448160535117</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>114</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp87">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>114</left>
+      <leftRatio>0.259098786828423</leftRatio>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.0842105263157895</sizeRatio>
+      <text>.</text>
+      <top>72</top>
+      <width>324</width>
+      <widthRatio>0.740901213171577</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp87/temp2">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00116959064327485</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>324</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp89">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>71</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>0</left>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.240802675585284</sizeRatio>
+      <text>.</text>
+      <top>144</top>
+      <width>114</width>
+      <widthRatio>0.259098786828423</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp89/temp3">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00334448160535117</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>114</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp91">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>71</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>114</left>
+      <leftRatio>0.259098786828423</leftRatio>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.0842105263157895</sizeRatio>
+      <text>.</text>
+      <top>144</top>
+      <width>324</width>
+      <widthRatio>0.740901213171577</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp91/temp4">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00116959064327485</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>324</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp93">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>0</left>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.240802675585284</sizeRatio>
+      <text>.</text>
+      <top>215</top>
+      <width>114</width>
+      <widthRatio>0.259098786828423</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp93/temp5">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00334448160535117</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>114</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp95">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>114</left>
+      <leftRatio>0.259098786828423</leftRatio>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.0842105263157895</sizeRatio>
+      <text>.</text>
+      <top>215</top>
+      <width>324</width>
+      <widthRatio>0.740901213171577</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp95/temp6">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00116959064327485</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>324</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp97">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>0</left>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.240802675585284</sizeRatio>
+      <text>.</text>
+      <top>287</top>
+      <width>114</width>
+      <widthRatio>0.259098786828423</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp97/temp7">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00334448160535117</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>114</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp99">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>114</left>
+      <leftRatio>0.259098786828423</leftRatio>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.0842105263157895</sizeRatio>
+      <text>.</text>
+      <top>287</top>
+      <width>324</width>
+      <widthRatio>0.740901213171577</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp99/temp8">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00116959064327485</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>324</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp101">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>0</left>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.240802675585284</sizeRatio>
+      <text>.</text>
+      <top>359</top>
+      <width>114</width>
+      <widthRatio>0.259098786828423</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp101/temp9">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00334448160535117</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>114</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp103">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>114</left>
+      <leftRatio>0.259098786828423</leftRatio>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.0842105263157895</sizeRatio>
+      <text>.</text>
+      <top>359</top>
+      <width>324</width>
+      <widthRatio>0.740901213171577</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp103/temp10">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00116959064327485</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>324</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp105">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>71</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>0</left>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.240802675585284</sizeRatio>
+      <text>.</text>
+      <top>431</top>
+      <width>114</width>
+      <widthRatio>0.259098786828423</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp105/temp11">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00334448160535117</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>114</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp107">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>71</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>114</left>
+      <leftRatio>0.259098786828423</leftRatio>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.0842105263157895</sizeRatio>
+      <text>.</text>
+      <top>431</top>
+      <width>324</width>
+      <widthRatio>0.740901213171577</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp107/temp12">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00116959064327485</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>324</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp109">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>0</left>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.240802675585284</sizeRatio>
+      <text>.</text>
+      <top>502</top>
+      <width>114</width>
+      <widthRatio>0.259098786828423</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp109/temp13">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00334448160535117</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>114</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp111">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>545454</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>30</fontSizeAuto>
+      <hAlign>left</hAlign>
+      <height>72</height>
+      <heightRatio>0.125435540069686</heightRatio>
+      <left>114</left>
+      <leftRatio>0.259098786828423</leftRatio>
+      <onClick>g5.tableClick(sender);</onClick>
+      <sizeRatio>0.0842105263157895</sizeRatio>
+      <text>.</text>
+      <top>502</top>
+      <width>324</width>
+      <widthRatio>0.740901213171577</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/tablebody2/temp111/temp14">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>1</height>
+      <heightRatio>0.0138888888888889</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00116959064327485</sizeRatio>
+      <top>71</top>
+      <topRatio>0.986111111111111</topRatio>
+      <width>324</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel5">
+      <backgroundImg>shadowY.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>18</height>
+      <heightRatio>0.0289389067524116</heightRatio>
+      <left>0</left>
+      <outerTop>-7</outerTop>
+      <sizeRatio>0.0155979202772964</sizeRatio>
+      <top>-7</top>
+      <topRatio>-0.0112540192926045</topRatio>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem6">
+      <backgroundColor>F4F4F4</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>8</heavy>
+      <height>50</height>
+      <heightRatio>0.0628140703517588</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0433275563258232</sizeRatio>
+      <top>684</top>
+      <topRatio>0.85929648241206</topRatio>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem6/panel16">
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>50</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.114155251141553</sizeRatio>
+      <text>共找到0条记录</text>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem3">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>10</heavy>
+      <height>62</height>
+      <heightRatio>0.0778894472361809</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0537261698440208</sizeRatio>
+      <top>734</top>
+      <topRatio>0.922110552763819</topRatio>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem3/layoutx22">
+      <backgroundColor>F4F4F4</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.0537261698440208</sizeRatio>
+      <top>0</top>
+      <width>438</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem3/layoutx22/layoutxitem44">
+      <backgroundColor>008080</backgroundColor>
+      <backgroundSkin>button2af</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <onClick>g5.pageJump(g5.pageCurrent-1);</onClick>
+      <sizeRatio>0.161038961038961</sizeRatio>
+      <text>上一页</text>
+      <top>0</top>
+      <width>146</width>
+      <widthRatio>0.333622183708839</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem3/layoutx22/layoutxitem45">
+      <backgroundColor>d0d0d0</backgroundColor>
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <left>146</left>
+      <leftRatio>0.333622183708839</leftRatio>
+      <sizeRatio>0.161458333333333</sizeRatio>
+      <text>1/1</text>
+      <top>0</top>
+      <width>146</width>
+      <widthRatio>0.332755632582322</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/layoutx22/layoutxitem45/panel23">
+      <backgroundColor>198DC9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <height>2</height>
+      <heightRatio>0.032258064516129</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00520833333333333</sizeRatio>
+      <top>0</top>
+      <width>146</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/layoutx22/layoutxitem45/panel24">
+      <backgroundColor>198DC9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <height>2</height>
+      <heightRatio>0.032258064516129</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.00520833333333333</sizeRatio>
+      <top>60</top>
+      <topRatio>0.967741935483871</topRatio>
+      <width>146</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem3/layoutx22/layoutxitem50">
+      <backgroundColor>008080</backgroundColor>
+      <backgroundSkin>button2cf</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>20</fontSizeAuto>
+      <height>62</height>
+      <heightRatio>1</heightRatio>
+      <left>292</left>
+      <leftRatio>0.666377816291161</leftRatio>
+      <onClick>g5.pageJump(g5.pageCurrent+1);</onClick>
+      <sizeRatio>0.161038961038961</sizeRatio>
+      <text>下一页</text>
+      <top>0</top>
+      <width>146</width>
+      <widthRatio>0.333622183708839</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <aniAlpha>appear:渐变出现</aniAlpha>
+      <aniPos>leftFlyIn:左侧飞入</aniPos>
+      <backgroundColor>008080</backgroundColor>
+      <backgroundSkin>edit2</backgroundSkin>
+      <cursor>pointer</cursor>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <fontColor>727272</fontColor>
+      <height>413</height>
+      <heightRatio>0.518844221105528</heightRatio>
+      <layerName>创建/编辑用户</layerName>
+      <layerVisible>false</layerVisible>
+      <left>-90</left>
+      <leftRatio>0.231369150779896</leftRatio>
+      <sizeRatio>0.667205169628433</sizeRatio>
+      <top>191</top>
+      <topRatio>0.239949748743719</topRatio>
+      <width>619</width>
+      <widthRatio>0.536395147313692</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel2">
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <fontFamily>微软雅黑</fontFamily>
+      <fontSize>14</fontSize>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.0871670702179177</heightRatio>
+      <left>28</left>
+      <leftRatio>0.0452342487883683</leftRatio>
+      <sizeRatio>0.168224299065421</sizeRatio>
+      <text>车辆信息卡</text>
+      <top>14</top>
+      <topRatio>0.0338983050847458</topRatio>
+      <width>214</width>
+      <widthRatio>0.345718901453958</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3">
+      <backgroundColor>198DC9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <height>2</height>
+      <heightRatio>0.00484261501210654</heightRatio>
+      <left>30</left>
+      <leftRatio>0.0484652665589661</leftRatio>
+      <outerLeft>30</outerLeft>
+      <outerRight>30</outerRight>
+      <sizeRatio>0.0035778175313059</sizeRatio>
+      <top>52</top>
+      <topRatio>0.12590799031477</topRatio>
+      <width>559</width>
+      <widthRatio>0.903069466882068</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel4">
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.0871670702179177</heightRatio>
+      <left>60</left>
+      <leftRatio>0.0969305331179321</leftRatio>
+      <sizeRatio>0.5</sizeRatio>
+      <text>车辆代码</text>
+      <top>66</top>
+      <topRatio>0.159806295399516</topRatio>
+      <width>72</width>
+      <widthRatio>0.116316639741519</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6">
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.0871670702179177</heightRatio>
+      <left>61</left>
+      <leftRatio>0.098546042003231</leftRatio>
+      <sizeRatio>0.507042253521127</sizeRatio>
+      <text>车辆类型</text>
+      <top>104</top>
+      <topRatio>0.25181598062954</topRatio>
+      <width>71</width>
+      <widthRatio>0.11470113085622</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel1/button1">
+      <backgroundSkin>TCloud000</backgroundSkin>
+      <backgroundSkin1>LRBtn7</backgroundSkin1>
+      <backgroundSkin2>LRBtn7</backgroundSkin2>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontColor1>FFFFFF</fontColor1>
+      <fontColor2>FFFFFF</fontColor2>
+      <height>39</height>
+      <heightRatio>0.0944309927360775</heightRatio>
+      <left>412</left>
+      <leftRatio>0.665589660743134</leftRatio>
+      <onClick>if (g5.operation == "new") {
+    addNew();
+} else if (g5.operation == "edit") {
+    modify();
+}
+</onClick>
+      <sizeRatio>0.276595744680851</sizeRatio>
+      <text>　确 定</text>
+      <top>338</top>
+      <topRatio>0.818401937046005</topRatio>
+      <width>141</width>
+      <widthRatio>0.227786752827141</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/button1/panel15">
+      <backgroundImg>i087_10.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <height>18</height>
+      <heightRatio>0.461538461538462</heightRatio>
+      <left>30</left>
+      <leftRatio>0.212765957446809</leftRatio>
+      <outerBottom>5</outerBottom>
+      <outerLeft>5</outerLeft>
+      <outerRight>5</outerRight>
+      <outerTop>5</outerTop>
+      <sizeRatio>0.642857142857143</sizeRatio>
+      <top>8</top>
+      <topRatio>0.205128205128205</topRatio>
+      <width>28</width>
+      <widthRatio>0.198581560283688</widthRatio>
+    </control>
+    <control type="Button" pathname="/divRoot/panel1/button3">
+      <backgroundSkin>ProjectAdmin001</backgroundSkin>
+      <backgroundSkin1>LRBtn7</backgroundSkin1>
+      <backgroundSkin2>LRBtn7</backgroundSkin2>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontColor1>FFFFFF</fontColor1>
+      <fontColor2>FFFFFF</fontColor2>
+      <height>39</height>
+      <heightRatio>0.0944309927360775</heightRatio>
+      <left>255</left>
+      <leftRatio>0.411954765751212</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel1"), false);</onClick>
+      <sizeRatio>0.276595744680851</sizeRatio>
+      <text>　取 消</text>
+      <top>338</top>
+      <topRatio>0.818401937046005</topRatio>
+      <width>141</width>
+      <widthRatio>0.227786752827141</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/button3/panel8">
+      <backgroundImg>i087_01.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <height>18</height>
+      <heightRatio>0.461538461538462</heightRatio>
+      <left>30</left>
+      <leftRatio>0.212765957446809</leftRatio>
+      <outerBottom>5</outerBottom>
+      <outerLeft>5</outerLeft>
+      <outerRight>5</outerRight>
+      <outerTop>5</outerTop>
+      <sizeRatio>0.642857142857143</sizeRatio>
+      <top>8</top>
+      <topRatio>0.205128205128205</topRatio>
+      <width>28</width>
+      <widthRatio>0.198581560283688</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel9">
+      <backgroundImg>i087_01000.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <cursor>pointer</cursor>
+      <dockX>right</dockX>
+      <dockY>top</dockY>
+      <height>25</height>
+      <heightRatio>0.0605326876513317</heightRatio>
+      <left>560</left>
+      <leftRatio>0.904684975767367</leftRatio>
+      <onClick>ee.setVisible(ee.getControl("panel1"), false);</onClick>
+      <outerBottom>5</outerBottom>
+      <outerLeft>5</outerLeft>
+      <outerRight>20</outerRight>
+      <outerTop>15</outerTop>
+      <sizeRatio>0.641025641025641</sizeRatio>
+      <top>15</top>
+      <topRatio>0.036319612590799</topRatio>
+      <width>39</width>
+      <widthRatio>0.0630048465266559</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/edit2">
+      <backgroundSkin>edit2</backgroundSkin>
+      <fontBold>true</fontBold>
+      <fontColor>C0C0C0</fontColor>
+      <height>36</height>
+      <heightRatio>0.0871670702179177</heightRatio>
+      <inputFontBold>true</inputFontBold>
+      <inputFontColor>808080</inputFontColor>
+      <left>133</left>
+      <leftRatio>0.21486268174475</leftRatio>
+      <sizeRatio>0.0861244019138756</sizeRatio>
+      <text>请在这里填写车辆类型，如：别克GL8</text>
+      <top>105</top>
+      <topRatio>0.254237288135593</topRatio>
+      <width>418</width>
+      <widthRatio>0.675282714054927</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel10">
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.0871670702179177</heightRatio>
+      <left>133</left>
+      <leftRatio>0.21486268174475</leftRatio>
+      <sizeRatio>0.346153846153846</sizeRatio>
+      <text>0</text>
+      <top>66</top>
+      <topRatio>0.159806295399516</topRatio>
+      <width>104</width>
+      <widthRatio>0.168012924071082</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel27">
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.0871670702179177</heightRatio>
+      <left>61</left>
+      <leftRatio>0.098546042003231</leftRatio>
+      <sizeRatio>0.507042253521127</sizeRatio>
+      <text>车牌照</text>
+      <top>143</top>
+      <topRatio>0.346246973365617</topRatio>
+      <width>71</width>
+      <widthRatio>0.11470113085622</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/edit6">
+      <backgroundSkin>edit2</backgroundSkin>
+      <fontBold>true</fontBold>
+      <fontColor>C0C0C0</fontColor>
+      <height>36</height>
+      <heightRatio>0.0871670702179177</heightRatio>
+      <inputFontBold>true</inputFontBold>
+      <inputFontColor>808080</inputFontColor>
+      <left>133</left>
+      <leftRatio>0.21486268174475</leftRatio>
+      <sizeRatio>0.0861244019138756</sizeRatio>
+      <text>请在这里填写有效的车牌照</text>
+      <top>144</top>
+      <topRatio>0.348668280871671</topRatio>
+      <width>418</width>
+      <widthRatio>0.675282714054927</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel7">
+      <fontBold>true</fontBold>
+      <fontColor>198DC9</fontColor>
+      <hAlign>left</hAlign>
+      <height>36</height>
+      <heightRatio>0.0871670702179177</heightRatio>
+      <left>61</left>
+      <leftRatio>0.098546042003231</leftRatio>
+      <sizeRatio>0.48</sizeRatio>
+      <text>备注信息</text>
+      <top>175</top>
+      <topRatio>0.423728813559322</topRatio>
+      <width>75</width>
+      <widthRatio>0.121163166397415</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/edit1">
+      <backgroundSkin>edit2</backgroundSkin>
+      <height>140</height>
+      <heightRatio>0.338983050847458</heightRatio>
+      <inputFontBold>true</inputFontBold>
+      <inputFontColor>808080</inputFontColor>
+      <left>133</left>
+      <leftRatio>0.21486268174475</leftRatio>
+      <multiLine>true</multiLine>
+      <sizeRatio>0.334928229665072</sizeRatio>
+      <top>183</top>
+      <topRatio>0.443099273607748</topRatio>
+      <width>418</width>
+      <widthRatio>0.675282714054927</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="4">
+    <taskSetItem name="query">
+      <script1>eio.appendString8(g5.sessionId);
+eio.appendInt32(g5.pageSize);
+eio.appendInt32(g5.pageCurrent);
+eio.appendString16(g5.func);
+eio.appendString16(g5.code);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var searchText = "";
+var pageSize = eio.readInt32();
+var pageCurrent = eio.readInt32();
+var func = eio.readString16();
+var code = eio.readString16();
+
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var companyId = db.getString(sqlResult, "companyId");
+
+//获取unionCode
+func = func.toLowerCase();
+if (func == "queryrfid") {
+    sql = "select * from unionCode where codeEpc='" + db.encode(code) + "'";
+} else if (func == "queryrqr") {
+    sql = "select * from unionCode where codeQr='" + db.encode(code) + "'";
+} else if (func == "queryrsn") {
+    sql = "select * from unionCode where codeBar='" + db.encode(code) + "'";
+} else {
+    eio.appendString8("F");
+    eio.appendString8("未知命令" + func);
+    return;
+}
+sqlResult = db.executeQuery("DB", sql);   
+if (!db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("代码不存在：" + code);
+    return;
+}
+var unionCode = db.getString(sqlResult, "id");
+
+//获取记录数量
+var condition = "";
+if (searchText != "") {
+    condition +=
+        " and (" +
+        "(cast(id as varchar(15)) like '%" + db.encode(searchText) + "%') or " +
+        "([vhcType] like '%" + db.encode(searchText) + "%') or " +
+        "([plateNumber] like '%" + db.encode(searchText) + "%') or " +
+        "([note] like '%" + db.encode(searchText) + "%')) ";
+}
+sql =
+    "SELECT count(*) as c " +
+    "FROM [log] " +
+    "WHERE (intParam2=" + unionCode + ") " + condition;
+sqlResult = db.executeQuery("DB", sql);   
+db.read(sqlResult);
+var count = db.getInt32(sqlResult, "c");
+
+sql= 
+    "SELECT id, right(left(CONVERT(varchar(100), regDatetime, 20),16),11) as regDatetime, note " +
+    "FROM [log] " +
+    "WHERE (intParam2=" + unionCode + ") " + condition + " " +
+    "ORDER BY id DESC ";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("数据库执行错误");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+eio.appendString8("T");
+eio.appendInt32(count);
+eio.appendDataSet(sqlResult,"regDatetime,note", pageSize*(pageCurrent-1), pageSize); 
+]]></script2>
+      <script3><![CDATA[if (eio.readString8() != "T") {
+    alert("无法获取您需要的数据：" + eio.readString8());
+    return;
+}
+g5.pageRecordCount = eio.readInt32();
+g5.dataset1 = eio.readDataSet();
+g5.user = eio.readString8();
+g5.pageCount = parseInt((g5.pageRecordCount-1)/g5.pageSize)+1;
+ee.setTableData(ee.getControl("tablebody2"), g5.dataset1,0);   
+ee.setText(ee.getControl("layoutxitem45"), g5.pageCurrent + "/" + g5.pageCount);
+ee.setText(ee.getControl("panel16"), "共找到" +
+    "<font color = '#d00000'>" + g5.pageRecordCount + "条</font>记录");
+
+ee.setAutoScroll(ee.getControl("layoutyitem2"), false);   
+setTimeout(function () { ee.setAutoScroll(ee.getControl("layoutyitem2"), true)}, 100); 
+]]></script3>
+    </taskSetItem>
+    <taskSetItem name="del">
+      <script1>eio.appendString8(eb.getCookie("loginToken"));
+eio.appendInt32(parseInt(g5.id));</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var deleteUserId = eio.readInt32();
+
+//获取用户信息及认证
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("您已经长时间没有登录系统了，请返回登录页面重新登录");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var companyId = db.getString(sqlResult, "companyId");
+
+//修改
+sql = "update vhcInfo set status='DEL' where id = " + deleteUserId;
+sqlResult = db.executeQuery("DB", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    alert("无法删除用户账户：" + eio.readString8());
+    return;
+}
+
+alert("删除车辆信息完成");
+query();</script3>
+    </taskSetItem>
+    <taskSetItem name="addNew">
+      <script1><![CDATA[var code1 = ee.getEditText(ee.getControl("edit2"));
+var code2 = ee.getEditText(ee.getControl("edit6"));
+var code3 = ee.getEditText(ee.getControl("edit1"));
+
+//if (storeName.length < 3) {
+//    alert("仓库名称长度不能小于3");
+//    return;
+//}
+
+eio.appendString8(eb.getCookie("loginToken"));
+eio.appendString8(code1);
+eio.appendString8(code2);
+eio.appendString8(code3);
+]]></script1>
+      <script2><![CDATA[var token = eio.readString8();
+var code1 = eio.readString8();
+var code2 = eio.readString8();
+var code3 = eio.readString8();
+
+//获取用户信息及认证
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("您已经长时间没有登录系统了，请返回登录页面重新登录");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var companyId = db.getString(sqlResult, "companyId");
+
+//创建
+sql = "insert into vhcInfo ([vhcType],[plateNumber],[note]) values ( " +
+    "'" + db.encode(code1) + "'," +
+    "'" + db.encode(code2) + "'," +
+    "'" + db.encode(code3) + "')";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    alert("无法创建用户：" + eio.readString8());
+    return;
+}
+
+alert("车辆登记完成");
+ee.setVisible(ee.getControl("panel1"), false);
+query();</script3>
+    </taskSetItem>
+    <taskSetItem name="modify">
+      <script1>var modifyUserId = ee.getText(ee.getControl("panel10"));
+var code1 = ee.getEditText(ee.getControl("edit2"));
+var code2 = ee.getEditText(ee.getControl("edit6"));
+var code3 = ee.getEditText(ee.getControl("edit1"));
+
+eio.appendString8(eb.getCookie("loginToken"));
+eio.appendInt32(parseInt(modifyUserId));
+eio.appendString8(code1);
+eio.appendString8(code2);
+eio.appendString8(code3);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var modifyUserId = eio.readInt32();
+var code1 = eio.readString8();
+var code2 = eio.readString8();
+var code3 = eio.readString8(); 
+
+//获取用户信息及认证
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("您已经长时间没有登录系统了，请返回登录页面重新登录");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+}   
+var userId = db.getString(sqlResult, "id");
+var companyId = db.getString(sqlResult, "companyId");
+
+//修改
+sql = "update vhcInfo set " +
+    "[vhcType] = '" + db.encode(code1) + "', " +
+    "[plateNumber] = '" + db.encode(code2) + "', " +
+    "[note] = '" + db.encode(code3) + "' " +
+    "where id = " + modifyUserId;
+sqlResult = db.executeQuery("DB", sql); 
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
+]]></script2>
+      <script3>if (eio.readString8() != "T") {
+    alert("无法修改用户信息：" + eio.readString8());
+    return;
+}
+
+alert("修改车辆信息完成");
+ee.setVisible(ee.getControl("panel1"), false);
+query();</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

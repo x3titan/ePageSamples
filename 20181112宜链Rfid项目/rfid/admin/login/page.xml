@@ -1,0 +1,523 @@
+<page>
+  <controls count="16">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>E0E0E0</backgroundColor>
+      <backgroundImg>登陆页.png</backgroundImg>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>484</height>
+      <left>0</left>
+      <onControlLoad><![CDATA[//onControlLoad
+/*onkeydown=function (e) {
+    if(e.keyCode==13)login();
+} */
+
+
+setTimeout(function() {
+    g5.token = eb.getCookie("loginToken");
+    if (g5.token!=null) {
+        loginToken();
+    }
+}, 500);
+
+setTimeout(function(){
+    ee.autoResize = false;
+},1000);
+
+!(function(window, document) {   
+            var size = 4;//设置验证码长度
+            function GVerify(options) { //创建一个图形验证码对象，接收options对象为参数
+                this.options = { //默认options参数值
+                    id: "", //容器Id
+                    canvasId: "verifyCanvas", //canvas的ID
+                    width: "70", //默认canvas宽度
+                    height: "30", //默认canvas高度
+                    type: "blend", //图形验证码默认类型blend:数字字母混合类型、number:纯数字、letter:纯字母
+                    code: "",
+                }
+                if(Object.prototype.toString.call(options) == "[object Object]"){//判断传入参数类型
+                    for(var i in options) { //根据传入的参数，修改默认参数值
+                        this.options[i] = options[i];
+                    }
+                }else{
+                    this.options.id = options.id;
+                }
+                
+                this.options.numArr = "2,3,4,5,6,7,8,9".split(",");
+                this.options.letterArr = getAllLetter();
+        
+                this._init();
+                this.refresh();
+            }
+        
+            GVerify.prototype = {
+                /**版本号**/
+                version: '1.0.0',
+                
+                /**初始化方法**/
+                _init: function() {
+                    var con = document.getElementById(this.options.id);
+                    var canvas = document.createElement("canvas");
+                    this.options.width = con.offsetWidth > 0 ? con.offsetWidth : "100";
+                    this.options.height = con.offsetHeight > 0 ? con.offsetHeight : "30";
+                    canvas.id = this.options.canvasId;
+                    canvas.width = this.options.width;
+                    canvas.height = this.options.height;
+                    canvas.style.cursor = "pointer";      
+                    canvas.title="点击更换验证码";
+                    canvas.innerHTML = "您的浏览器版本不支持canvas";
+                    con.appendChild(canvas);
+                    var parent = this;
+                    canvas.onclick = function(){
+                        parent.refresh();
+                    }
+                },
+                
+                /**生成验证码**/
+                refresh: function() {
+                    this.options.code = "";
+                    var canvas = document.getElementById(this.options.canvasId);
+                    if(canvas.getContext) {
+                        var ctx = canvas.getContext('2d');
+                    }else{
+                        return;
+                    }
+                    
+                    ctx.textBaseline = "middle";
+        
+                    ctx.fillStyle = randomColor(180, 240);
+                    ctx.fillRect(0, 0, this.options.width, this.options.height);
+        
+                    if(this.options.type == "blend") { //判断验证码类型
+                        var txtArr = this.options.numArr.concat(this.options.letterArr);
+                    } else if(this.options.type == "number") {
+                        var txtArr = this.options.numArr;
+                    } else {
+                        var txtArr = this.options.letterArr;
+                    }
+        
+                    for(var i = 1; i <=size; i++) {
+                        var txt = txtArr[randomNum(0, txtArr.length)];
+                        this.options.code += txt;
+                        ctx.font = randomNum(this.options.height, this.options.height) + 'px SimHei'; //随机生成字体大小
+                        ctx.fillStyle = randomColor(50, 160); //随机生成字体颜色        
+                        ctx.shadowOffsetX = randomNum(-3, 3);
+                        ctx.shadowOffsetY = randomNum(-3, 3);
+                        ctx.shadowBlur = randomNum(-3, 3);
+                        ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+                        var x = this.options.width / (size+1) * i;
+                        var y = this.options.height / 2;
+                        var deg = randomNum(-30, 30);
+                        /**设置旋转角度和坐标原点**/
+                        ctx.translate(x, y);
+                        ctx.rotate(deg * Math.PI / 180);
+                        ctx.fillText(txt, 0, 0);
+                        /**恢复旋转角度和坐标原点**/
+                        ctx.rotate(-deg * Math.PI / 180);
+                        ctx.translate(-x, -y);
+                    }
+                    /**绘制干扰线**/
+                    for(var i = 0; i < 2; i++) {
+                        ctx.strokeStyle = randomColor(40, 180);
+                        ctx.beginPath();
+                        ctx.moveTo(randomNum(0, this.options.width), randomNum(0, this.options.height));
+                        ctx.lineTo(randomNum(0, this.options.width), randomNum(0, this.options.height));
+                        ctx.stroke();
+                    }
+                    /**绘制干扰点**/
+                    for(var i = 0; i < this.options.width/4; i++) {
+                        ctx.fillStyle = randomColor(0, 255);
+                        ctx.beginPath();
+                        ctx.arc(randomNum(0, this.options.width), randomNum(0, this.options.height), 1, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                },
+                
+                /**验证验证码**/
+                validate: function(code){
+                    var code = code.toLowerCase();
+                    var v_code = this.options.code.toLowerCase();
+                    if(code == v_code){
+                        return true;
+                    }else{
+                        this.refresh();
+                        return false;
+                    }
+                }
+            }
+            /**生成字母数组**/
+            function getAllLetter() {
+                var letterStr = "a,b,c,d,e,f,g,h,i,j,k,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C,D,E,F,G,H,J,K,M,N,P,Q,R,S,T,U,V,W,X,Y,Z";
+                return letterStr.split(",");
+            }
+            /**生成一个随机数**/
+            function randomNum(min, max) {
+                return Math.floor(Math.random() * (max - min) + min);
+            }
+            /**生成一个随机色**/
+            function randomColor(min, max) {
+                var r = randomNum(min, max);
+                var g = randomNum(min, max);
+                var b = randomNum(min, max);
+                return "rgb(" + r + "," + g + "," + b + ")";
+            }
+            window.GVerify = GVerify;
+        })(window, document);
+       
+
+
+  g5.verifyCode = new GVerify(ee.getControl("panel11"));
+]]></onControlLoad>
+      <pageTitle>温感RFID区块链溯源管理平台</pageTitle>
+      <top>0</top>
+      <width>905</width>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <alpha>0.1</alpha>
+      <backgroundColor>E0E0E0</backgroundColor>
+      <dockX>center</dockX>
+      <dockY>center</dockY>
+      <height>484</height>
+      <heightRatio>1</heightRatio>
+      <left>-47</left>
+      <leftRatio>-0.0519337016574586</leftRatio>
+      <sizeRatio>0.484</sizeRatio>
+      <top>0</top>
+      <width>1000</width>
+      <widthRatio>1.10497237569061</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel2">
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>13</fontSize>
+      <hAlign>left</hAlign>
+      <height>27</height>
+      <heightRatio>0.0557851239669422</heightRatio>
+      <left>30</left>
+      <leftRatio>0.03</leftRatio>
+      <sizeRatio>0.0789473684210526</sizeRatio>
+      <text>来 自 温 感 溯 源 的 领 跑 者 </text>
+      <top>245</top>
+      <topRatio>0.506198347107438</topRatio>
+      <width>342</width>
+      <widthRatio>0.342</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel3">
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>32</fontSize>
+      <hAlign>left</hAlign>
+      <height>80</height>
+      <heightRatio>0.165289256198347</heightRatio>
+      <left>10</left>
+      <leftRatio>0.01</leftRatio>
+      <sizeRatio>0.132013201320132</sizeRatio>
+      <text>温感RFID区块链溯源管理平台</text>
+      <top>168</top>
+      <topRatio>0.347107438016529</topRatio>
+      <width>606</width>
+      <widthRatio>0.606</widthRatio>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/panel1/layoutx1">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <dockX>fill</dockX>
+      <height>385</height>
+      <heightRatio>0.795454545454545</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.385</sizeRatio>
+      <top>57</top>
+      <topRatio>0.117768595041322</topRatio>
+      <width>1000</width>
+      <widthRatio>1</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel1/layoutx1/layoutxitem1">
+      <alpha>1</alpha>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>80</heavy>
+      <height>385</height>
+      <heightRatio>1</heightRatio>
+      <left>0</left>
+      <sizeRatio>1.25</sizeRatio>
+      <top>0</top>
+      <width>308</width>
+      <widthRatio>0.308</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel1/layoutx1/layoutxitem2">
+      <alpha>1</alpha>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>80</heavy>
+      <height>385</height>
+      <heightRatio>1</heightRatio>
+      <left>308</left>
+      <leftRatio>0.308</leftRatio>
+      <sizeRatio>1.25407166123778</sizeRatio>
+      <top>0</top>
+      <width>307</width>
+      <widthRatio>0.307</widthRatio>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/panel1/layoutx1/layoutxitem3">
+      <backgroundColor>f0f0f0</backgroundColor>
+      <height>385</height>
+      <heightRatio>1</heightRatio>
+      <left>615</left>
+      <leftRatio>0.615</leftRatio>
+      <sizeRatio>1</sizeRatio>
+      <top>0</top>
+      <width>385</width>
+      <widthRatio>0.385</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/layoutx1/layoutxitem3/panel4">
+      <backgroundColor>FFFFFF</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+      <backgroundSkin>button3a000</backgroundSkin>
+      <dockX>left</dockX>
+      <height>273</height>
+      <heightRatio>0.709090909090909</heightRatio>
+      <left>0</left>
+      <sizeRatio>0.78</sizeRatio>
+      <top>91</top>
+      <topRatio>0.236363636363636</topRatio>
+      <width>350</width>
+      <widthRatio>0.909090909090909</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/layoutx1/layoutxitem3/panel4/edit1">
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>center</dockX>
+      <fontColor>808080</fontColor>
+      <hAlign>left</hAlign>
+      <height>30</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <left>37</left>
+      <leftRatio>0.105714285714286</leftRatio>
+      <sizeRatio>0.109090909090909</sizeRatio>
+      <text> 账  号</text>
+      <top>60</top>
+      <topRatio>0.21978021978022</topRatio>
+      <width>275</width>
+      <widthRatio>0.785714285714286</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/layoutx1/layoutxitem3/panel4/edit2">
+      <backgroundSkin>edit1</backgroundSkin>
+      <dockX>center</dockX>
+      <fontColor>808080</fontColor>
+      <hAlign>left</hAlign>
+      <height>30</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <inputPassword>true</inputPassword>
+      <left>37</left>
+      <leftRatio>0.105714285714286</leftRatio>
+      <sizeRatio>0.109090909090909</sizeRatio>
+      <text> 密  码</text>
+      <top>102</top>
+      <topRatio>0.373626373626374</topRatio>
+      <width>275</width>
+      <widthRatio>0.785714285714286</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/layoutx1/layoutxitem3/panel4/panel5">
+      <backgroundColor>008000</backgroundColor>
+      <backgroundSkin>rfid001</backgroundSkin>
+      <cursor>pointer</cursor>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontSize>12</fontSize>
+      <height>37</height>
+      <heightRatio>0.135531135531136</heightRatio>
+      <left>69</left>
+      <leftRatio>0.197142857142857</leftRatio>
+      <onClick>login();</onClick>
+      <sizeRatio>0.172093023255814</sizeRatio>
+      <text>登 录</text>
+      <top>215</top>
+      <topRatio>0.787545787545788</topRatio>
+      <width>215</width>
+      <widthRatio>0.614285714285714</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/layoutx1/layoutxitem3/panel4/panel6">
+      <dockX>center</dockX>
+      <fontBold>true</fontBold>
+      <fontColor>808080</fontColor>
+      <fontSize>15</fontSize>
+      <height>37</height>
+      <heightRatio>0.135531135531136</heightRatio>
+      <left>125</left>
+      <leftRatio>0.357142857142857</leftRatio>
+      <sizeRatio>0.37</sizeRatio>
+      <text>用户登录</text>
+      <top>14</top>
+      <topRatio>0.0512820512820513</topRatio>
+      <widthRatio>0.285714285714286</widthRatio>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/layoutx1/layoutxitem3/panel4/edit6">
+      <backgroundSkin>edit1</backgroundSkin>
+      <fontColor>808080</fontColor>
+      <hAlign>left</hAlign>
+      <height>30</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <left>37</left>
+      <leftRatio>0.105714285714286</leftRatio>
+      <sizeRatio>0.167597765363128</sizeRatio>
+      <text> 验证码</text>
+      <top>145</top>
+      <topRatio>0.531135531135531</topRatio>
+      <width>179</width>
+      <widthRatio>0.511428571428571</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/layoutx1/layoutxitem3/panel4/panel11">
+      <height>30</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <left>224</left>
+      <leftRatio>0.64</leftRatio>
+      <sizeRatio>0.340909090909091</sizeRatio>
+      <top>143</top>
+      <topRatio>0.523809523809524</topRatio>
+      <width>88</width>
+      <widthRatio>0.251428571428571</widthRatio>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/layoutx1/layoutxitem3/panel4/panel7">
+      <cursor>pointer</cursor>
+      <fontColor>0000FF</fontColor>
+      <hAlign>right</hAlign>
+      <height>30</height>
+      <heightRatio>0.10989010989011</heightRatio>
+      <left>237</left>
+      <leftRatio>0.677142857142857</leftRatio>
+      <onClick>alert("请联系系统管理员重置密码。")</onClick>
+      <sizeRatio>0.375</sizeRatio>
+      <text>忘记密码？</text>
+      <top>178</top>
+      <topRatio>0.652014652014652</topRatio>
+      <width>80</width>
+      <widthRatio>0.228571428571429</widthRatio>
+    </control>
+  </controls>
+  <taskSet count="3">
+    <taskSetItem name="login">
+      <script1><![CDATA[ var  gverifytf=gverify(); 
+if(!gverifytf){  
+    ee.setEditText(ee.getControl("edit6"),'');
+    alert("验证码输入错误！");
+    return;
+}  
+//eb.delCookie("companyDetailTypeName")
+g5.username = ee.getEditText(ee.getControl("edit1"));
+g5.password = ee.getEditText(ee.getControl("edit2"));
+if (g5.username.length <= 2) {
+    alert("请输入有效的用户名或者手机号码");
+    return;
+}
+eio.appendString8(g5.username);
+eio.appendString8(g5.password);
+
+]]></script1>
+      <script2>var username = eio.readString8();
+var password = eio.readString8();
+var passwordMd5 = es.getMd5(password);
+var sql,sqlResult;  
+
+sql = "exec login '" + db.encode(username) + "'," +
+    "'" + passwordMd5 + "',''";
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getInt32(sqlResult, "errorCode")!=0) {
+    eio.appendString8("F");
+    eio.appendString8(db.getString(sqlResult, "errorString"));
+    es.logWarning("用户登录失败,username=" + username + ",password=" + password);
+    return;
+} 
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult, "errorString"));
+es.logCommon("用户输入账户密码登录：" + username);
+</script2>
+      <script3>var resultCode=eio.readString8(); 
+if (resultCode=="F") {
+    alert("登录失败：" + eio.readString8());
+    g5.show(1);
+    return;
+}  
+//获取令牌
+eb.setCookie("loginToken", eio.readString8());  
+loginToken();
+
+
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="loginToken">
+      <script1>g5.token = eb.getCookie("loginToken");
+if (eb.isEmpty(g5.token)) {
+    return;              
+}
+eio.appendString8(g5.token);
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+es.logCommon(sql);
+sqlResult = db.executeQuery("DB", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("上次登录时间太久或者您更换了系统");
+    es.logCommon("用户token登录失败,token=" + token);
+    return;
+} 
+eio.appendString8("T");
+//eio.appendString8(db.getString(sqlResult, "userType"));
+es.logCommon("用户token登录,userName=" + db.getString(sqlResult,"userName") +
+    ",nickName=" + db.getString(sqlResult, "nickName"));
+
+]]></script2>
+      <script3>if (eio.readString8()!="T") {
+    //alert("登录失败："+eio.readString8());
+    //g5.show(1);
+    return;
+}
+
+//window.location.href = ee.getUrl("/admin/main");  
+//window.location.href = ee.getUrl("/admin/guidePage");
+ window.location.href = "http://139.199.23.13/eengine/index.html";
+
+
+//window.location.href=ee.pageRoot + "/main";  
+
+//var userType = eio.readString8();
+//eb.setCookie("pjUserType", userType);
+//window.location.href="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/login"
+/*if (userType=="教练") {                   
+    window.location.href = ee.pageRoot + "/cMain"; 
+} else {
+    window.location.href = ee.pageRoot + "/student/sMain"; 
+} */
+
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="gverify">
+      <script1>var res = g5.verifyCode.validate(ee.getEditText(ee.getControl("edit6")));
+if(res){ 
+return true;
+ }else{
+ return false;
+}
+        </script1>
+      <script2 />
+      <script3 />
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

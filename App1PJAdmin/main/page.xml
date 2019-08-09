@@ -1,5 +1,5 @@
 <page>
-  <controls count="20">
+  <controls count="21">
     <control type="DivRoot" pathname="/divRoot">
       <backgroundColor>ffffff</backgroundColor>
       <bgColorEnabled>true</bgColorEnabled>
@@ -13,7 +13,9 @@ if (session.get("username").length == 0) {
     response.redirect("ee.aspx?_L_=/App1PJAdmin/login");
 }
 %>
-g5.pages = new Array();
+g5.pages = new Array();     
+
+document.title="1陪驾后台管理系统"; 
 
 //创建新页面
 g5.divTab = ee.getControl("layoutyitem4");
@@ -156,7 +158,8 @@ g5.menu1 = {
             if (this.currentX == 0) this.subY--;
             this.currentSubDiv.style.height = (this.subY * 30 + 35+2) + "px";
             c = createPanel(this.currentSubDiv, "", "", 0, 0, this.currentSubDiv.offsetWidth, this.currentSubDiv.offsetHeight);
-            addSkin(c, ee.pageUrl.substr(ee.pageUrl, ee.pageUrl.indexOf("/", 1)) + "/skins/body2.png", 96, 96, 12, 11, 72, 74);
+            //addSkin(c, ee.pageUrl.substr(ee.pageUrl, ee.pageUrl.indexOf("/", 1)) + "/skins/body2.png", 96, 96, 12, 11, 72, 74); 
+            addSkin(c, "/App1PJAdmin/skins/body2.png","9x",96, 96, 12, 11, 72, 74);
             c.style.zIndex = 0;
             if ((this.subY == 0) &amp;&amp; (this.currentX == 0)) {
             } else {
@@ -196,12 +199,14 @@ g5.menu1 = {
         c = createPanel(this.currentSubDiv, "", "", 24 + this.currentX * this.xSize + 100, 11 + this.subY * 30, 18, 19);
         ee.setImage(c, ee.pageUrl + "/dot.png","center","","");
         c.style.zIndex = 100;
-        c = createPanel(this.currentSubDiv, "", "", 40 + this.currentX * this.xSize + 100, 11 + this.subY * 30, this.xSize - 13, 19);
+        c = createPanel(this.currentSubDiv, "", "", 40 + this.currentX * this.xSize + 100, 11 + this.subY * 30, this.xSize - 13, 19);  
+        
+        //addSkin(c, ee.pageUrl.substr(ee.pageUrl, ee.pageUrl.indexOf("/", 1)) + "/skins/body2.png", 96, 96, 12, 11, 72, 74);
         addText(c, name, "left", "middle", "宋体",9, "000000", "normal");
         c.mainDiv = this.currentRootDiv;
         c.text = name;
         c.url = url;
-        c.style.cursor = "hand";
+        c.style.cursor = "pointer";
         c.style.zIndex = 100;
         c.onclick = function () {
             g5.menu1.closeByButton(this);
@@ -252,9 +257,12 @@ var url18="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/authenticati
 var url19="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/bankCard";     //银行卡管理
 var url20="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/messageManagement";     //消息管理  monitor
 var url21="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/monitorChange"; //主页  
-var url22="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/vouchers"; //代金券
-
-/*//台账管理
+var url22="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/vouchers"; //代金券 
+var url23="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/adminUserCenter"; //密码修改
+var url24="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/adminUserCenter1"; //登录后台用户管理（权限） 
+var url25="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJAdmin/telSale"; //学车电销管理 
+var url26="http://m.1peijia.com:88/EEngine/ee.aspx?_L_=/App1PJadmin/backpayadmin";//后付费简版
+/*///台账管理
 //g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x+200, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
 g5.menu1.appendMenu($g("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
 g5.menu1.addMainMenu("台账报表","");
@@ -273,6 +281,7 @@ g5.menu1.addMainMenu("订单管理","");
 g5.menu1.addMainMenu("","");
 
 */
+var lv = eb.getCookie("lv"); 
 
 //g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x+200, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
 g5.menu1.appendMenu($g("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
@@ -286,7 +295,14 @@ g5.menu1.addMainMenu("陪驾管理","");
     g5.menu1.addSubMenu("订单日志管理",url10);
     g5.menu1.addSubMenu("银行卡管理",url19);
     g5.menu1.addSubMenu("代金券管理",url22);   
-    g5.menu1.addSubMenu("消息管理",url20);   
+    g5.menu1.addSubMenu("消息管理",url20);
+    if(lv ==0){
+        g5.menu1.addSubMenu("后台用户管理",url24);
+    }else {
+        g5.menu1.addSubMenu("密码修改",url23);
+    }
+    g5.menu1.addSubMenu("后付费简版",url26);
+       
 g5.menu1.addMainMenu("","");  
 
 //陪驾受理
@@ -294,7 +310,8 @@ g5.menu1.addMainMenu("","");
 g5.menu1.appendMenu($g("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
 g5.menu1.addMainMenu("陪驾受理","");
     g5.menu1.addSubMenu("意见受理",url17);
-    g5.menu1.addSubMenu("教练认证",url18);   
+    g5.menu1.addSubMenu("教练认证",url18); 
+     g5.menu1.addSubMenu("驾校报名",url25);  
 g5.menu1.addMainMenu("","");  
 
 //陪驾统计
@@ -309,8 +326,12 @@ g5.menu1.addMainMenu("","");
 
 
 var url="http://192.168.50.104/gismap/GIS_Main.htm?UserId="+g5.userId+"";
-g5.appendPage("主页", url21,false);
+g5.appendPage("主页", url21,false);   
 
+
+//add code
+var loginName = eb.getCookie("username");
+ee.setText(ee.getControl("panel4"),"欢迎："+loginName);
 
 
 ]]></onControlLoad>
@@ -321,10 +342,12 @@ g5.userId = "<%
        //response.redirect("ee.aspx?_L_=/web_jintan/login");
     }
     userId;
-%>";
-]]></onPageCreate>
+%>"; 
+
+
+ ]]></onPageCreate>
       <top>0</top>
-      <width>833</width>
+      <width>1232</width>
     </control>
     <control type="LayoutY" pathname="/divRoot/layouty1">
       <dockX>fill</dockX>
@@ -332,9 +355,9 @@ g5.userId = "<%
       <height>816</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>0.941379310344828</sizeRatio>
+      <sizeRatio>0.803940886699507</sizeRatio>
       <top>0</top>
-      <width>833</width>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
@@ -347,25 +370,25 @@ g5.userId = "<%
       <hAlign>left</hAlign>
       <heavyEnabled>false</heavyEnabled>
       <height>80</height>
-      <heightRatio>0.0976800976800977</heightRatio>
+      <heightRatio>0.0980392156862745</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0919540229885057</sizeRatio>
+      <sizeRatio>0.0788177339901478</sizeRatio>
       <top>0</top>
-      <width>833</width>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15">
       <dockX>right</dockX>
       <height>69</height>
       <heightRatio>0.8625</heightRatio>
-      <left>-50</left>
-      <leftRatio>-0.0149425287356322</leftRatio>
+      <left>349</left>
+      <leftRatio>0.130049261083744</leftRatio>
       <outerRight>50</outerRight>
       <sizeRatio>0.0828331332533013</sizeRatio>
       <top>1</top>
       <topRatio>0.0125</topRatio>
       <width>833</width>
-      <widthRatio>0.957471264367816</widthRatio>
+      <widthRatio>0.820689655172414</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel12">
       <backgroundImg>首页.png</backgroundImg>
@@ -457,7 +480,8 @@ g5.menu1.show(0);</onClick>
       <heightRatio>1.01449275362319</heightRatio>
       <left>753</left>
       <leftRatio>0.903961584633854</leftRatio>
-      <onClick>window.location.href = ee.pageRoot + "/login"; </onClick>
+      <onClick>
+window.location.href = ee.pageRoot + "/login"; </onClick>
       <outerRight>150</outerRight>
       <sizeRatio>1</sizeRatio>
       <top>2</top>
@@ -491,15 +515,33 @@ g5.menu1.show(2);
       <width>70</width>
       <widthRatio>0.0840336134453782</widthRatio>
     </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel4">
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <fontBold>true</fontBold>
+      <fontColor>FFFFFF</fontColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSizeAuto>45</fontSizeAuto>
+      <height>50</height>
+      <heightRatio>0.625</heightRatio>
+      <left>396</left>
+      <leftRatio>0.321374045801527</leftRatio>
+      <sizeRatio>0.333333333333333</sizeRatio>
+      <text>登录名</text>
+      <top>31</top>
+      <topRatio>0.3875</topRatio>
+      <width>141</width>
+      <widthRatio>0.114503816793893</widthRatio>
+    </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
       <backgroundColor>d0d0d0</backgroundColor>
       <height>714</height>
-      <heightRatio>0.875457875457875</heightRatio>
+      <heightRatio>0.875</heightRatio>
       <left>0</left>
-      <sizeRatio>0.824137931034483</sizeRatio>
+      <sizeRatio>0.703448275862069</sizeRatio>
       <top>80</top>
-      <topRatio>0.0976800976800977</topRatio>
-      <width>833</width>
+      <topRatio>0.0980392156862745</topRatio>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem2/layoutx1">
@@ -509,9 +551,9 @@ g5.menu1.show(2);
       <height>714</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>0.824137931034483</sizeRatio>
+      <sizeRatio>0.703448275862069</sizeRatio>
       <top>0</top>
-      <width>833</width>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2">
@@ -519,9 +561,9 @@ g5.menu1.show(2);
       <height>714</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>0.824137931034483</sizeRatio>
+      <sizeRatio>0.703448275862069</sizeRatio>
       <top>0</top>
-      <width>833</width>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutY" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2">
@@ -531,20 +573,20 @@ g5.menu1.show(2);
       <height>714</height>
       <heightRatio>1</heightRatio>
       <left>0</left>
-      <sizeRatio>0.824137931034483</sizeRatio>
+      <sizeRatio>0.703448275862069</sizeRatio>
       <top>0</top>
-      <width>833</width>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4">
       <backgroundColor>8080FF</backgroundColor>
       <heavyEnabled>false</heavyEnabled>
       <height>36</height>
-      <heightRatio>0.0502092050209205</heightRatio>
+      <heightRatio>0.0504201680672269</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0413793103448276</sizeRatio>
+      <sizeRatio>0.0354679802955665</sizeRatio>
       <top>0</top>
-      <width>833</width>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4/panel2">
@@ -555,10 +597,10 @@ g5.menu1.show(2);
       <height>2</height>
       <heightRatio>0.0555555555555556</heightRatio>
       <left>0</left>
-      <sizeRatio>0.00229885057471264</sizeRatio>
+      <sizeRatio>0.00197044334975369</sizeRatio>
       <top>34</top>
       <topRatio>0.944444444444444</topRatio>
-      <width>833</width>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4/panel17">
@@ -569,21 +611,21 @@ g5.menu1.show(2);
       <height>11</height>
       <heightRatio>0.305555555555556</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0126436781609195</sizeRatio>
+      <sizeRatio>0.0108374384236453</sizeRatio>
       <top>0</top>
-      <width>833</width>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem5">
       <backgroundColor>d0d0d0</backgroundColor>
       <backgroundImg>xz_bn.png</backgroundImg>
       <height>678</height>
-      <heightRatio>0.949790794979079</heightRatio>
+      <heightRatio>0.949579831932773</heightRatio>
       <left>0</left>
-      <sizeRatio>0.782758620689655</sizeRatio>
+      <sizeRatio>0.667980295566503</sizeRatio>
       <top>36</top>
-      <topRatio>0.0502092050209205</topRatio>
-      <width>833</width>
+      <topRatio>0.0504201680672269</topRatio>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem3">
@@ -592,13 +634,13 @@ g5.menu1.show(2);
       <fontColor>FFFFFF</fontColor>
       <heavyEnabled>false</heavyEnabled>
       <height>22</height>
-      <heightRatio>0.0268620268620269</heightRatio>
+      <heightRatio>0.0269607843137255</heightRatio>
       <left>0</left>
-      <sizeRatio>0.0252873563218391</sizeRatio>
+      <sizeRatio>0.0216748768472906</sizeRatio>
       <text>点亮城市生活梦想</text>
       <top>794</top>
-      <topRatio>0.973137973137973</topRatio>
-      <width>833</width>
+      <topRatio>0.973039215686274</topRatio>
+      <width>1232</width>
       <widthRatio>1</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel1">
@@ -613,7 +655,7 @@ g5.menu1.show(2);
       <top>-1</top>
       <topRatio>-0.0454545454545455</topRatio>
       <width>223</width>
-      <widthRatio>0.25632183908046</widthRatio>
+      <widthRatio>0.219704433497537</widthRatio>
     </control>
     <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel3">
       <dockX>right</dockX>
@@ -621,14 +663,14 @@ g5.menu1.show(2);
       <fontColor>FFFFFF</fontColor>
       <height>25</height>
       <heightRatio>1.13636363636364</heightRatio>
-      <left>493</left>
-      <leftRatio>0.609195402298851</leftRatio>
+      <left>892</left>
+      <leftRatio>0.665024630541872</leftRatio>
       <sizeRatio>0.0735294117647059</sizeRatio>
-      <text>地址：上海市嘉定区金沙江西路388号  电话 400-026-9090   </text>
+      <text>地址：上海市嘉定区金沙江西路388号  电话 400-606-6178   </text>
       <top>-1</top>
       <topRatio>-0.0454545454545455</topRatio>
       <width>340</width>
-      <widthRatio>0.390804597701149</widthRatio>
+      <widthRatio>0.334975369458128</widthRatio>
     </control>
   </controls>
   <taskSet count="4">

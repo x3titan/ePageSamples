@@ -1,0 +1,456 @@
+<page>
+  <controls count="1">
+    <control type="DivRoot" pathname="/divRoot">
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <height>484</height>
+      <left>0</left>
+      <onPageLoad><![CDATA[<%
+function main() { 
+var postData = request.getPostData().trim() + " "; 
+es.logCommon(postData) 
+var postDataType = "common";
+var params;
+if (postData.substr(0, 1) == "{") {
+    postDataType = "json";
+}
+if (postDataType == "json") {
+    params = eval("(" + postData + ")");
+} else {
+    params = postData.trim().split("&amp;");
+    for (var i = 0; i < params.length; i++) {
+        params[i] = params[i].split("=");
+    }
+}  
+function encodeResult(resultCode, resultString, sessionId) {
+    var r = "";
+    if (postDataType == "json") {
+        r = "{ \"resultCode\":" + resultCode + ",\"resultString\":\"" + resultString + "\"";
+        if (sessionId != undefined) r += ",\"sessionId\":\"" + sessionId + "\"";
+        r += " }";
+    } else {
+        r = "resultCode=" + resultCode + "&amp;resultString=" + resultString;
+        if (sessionId != undefined) r += "&amp;sessionId=" + sessionId;
+    }
+    return r;
+}
+function linkBlock(key, packet) {
+    //创建链条
+    //var r = es.post(
+    //    "https://maas-proxy.cfapps.eu10.hana.ondemand.com/798e439e-8058-40b1-a0bf-9969ea1f3f60/rpc",
+    //    "{\"method\": \"create\", \"params\": [\"stream\", \"S02\", true]}");
+    //{"result":"af5ed0f4b65a6157d800c3391c1f8cca312e06302da98598a9ffd295eeaa44cb","error":null,"id":null}
+    //uplink
+    es.setEncoding("utf-8");
+    es.setPostHttpsProtocol("tls12");
+    es.addPostHeader("apikey", "NNYAdhT3bfNHrBBHDY9pGX8H3bacLutkBKZCY8wQ5X72Gu54Uq6DM7h3Sbv38Fwm");
+    var r = es.post(
+        "https://maas-proxy.cfapps.eu10.hana.ondemand.com/798e439e-8058-40b1-a0bf-9969ea1f3f60/rpc",
+        "{\"method\": \"publish\", \"params\": [\"Demo_iLian\", \"" + key + "\", " +
+        "\"" + es.stringEncodeX2(packet) + "\"]}"
+        );
+    es.logCommon("加入区块链结果：" + r);
+}
+
+function dbExec(sql) {
+    var sqlResult; 
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-2, "database connection error");
+    }
+    db.read(sqlResult);
+    return encodeResult(db.getInt32(sqlResult,"errorCode"),db.getString(sqlResult,"errorString"));
+}
+
+function arrayToJson(value) {
+    var s = "[";
+    for (var i = 0; i < value.length; i++) {
+        if (s=="[") {
+            s += "\"";
+        } else s+= ",\"";
+        s += value[i] + "\"";
+    }
+    s += "]";
+    return s;
+}
+function array2ToJson(value) {
+    var s = "[";
+    for (var i = 0; i < value.length; i++) {
+        if (s=="[") {
+        } else s+= ",";
+        s += arrayToJson(value[i]);
+    }
+    s += "]";
+    return s;
+}
+
+var func = params.func;
+if (func == "login") {
+    //设备登录请求
+    var username = params.username;
+    var password = params.password;
+    var passwordMd5 = es.getMd5(password);
+    var deviceId = params.deviceId;   
+    var sql,sqlResult;  
+    sql = "exec login '" + db.encode(username) + "'," +
+        "'" + passwordMd5 + "',"+
+        "'" + deviceId + "'";  
+    sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-1,"database connection error");
+    }
+    db.read(sqlResult);
+    if (db.getInt32(sqlResult, "errorCode")!=0) {
+        return encodeResult(db.getInt32(sqlResult,"errorCode"), db.getString(sqlResult, "errorString"));
+    }
+    if (params.aaaa==undefined) {
+        es.logWarning("undefined");
+    } 
+    return encodeResult(0, "login success", db.getString(sqlResult, "errorString"));
+} else if (func == "storeIn") { //入库
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec storeIn '" + db.encode(params.sessionId) + "'," +
+            params.codeStore + "," +   
+            "'" + db.encode(params.type) + "'," +  
+             "'" + db.encode(params.codeRfid[i]) + "'," +            
+            "'" + db.encode(params.gps) + "';\r\n";              
+        linkBlock(params.codeRfid[i], "入库,codeStore=" + params.codeStore);    
+    } 
+    return dbExec(sql);
+} else if (func == "storeOut") { //出库
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec storeOut '" + db.encode(params.sessionId) + "'," +
+            "'" + db.encode(params.type) + "'," +  
+            "'" + db.encode(params.codeRfid[i]) + "'," +              
+            "'" + db.encode(params.gps) + "';\r\n";
+        linkBlock(params.codeRfid[i], "出库");    
+    }
+    return dbExec(sql);
+} else if (func == "vhcIn") {  //上车
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec vhcIn '" + db.encode(params.sessionId) + "'," +
+            params.codeVhc + "," +
+            "'" + db.encode(params.type) + "'," + 
+            "'" + db.encode(params.codeRfid[i]) + "'," +               
+            "'" + db.encode(params.gps) + "';\r\n";
+        linkBlock(params.codeRfid[i], "上车,codeVhc=" + params.codeVhc);    
+    }
+    return dbExec(sql);
+} else if (func == "vhcOut") { //下车
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec vhcOut '" + db.encode(params.sessionId) + "'," +
+            "'" + db.encode(params.type) + "'," +  
+            "'" + db.encode(params.codeRfid[i]) + "'," +              
+            "'" + db.encode(params.gps) + "';\r\n";
+        linkBlock(params.codeRfid[i], "下车");    
+    }
+    return dbExec(sql);
+} else if (func == "frgIn") {  //进冰箱
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec frgIn '" + db.encode(params.sessionId) + "'," +
+            params.codeFrg + "," +
+            "'" + db.encode(params.type) + "'," +  
+            "'" + db.encode(params.codeRfid[i]) + "'," +              
+            "'" + db.encode(params.gps) + "';\r\n";
+        linkBlock(params.codeRfid[i], "进冰箱,codeFrg=" + params.codeFrg);    
+    }
+    return dbExec(sql);
+} else if (func == "frgOut") { //出冰箱
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec frgOut '" + db.encode(params.sessionId) + "'," +
+            "'" + db.encode(params.type) + "'," + 
+            "'" + db.encode(params.codeRfid[i]) + "'," +               
+            "'" + db.encode(params.gps) + "';\r\n";
+        linkBlock(params.codeRfid[i], "出冰箱");    
+    }
+    return dbExec(sql);
+} else if (func == "link") { //关联
+    var sql="";  
+    for (var i = 0; i < params.epc.length; i++) {
+        sql +=
+            "exec cmdLink '" + db.encode(params.sessionId) + "'," +
+            "'" + db.encode(params.epc[i]) + "'," +
+            "'" + db.encode(params.qr[i]) + "'," +
+            "'" + db.encode(params.sn[i]) + "';\r\n";     
+        linkBlock(params.epc[i], "关联：" + params.epc[i] + "," + params.qr[i] + "," + params.sn[i]);    
+    }
+    return dbExec(sql);
+} else if (func == "prod_Info") { //赋码
+    if (params.type != "epc") {
+        return encodeResult(-10, "type code does not support");
+    }
+    var sql=" declare @userId as bigint; declare @deviceId as varchar(100);  declare @unionCodeid as bigint; ";  
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql +=
+            "exec cmdLink  '" + db.encode(params.sessionId) + "'," +
+            "'" + db.encode(params.codeRfid[i]) + "'," +
+            "'" + db.encode("") + "'," +
+            "'" + db.encode("") + "'; " +
+            "update unionCode set " + 
+            "prodName='" + db.encode(params.prod_Name[i]) + "'," +
+            "[position]='赋码'," +
+            "manufact='" + db.encode(params.manufact[i]) + "'," +
+            "batch='" + db.encode(params.batch[i]) + "'," +
+            "produceDate='" + db.encode(params.produce_Date[i]) + "'," +
+            "validDate='" + db.encode(params.valid_Date[i]) + "'," +
+            "codeLabel='" + db.encode(params.codeLabel[i]) + "'," +
+            "sn='" + db.encode(params.sn[i]) + "' " +
+            "where codeEpc='" +db.encode(params.codeRfid[i])+ "';\r\n ";
+        sql += 
+        "select @userId = userId,@deviceId=deviceId from [session] where sessionId = '" + db.encode(params.sessionId) + "' "+
+        "select @unionCodeid = id from unionCode where codeEpc = '"+db.encode(params.codeRfid[i])+"';\r\n "+
+        "insert into log (userId, logType, logSubType, epc, intParam1, intParam2,strParam4, note) values (@userId, 'setInfo', 'rfid', " +
+                "'" + db.encode(params.codeRfid[i]) + "', 0, @unionCodeid,@deviceId," +
+                "'赋码：" + db.encode(params.codeRfid[i]) + "');\r\n"; 
+        linkBlock(params.codeRfid[i], "赋码");    
+    }
+    return dbExec(sql);
+} else if (func == "temp") { //汇报温度
+    if (params.type != "epc") {
+        return encodeResult(-10, "type code does not support");
+    }
+    //var sql=" declare @userId as bigint; declare @deviceId as varchar(100);  "; 
+    //for (var i = 0; i < params.codeRfid.length; i++) {  
+    //   sql += "select @userId = userId,@deviceId=deviceId from [session] where sessionId = '" + db.encode(params.sessionId) + "' "+
+    //     "insert into [logTemperature] ([codeEpc],[address],[temperature],[userId],[deviceId]) values (" + 
+    //        "'" + db.encode(params.codeRfid[i]) + "'," + 
+    //        "'" + db.encode(params.gps) + "'," +
+    //        "" + parseFloat(params.temp[i]) + ",@userId,@deviceId);\r\n";
+    //    linkBlock(params.codeRfid[i], "温度:" + params.temp[i]);    
+    //}
+    //if (!db.executeNoneQuery("DB", sql)) {
+    //    return encodeResult(-2, "database connection error");
+    //}
+    //return encodeResult(0, "success");
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) { 
+     sql +=
+            "exec usp_temp '" + db.encode(params.sessionId) + "'," + 
+            "'" + db.encode(params.type) + "'," +
+            "'" + db.encode(params.codeRfid[i]) + "'," +
+            "'" + db.encode(params.gps) + "'," +
+            "'" + db.encode(params.temp[i]) + "';\r\n";   
+        linkBlock(params.codeRfid[i], "温度:" + params.temp[i]);    
+    }
+    return dbExec(sql);
+    
+} else if (func == "tempUpload") { //汇报温度计温度
+    var sql = "";  
+    
+    for (var i = 0; i < params.temp.length; i++) {  
+    if(params.temp[i]==0){
+    }else{
+      sql +=
+            "exec tempUpload '" + db.encode(params.sessionId) + "'," + 
+            "'" + db.encode(params.themId[i]) + "'," +
+            "'" + db.encode(params.temp[i]) + "'," +
+            "'" + db.encode(params.gps[i]) + "'," + 
+            "'" + db.encode(params.dateTime[i]) + "';\r\n";     
+        linkBlock(params.themId[i], "温度计温度上传" + params.temp[i] + "," + params.gps[i] + "," + params.dateTime[i]);  
+        } 
+    }
+    if(sql==""){
+        return encodeResult(0, "success");
+    }  
+    return dbExec(sql);
+    
+} else if (func == "gps") { //汇报gps坐标
+    if (params.type != "epc") {
+        return encodeResult(-10, "type code does not support");
+    }               
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "insert into [logGps] ([codeEpc],[gps]) values (" + 
+            "'" + db.encode(params.codeRfid[i]) + "'," +
+            "'" + db.encode(params.gps[i]) + "');\r\n";
+        linkBlock(params.codeRfid[i], "GPS坐标:" + params.gps[i]);    
+    }
+    if (!db.executeNoneQuery("DB", sql)) {
+        return encodeResult(-2, "database connection error");
+    }
+    return encodeResult(0, "success");
+} else if (func == "bind") { //批量捆绑
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec rfidBind3 '" + db.encode(params.sessionId) + "'," +
+            "'" + db.encode(params.type) + "'," +
+            "'" + db.encode(params.codeRfid[i]) + "'," +
+            "'" + db.encode(params.codeRfidParent[0]) + "';\r\n";
+    }
+    return dbExec(sql);
+} else if (func == "unbind") { //批量解绑
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec rfidUnbind3 '" + db.encode(params.sessionId) + "'," +
+            "'" + db.encode(params.type) + "'," +
+            "'" + db.encode(params.codeRfid[i]) + "';\r\n";
+    }
+    return dbExec(sql);
+} else if (func == "setStatus") { //设置rfid状态
+    var sql = "";
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec setStatus3 '" + db.encode(params.sessionId) + "'," +
+            "'" + db.encode(params.type) + "'," +
+            "'" + db.encode(params.codeRfid[i]) + "', " +   
+            "'" + db.encode(params.gps) + "', " +
+            "'" + db.encode(params.status[i]) + "';\r\n";
+        linkBlock(params.codeRfid[i], "状态改变:" + params.status[i]);    
+    }
+    return dbExec(sql);
+} else if (func == "uploadStoreDetail") { //上传当前库中所有标签
+    var sql = ""; 
+    var newdate =  new Date();
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        sql += "exec usp_uploadStoreDetail '" + db.encode(params.sessionId) + "'," +
+            "'" + db.encode(params.codeStore) + "'," +   
+            "'" + db.encode(params.type) + "'," +  
+            "'" + db.encode(params.gps) + "'," +  
+            "'" + db.encode(params.codeRfid[i]) + "'," +               
+            "'" + db.encode(newdate) + "';\r\n";              
+        linkBlock(params.codeRfid[i], "盘询,codeStore=" + params.codeStore);    
+    } 
+    return dbExec(sql);
+} else if (func == "saveConfig") { //保存设备参数
+    var sql = "";
+    for (var i = 0; i < params.keys.length; i++) {
+        sql += "update [config] set " + 
+            "[value]='" + parseFloat(params.values[i]) + "' " +
+            "where [name]='" + db.encode(params.keys[i]) + "';\r\n";
+    }
+    if (!db.executeNoneQuery("DB", sql)) {
+        return encodeResult(-2, "database connection error");
+    }
+    return encodeResult(0, "success");
+} else if (func == "loadConfigAll") { //读取所有参数
+    var sql = "select * from [config] order by [name];";
+    var sqlResult = db.executeQuery("DB", sql);
+    if (sqlResult == null) {
+        return encodeResult(-2, "database connection error");
+    }
+    var v = [[],[]], i = 0;
+    while (db.read(sqlResult)) {
+        v[0][i] = db.getString(sqlResult,"name");
+        v[1][i] = db.getString(sqlResult,"value");
+        i++;
+    }
+    var r = "{\"resultCode\":0,\"resultString\":\"success\"," + 
+        "\"keys\":" + arrayToJson(v[0]) + "," +
+        "\"values\":" + arrayToJson(v[1]) + "" +
+        "}";
+    return r;
+} else if (func == "loadConfig") { //读取设备指定的参数
+    var sql = "";
+    var v = [[],[]];
+    for (var i = 0; i < params.keys.length; i++) {
+        //common information
+        sql = "select * from [config] where [name] = '" + db.encode(params.keys[i]) + "'";
+        sqlResult = db.executeQuery("DB", sql);
+        if (sqlResult == null) {
+            return encodeResult(-2, "database connection error");
+        }
+        if (!db.read(sqlResult)) {
+            for(var j = 0; j < v.length; j++) v[j][i] = "";
+        } else {
+            v[0][i] = db.getString(sqlResult,"name");
+            v[1][i] = db.getString(sqlResult,"value");
+        }
+    }
+    var r = "{\"resultCode\":0,\"resultString\":\"success\"," + 
+        "\"keys\":" + arrayToJson(v[0]) + "," +
+        "\"values\":" + arrayToJson(v[1]) + "" +
+        "}";
+    return r;
+} else if (func == "query") { //查询
+    if (params.type != "epc") {
+        return encodeResult(-10, "type code does not support");
+    }
+    var sql = "";
+    var v = [[],[],[],[],[],[],[],[],[],[],[],[]]; //12
+    var unionCode;
+    for (var i = 0; i < params.codeRfid.length; i++) {
+        //common information
+        sql = "select * from viewUnionCodeParent where codeEpc = '" + db.encode(params.codeRfid[i]) + "'";
+        sqlResult = db.executeQuery("DB", sql);
+        if (sqlResult == null) {
+            return encodeResult(-2, "database connection error");
+        }
+        if (!db.read(sqlResult)) {
+            for(var j = 0; j < v.length; j++) v[j][i] = "";
+            unionCode = "-1";
+        } else {
+            unionCode = db.getString(sqlResult,"id");
+            v[0][i] = db.getString(sqlResult,"prodName");
+            v[1][i] = db.getString(sqlResult,"manufact");
+            v[2][i] = db.getString(sqlResult,"batch");
+            v[3][i] = db.getString(sqlResult,"produceDate");
+            v[4][i] = db.getString(sqlResult,"validDate");
+            v[5][i] = db.getString(sqlResult,"sn");
+            v[6][i] = db.getString(sqlResult,"codeLabel");
+            v[7][i] = db.getString(sqlResult,"codeEpc");
+            //status code
+            v[8][i] = db.getString(sqlResult,"position");
+            //parent node
+            if (db.getString(sqlResult, "parentEpc") == "-1") {
+                v[10][i] = "";
+            } else {
+                v[10][i] = db.getString(sqlResult,"pCodeEpc");
+            }
+            //children node
+            v[11][i] = [];
+            sql = "select * from unionCode where parentEpc = '" + db.encode(db.getString(sqlResult, "parentEpc")) + "'";
+            sqlResult = db.executeQuery("DB", sql);
+            if (sqlResult == null) {
+                return encodeResult(-10, "database connection error");
+            }
+            var k = 0;
+            while (db.read(sqlResult)) {
+                v[11][i][k] = db.getString(sqlResult,"codeEpc");
+            }
+        }
+        //gps position
+        v[9][i] = "";
+    }
+    var r;
+    r = "{\"resultCode\":0,\"resultString\":\"success\"," + 
+        "\"query\":{" +
+        "\"epc\":" + arrayToJson(v[7]) + "," +
+        "\"sn\":" + arrayToJson(v[5]) + "," +
+        "\"codeLabel\":" + arrayToJson(v[6]) + "," +
+        "\"prod_Name\":" + arrayToJson(v[0]) + "," +
+        "\"manufact\":" + arrayToJson(v[1]) + "," +
+        "\"batch\":" + arrayToJson(v[2]) + "," +
+        "\"produce_Date\":" + arrayToJson(v[3]) + "," +
+        "\"valid_Date\":" + arrayToJson(v[4]) + "," +
+        "\"status\":" + arrayToJson(v[8]) + "," +
+        "\"gps\":" + arrayToJson(v[9]) + "," +
+        "\"codeParent\":" + arrayToJson(v[10]) + "," +
+        "\"codeChildren\":" + array2ToJson(v[11]) + "" +
+        "}}";
+    return r;
+} else {
+    return encodeResult(-100, "unknow command: " + func);
+}
+
+                  
+
+} 
+
+main();
+
+%>]]></onPageLoad>
+      <pageTitle>string</pageTitle>
+      <top>0</top>
+      <width>754</width>
+    </control>
+  </controls>
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>
