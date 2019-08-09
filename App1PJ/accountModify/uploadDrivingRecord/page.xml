@@ -1,0 +1,510 @@
+<page>
+  <controls count="16">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>775</width>
+      <height>819</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>000000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onControlLoad>var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+if (!isIOS) {
+    ee.getControl("layoutyitem1").heavy = 0;
+}  
+
+getUserPhoto()//读取用户头像
+
+//设置文件上传进度条
+g5.setProgress = function (percent) {
+    var c = ee.getControl("panel11");
+    ee.setRect(c,null,null,parseInt(eb.getDivRect(c.parentNode).w*percent),null);
+    ee.setText(ee.getControl("panel14"),
+        "文件正在上传中，请耐心等候...\r\n" + parseInt(percent*100) + "%");    
+}
+
+//setTimeout(function () {
+  // alert("请认真填写个人资料和信息，并确保每一项的真实性。完成后，我们后台工作人员会进行人工审核。"+
+   // "只有审核通过后您的账户才能正式开通并接受用户的订单。");
+   // }, 1000);    
+
+g5.onDeviceReady = function () {
+    g5.initUpload("fileupload2");
+}
+document.addEventListener("deviceready", g5.onDeviceReady, false);
+
+g5.initUpload = function (controlName) {
+    var cc = ee.getControl(controlName);
+    if (eb.isEmpty(cc)) return;
+    var isIOS = !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+    if (isIOS) return;
+    eval(
+        "cc.onclick = function () {\n"+
+        "    g5.currentUploadName='" + controlName + "';\n"+
+        "    g5.openFileSelector();\n"+
+        "}\n"
+    ); 
+    g5.pgFileTransfer = null;    
+    g5.openFileSelector = function() {
+        var source = navigator.camera.PictureSourceType.PHOTOLIBRARY;
+        //描述类型，取文件路径
+        var destinationType = navigator.camera.DestinationType.FILE_URI;
+        //媒体类型，设置为ALLMEDIA即支持任意文件选择
+        var mediaType = navigator.camera.MediaType.ALLMEDIA;
+        var options={
+        quality : 50,
+        destinationType : destinationType,
+        sourceType : source,
+        mediaType : mediaType    
+        };
+        navigator.camera.getPicture(g5.uploadFile,g5.uploadBroken,options);
+    };
+    //上传意外终止处理。
+    g5.uploadBroken = function(message){
+      alert(message);
+      g5.pgFileTransfer.abort();
+    };
+    //上传过程回调，用于处理上传进度，如显示进度条等。
+    g5.uploadProcessing = function(progressEvent){
+      if (progressEvent.lengthComputable) {
+        //已经上传
+        var loaded=progressEvent.loaded;
+        //文件总长度
+        var total=progressEvent.total;
+        //计算百分比，用于显示进度条
+        var percent=parseInt((loaded/total)*100);
+        //换算成MB
+        loaded=(loaded/1024/1024).toFixed(2);
+        total=(total/1024/1024).toFixed(2);
+        $('#process_info').html(loaded+'/'+total);
+        $('.upload_current_process').css({'width':percent+'%'});
+      }
+    };
+    
+    //选择文件后回调上传。
+    g5.uploadFile = function(fileURI) {
+      var options = new FileUploadOptions();
+      options.fileKey = "file";
+      options.fileName = fileURI.substr(fileURI.lastIndexOf('/') + 1);
+      options.mimeType = "multipart/form-data";
+      options.chunkedMode = false;
+      g5.pgFileTransfer = new FileTransfer();
+      eio.clear();
+      //eio.appendString8(options.fileName);
+      var uploadUrl=encodeURI("http://m.1peijia.com:88/eengine/ee.aspx?_L_=/App1PJ/accountModify&amp;_F_=U&amp;controlName="+g5.currentUploadName+"&amp;eio="+eio.buffo);
+      g5.pgFileTransfer.upload(fileURI,uploadUrl,g5.uploadSuccess, g5.uploadFailed, options);
+      //获取上传进度
+      g5.pgFileTransfer.onprogress = g5.uploadProcessing;
+      //显示进度条
+      //$('.upload_process_bar').show();
+      eval(g5.currentUploadName+"_start()");
+    } 
+    //上传成功回调.
+    g5.uploadSuccess = function(r) {
+      //alert('文件上传成功:'+r.response);
+      g5.pgFileTransfer.abort();
+    }
+    //上传失败回调.
+    g5.uploadFailed = function(error) {
+      alert('上传失败了。');
+      g5.pgFileTransfer.abort();
+    }
+
+}
+
+setTimeout(function(){
+    ee.autoResize = false;
+},1000);
+
+
+
+
+</onControlLoad>
+      <pageHead><![CDATA[<meta name="viewport" content="width=device-width, minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<script type="text/javascript" charset="utf-8" src="scripts/cordova-2.0.0.js"></script>
+]]></pageHead>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <left>0</left>
+      <top>0</top>
+      <width>775</width>
+      <height>90</height>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.10989010989011</heightRatio>
+      <sizeRatio>0.0740740740740741</sizeRatio>
+      <dockX>fill</dockX>
+      <dockY>ratio</dockY>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>775</width>
+      <height>29</height>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.322222222222222</heightRatio>
+      <sizeRatio>0.0374193548387097</sizeRatio>
+      <backgroundColor>BFCEDF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavy>47</heavy>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <left>0</left>
+      <top>29</top>
+      <width>775</width>
+      <height>61</height>
+      <topRatio>0.322222222222222</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.677777777777778</heightRatio>
+      <sizeRatio>0.0787096774193548</sizeRatio>
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>上传行车记录仪</text>
+      <fontSizeAuto>15</fontSizeAuto>
+      <fontColor>FFFFFF</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel6">
+      <left>21</left>
+      <top>13</top>
+      <width>92</width>
+      <height>34</height>
+      <leftRatio>0.0274442538593482</leftRatio>
+      <topRatio>0.213114754098361</topRatio>
+      <widthRatio>0.118353344768439</widthRatio>
+      <heightRatio>0.557377049180328</heightRatio>
+      <sizeRatio>0.492753623188406</sizeRatio>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <backgroundImg>back.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+      <fontSizeAuto>30</fontSizeAuto>
+      <cursor>pointer</cursor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel7">
+      <left>1</left>
+      <top>1</top>
+      <width>152</width>
+      <height>57</height>
+      <leftRatio>0.00129032258064516</leftRatio>
+      <topRatio>0.0163934426229508</topRatio>
+      <widthRatio>0.196129032258065</widthRatio>
+      <heightRatio>0.934426229508197</heightRatio>
+      <sizeRatio>0.375</sizeRatio>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <backgroundSkin>empty</backgroundSkin>
+      <onClick>window.location.href = ee.pageRoot + "/accountModify/accountCoach";
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/panel4">
+      <left>674</left>
+      <top>0</top>
+      <width>99</width>
+      <height>61</height>
+      <leftRatio>0.869047619047619</leftRatio>
+      <widthRatio>0.12797619047619</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.709302325581395</sizeRatio>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <backgroundColor>47A9F9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>...</text>
+      <fontSizeAuto>20</fontSizeAuto>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+    </control>
+    <control type="FileUpload" pathname="/divRoot/layouty1/layoutyitem2/panel4/fileupload2">
+      <left>0</left>
+      <top>0</top>
+      <width>99</width>
+      <height>61</height>
+      <widthRatio>1</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.616161616161616</sizeRatio>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <alpha>0.98</alpha>
+      <onUploadStartC>//初步过滤
+fileExt = fileExt.toUpperCase();
+if ((fileExt!=".JPG")&amp;&amp;(fileExt!=".BMP")&amp;&amp;(fileExt!=".PNG")&amp;&amp;(fileExt!=".JPEG")) {
+    alert("对不起，请务必选择一张有效的图片"+fileExt);
+    return;
+}
+ee.showAni(ee.getControl("panel20"));
+g5.setProgress(0.06);
+</onUploadStartC>
+      <onUploadStartS><![CDATA[//产生文件名
+var sql = 
+    "declare @r varchar(20); " +
+    "exec @r = getPhotoName; " +
+    "select @r as result;";
+var sqlResult = db.executeQuery("PJ", sql);
+if (fileExt.length<=0) {
+    fileExt = ".jpg";
+}
+while (true) {
+    if (sqlResult == null) {
+        cancelUpload = true;
+        errorString = "系统繁忙，请稍后再试";
+        break;
+    }
+    db.read(sqlResult);
+    newFileName = db.getString(sqlResult, "result") + fileExt.toLowerCase();
+    newFileName = "E:\\www\\root\\userRes\\" + newFileName;
+    break;
+}
+]]></onUploadStartS>
+      <onUploadProgress>g5.setProgress(sizeCurrent/sizeTotal);
+
+</onUploadProgress>
+      <onUploadError>alert("上传文件失败："+errorString);
+ee.setVisible(ee.getControl("panel20"), false);
+
+
+          
+</onUploadError>
+      <onUploadCompleteC>g5.photo6 = eio.readString8();
+eb.setCookie("am_photo6", g5.photo6); 
+
+ee.setImage(ee.getControl("panel5"), "url:/userRes/" +g5.photo6, "fill");   
+ee.setVisible(ee.getControl("panel20"), false);   
+sendPhoto();
+
+
+
+
+</onUploadCompleteC>
+      <onUploadCompleteS>//取文件名
+var pos=newFileName.lastIndexOf("\\");
+var filename = newFileName.substring(pos+1);
+//写入session供后续或者页面掉线后使用
+session.set("photo1", filename);
+eio.appendString8(filename);  
+</onUploadCompleteS>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel5">
+      <left>71</left>
+      <top>198</top>
+      <width>632</width>
+      <height>512</height>
+      <leftRatio>0.0916129032258065</leftRatio>
+      <topRatio>0.241758241758242</topRatio>
+      <widthRatio>0.815483870967742</widthRatio>
+      <heightRatio>0.625152625152625</heightRatio>
+      <sizeRatio>0.810126582278481</sizeRatio>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <lockRatio>true</lockRatio>
+      <backgroundImg>CPY0001.jpg</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel20">
+      <left>0</left>
+      <top>0</top>
+      <width>775</width>
+      <height>819</height>
+      <widthRatio>1</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>1.05677419354839</sizeRatio>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>000000</backgroundColor>
+      <backgroundImg>dialogMask.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <layerName>m1</layerName>
+      <layerVisible>false</layerVisible>
+      <aniAlpha>whiteAlpha:白色淡出</aniAlpha>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel20/panel13">
+      <left>42</left>
+      <top>154</top>
+      <width>685</width>
+      <height>289</height>
+      <leftRatio>0.0539956803455724</leftRatio>
+      <topRatio>0.187760778859527</topRatio>
+      <widthRatio>0.883369330453564</widthRatio>
+      <heightRatio>0.35326842837274</heightRatio>
+      <sizeRatio>0.621026894865526</sizeRatio>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <backgroundSkin>body2</backgroundSkin>
+      <fontSizeAuto>20</fontSizeAuto>
+      <fontColor>FFFFFF</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel20/panel13/panel14">
+      <left>22</left>
+      <top>20</top>
+      <width>640</width>
+      <height>86</height>
+      <leftRatio>0.0317848410757946</leftRatio>
+      <topRatio>0.0708661417322835</topRatio>
+      <widthRatio>0.93398533007335</widthRatio>
+      <heightRatio>0.299212598425197</heightRatio>
+      <sizeRatio>0.198952879581152</sizeRatio>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <backgroundSkin>line1001</backgroundSkin>
+      <text>文件正在上传中，请耐心等候</text>
+      <fontSizeAuto>30</fontSizeAuto>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel20/panel13/panel2">
+      <left>70</left>
+      <top>215</top>
+      <width>541</width>
+      <height>46</height>
+      <leftRatio>0.102564102564103</leftRatio>
+      <topRatio>0.743944636678201</topRatio>
+      <widthRatio>0.79020979020979</widthRatio>
+      <heightRatio>0.15916955017301</heightRatio>
+      <sizeRatio>0.135693215339233</sizeRatio>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <backgroundSkin>button3</backgroundSkin>
+      <text>取消上传</text>
+      <fontSizeAuto>20</fontSizeAuto>
+      <fontColor>FFFFFF</fontColor>
+      <cursor>pointer</cursor>
+      <onClick>ee.getControl("fileupload1").stop();
+ee.setVisible(ee.getControl("panel20"), false);
+
+
+                                                   </onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel20/panel13/panel8">
+      <left>22</left>
+      <top>134</top>
+      <width>640</width>
+      <height>25</height>
+      <leftRatio>0.0317848410757946</leftRatio>
+      <topRatio>0.464566929133858</topRatio>
+      <widthRatio>0.93398533007335</widthRatio>
+      <heightRatio>0.0866141732283465</heightRatio>
+      <sizeRatio>0.0575916230366492</sizeRatio>
+      <dockX>ratio</dockX>
+      <dockY>ratio</dockY>
+      <backgroundSkin>line1001</backgroundSkin>
+      <fontSizeAuto>30</fontSizeAuto>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel20/panel13/panel8/panel10">
+      <left>5</left>
+      <top>5</top>
+      <width>630</width>
+      <height>15</height>
+      <leftRatio>0.0078125</leftRatio>
+      <topRatio>0.2</topRatio>
+      <widthRatio>0.984375</widthRatio>
+      <heightRatio>0.6</heightRatio>
+      <sizeRatio>0.0238095238095238</sizeRatio>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <outerLeft>5</outerLeft>
+      <outerRight>5</outerRight>
+      <outerTop>5</outerTop>
+      <outerBottom>5</outerBottom>
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSizeAuto>30</fontSizeAuto>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel20/panel13/panel8/panel10/panel11">
+      <left>0</left>
+      <top>0</top>
+      <width>141</width>
+      <height>15</height>
+      <widthRatio>0.223809523809524</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.106382978723404</sizeRatio>
+      <dockX>left</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <fontSizeAuto>30</fontSizeAuto>
+    </control>
+  </controls>
+  <taskSet count="2">
+    <taskSetItem name="sendPhoto">
+      <script1>eio.appendString8(eb.getCookie("pjToken"));
+eio.appendString8(eb.getCookie("am_photo6"));
+//eio.appendString8(eb.getCookie("am_photo2"));
+//eio.appendString8(eb.getCookie("am_photo3"));
+</script1>
+      <script2><![CDATA[var token = eio.readString8();
+var sql,sqlResult;
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    eio.appendString8("token失效");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+var userId = db.getString(sqlResult, "id");
+var photo6 = eio.readString8();
+//var photo2 = eio.readString8();
+//var photo3 = eio.readString8();
+sql =
+    "update userInfo set " +
+    "photo6 = '" + db.encode(photo6) + "' " +
+    //"photo2 = '" + db.encode(photo2) + "', " +
+    //"photo3 = '" + db.encode(photo3) + "' " +  
+    "where id = " + userId;
+if (!db.executeNoneQuery("PJ", sql)) {
+    eio.appendString8("F");
+    eio.appendString8("系统繁忙请稍后再试");
+    return;
+}
+es.logWarning(sql);
+eio.appendString8("T"); ]]></script2>
+      <script3>var resultCode = eio.readString8();
+var resultString = eio.readString8();
+if (resultCode!="T") {
+    alert("上传头像失败：" + resultString);
+    return;
+}
+alert("上传行车记录仪图片成功！");
+</script3>
+    </taskSetItem>
+    <taskSetItem name="getUserPhoto">
+      <script1>eio.appendString8(eb.getCookie("pjToken"));
+</script1>
+      <script2><![CDATA[var sql,sqlResult;
+var token = eio.readString8();
+sql = "exec getUserInfoBySession '" + db.encode(token) + "'";
+sqlResult = db.executeQuery("PJ", sql);
+if (sqlResult == null) {
+    eio.appendString8("F");
+    es.logWarning("数据库执行错误, sql=" + sql);
+    return;
+}
+db.read(sqlResult);
+if (db.getString(sqlResult, "sessionId").length < 5) {
+    eio.appendString8("F");
+    es.logWarning("用户token失效, sql=" + sql);
+    return;
+} 
+eio.appendString8("T");
+eio.appendString8(db.getString(sqlResult,"photo6"));
+]]></script2>
+      <script3><![CDATA[if (eio.readString8()!="T") {
+    window.location.href = ee.pageRoot + "/login";
+    return;
+}
+g5.photo6 = eio.readString8(); 
+
+if (g5.photo6.length>0) { 
+    ee.setImage(ee.getControl("panel5"), "url:/userRes/"+g5.photo6,"fill"); 
+} 
+]]></script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

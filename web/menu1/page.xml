@@ -1,0 +1,133 @@
+<page>
+  <controls count="2">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>1131</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onPageCreate><![CDATA[/////////////////////菜单部分
+g5.menu1 = {
+    //menuP6,
+    currentRootDiv: null,
+    currentSubDiv: null,
+    mainY: 0,
+    subY: 0,
+    currentX: 0,
+    init: function () {
+        this.currentRootDiv = eb.createDiv($("divRoot"));
+        eb.setDivRect(this.currentRootDiv, 137, 152, 373 + 113 * 3 + 20 + 100, 1000);
+        this.mainY = 0;
+        this.currentRootDiv.onmouseleave = function () {
+            this.style.visibility = "hidden";
+        }
+        return this.currentRootDiv;
+    },
+    addMainMenu: function (name, url) {
+        var c;
+        if (this.mainY != 0) {
+            if (this.currentX == 0) this.subY--;
+            this.currentSubDiv.style.height = (this.subY * 30 + 40) + "px";
+            c = createPanel(this.currentSubDiv, "", "", 0, 0, this.currentSubDiv.offsetWidth, this.currentSubDiv.offsetHeight);
+            addSkin(c, "/web_jintan/skins/body2.png", 96, 96, 12, 11, 72, 74);
+            c.style.zIndex = 0;
+            if ((this.subY == 0) &amp;&amp; (this.currentX == 0)) {
+            } else {
+                //this.mainY += (this.subY * 30 + 40);
+            }
+            this.mainY += (this.subY * 30 + 40);
+        }
+        this.currentX = 0;
+        this.subY = 0;
+        if (name == "") {
+            this.currentRootDiv.style.height = this.mainY + "px";
+            return;
+        }
+        if (this.mainY == 0) this.mainY += 1;
+        this.currentSubDiv = createPanel(this.currentRootDiv, "", "", 0, this.mainY, 373 + 113 * 3 + 100, 30);
+        c = createPanel(this.currentSubDiv, "", "", 0, 10, 100, 20);
+        addText(c, name, "center", "middle", "宋体", 12, "000000", "normal");
+        c.mainDiv = this.currentSubDiv;
+        c.text = name;
+        c.url = url;
+        c.style.zIndex = 100;
+        if (c.url.length > 0) {
+            c.style.cursor = "hand";
+            c.onclick = function () {
+                this.mainDiv.style.visibility = "hidden";
+                appendPage(this.text, this.url);
+            }
+        }
+    },
+    addSubMenu: function (name, url) {
+        var c;
+        c = createPanel(this.currentSubDiv, "", "", 24 + this.currentX * 113 + 100, 11 + this.subY * 30, 18, 19);
+        addImage(c, ee.pageUrl + "/dot.png","center","","");
+        c.style.zIndex = 100;
+        c = createPanel(this.currentSubDiv, "", "", 40 + this.currentX * 113 + 100, 11 + this.subY * 30, 100, 19);
+        addText(c, name, "left", "middle", "宋体", 9, "000000", "normal");
+        c.mainDiv = this.currentRootDiv;
+        c.text = name;
+        c.url = url;
+        c.style.cursor = "hand";
+        c.style.zIndex = 100;
+        c.onclick = function () {
+            this.mainDiv.style.visibility = "hidden";
+            appendPage(this.text, this.url);
+        }
+        if ((this.currentX == 0) &amp;&amp; (this.subY != 0)) {
+            c = createPanel(this.currentSubDiv, "", "E0E0E0", 10 + 100, 33 + (this.subY - 1) * 30, 354 + 113 * 3, 2);
+            c.style.zIndex = 100;
+        }
+        if (this.currentX == 5) {
+            this.subY++;
+        }
+        this.currentX = (this.currentX + 1) % 6;
+    }
+}
+
+
+
+]]></onPageCreate>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <left>57</left>
+      <top>25</top>
+      <width>185</width>
+      <height>33</height>
+      <backgroundSkin>skin1</backgroundSkin>
+      <text>菜单1</text>
+      <fontColor>FFFFFF</fontColor>
+      <cursor>pointer</cursor>
+      <onClick>g5.menu1.init();
+g5.menu1.addMainMenu("sajdfsa","http://192.168.50.104/gismap/MainMap.htm");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addMainMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addSubMenu("sajdfsa","sladfsafl");
+g5.menu1.addMainMenu("","");
+g5.menu1.currentRootDiv.style.visibility = "visible";
+
+
+</onClick>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

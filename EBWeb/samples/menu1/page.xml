@@ -1,0 +1,285 @@
+<page>
+  <controls count="5">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onPageCreate><![CDATA[/////////////////////菜单部分
+g5.menu1 = {
+    menu: new Array(),
+    currentRootDiv: null,
+    currentSubDiv: null,
+    mainY: 0,
+    subY: 0,
+    currentX: 0,
+    xCount: 3, //子菜单横向个数
+    xSize: 120, //子菜单的横向间距
+    appendMenu: function(parent, x, y) {
+        this.currentRootDiv = eb.createDiv(parent);
+        eb.setDivRect(this.currentRootDiv, x, y, 24 + this.xCount * this.xSize + 100, 1000);
+        this.mainY = 0;
+        this.currentRootDiv.onmouseleave = function () {
+            g5.menu1.close(this);
+        }
+        this.currentRootDiv.style.visibility = "hidden";
+        this.menu.push(this.currentRootDiv);
+        return this.currentRootDiv;
+    },
+    show: function(menuIndex) {
+        if (menuIndex<0) return;
+        if (menuIndex>=this.menu.length) return;
+        this.closeAll();
+        for (var i = 0; i < this.menu[menuIndex].children.length; i++) {
+            this.menu[menuIndex].children[i].style.visibility = "hidden";
+            ee.showAni(this.menu[menuIndex].children[i]);
+        }
+        this.menu[menuIndex].style.visibility = "visible";
+    },
+    addMainMenu: function (name, url) {
+        var c;
+        if (this.mainY != 0) {
+            if (this.currentX == 0) this.subY--;
+            this.currentSubDiv.style.height = (this.subY * 30 + 40) + "px";
+            c = createPanel(this.currentSubDiv, "", "", 0, 0, this.currentSubDiv.offsetWidth, this.currentSubDiv.offsetHeight);
+            addSkin(c, ee.pageUrl.substr(ee.pageUrl, ee.pageUrl.indexOf("/", 1)) + "/skins/body2.png", 96, 96, 12, 11, 72, 74);
+            c.style.zIndex = 0;
+            if ((this.subY == 0) &amp;&amp; (this.currentX == 0)) {
+            } else {
+                //this.mainY += (this.subY * 30 + 40);
+            }
+            this.mainY += (this.subY * 30 + 40);
+        }
+        this.currentX = 0;
+        this.subY = 0;
+        if (name == "") {
+            this.currentRootDiv.style.height = this.mainY + "px";
+            return;
+        }
+        if (this.mainY == 0) this.mainY += 1;
+        this.currentSubDiv = createPanel(this.currentRootDiv, "", "", 0, this.mainY, 24 + this.xCount * this.xSize + 100, 30);
+        c = createPanel(this.currentSubDiv, "", "", 0, 10, 100, 20);
+        addText(c, name, "center", "middle", "宋体", 12, "000000", "normal");
+        c.mainDiv = this.currentSubDiv;
+        c.text = name;
+        c.url = url;
+        c.style.zIndex = 100;
+        eb.setAni(this.currentSubDiv, "null", "topFlyIn", "null", this.mainY*3*0, true, false);
+        if (c.url.length > 0) {
+            c.style.cursor = "hand";
+            c.onclick = function () {
+                g5.menu1.closeByButton(this);
+                //菜单点击修改位置
+                //appendPage(this.text, this.url);
+                window.open(this.url);
+            }
+        } else {
+            c.style.cursor = "auto";
+        }
+    },
+    addSubMenu: function (name, url) {
+        var c;
+        c = createPanel(this.currentSubDiv, "", "", 24 + this.currentX * this.xSize + 100, 11 + this.subY * 30, 18, 19);
+        addImage(c, ee.pageUrl + "/dot.png","center","","");
+        c.style.zIndex = 100;
+        c = createPanel(this.currentSubDiv, "", "", 40 + this.currentX * this.xSize + 100, 11 + this.subY * 30, this.xSize - 13, 19);
+        addText(c, name, "left", "middle", "宋体", 9, "000000", "normal");
+        c.mainDiv = this.currentRootDiv;
+        c.text = name;
+        c.url = url;
+        c.style.cursor = "hand";
+        c.style.zIndex = 100;
+        c.onclick = function () {
+            g5.menu1.closeByButton(this);
+            //菜单点击修改位置
+            //appendPage(this.text, this.url);
+            window.open(this.url);
+        }
+        if ((this.currentX == 0) &amp;&amp; (this.subY != 0)) {
+            c = createPanel(this.currentSubDiv, "", "E0E0E0", 10 + 100, 33 + (this.subY - 1) * 30, this.xCount * this.xSize, 2);
+            c.style.zIndex = 100;
+        }
+        if (this.currentX == this.xCount - 1) {
+            this.subY++;
+        }
+        this.currentX = (this.currentX + 1) % this.xCount;
+    },
+    closeByButton: function(button) {
+        this.close(button.parentNode.parentNode);
+    },
+    close: function(root) {
+        for (var i = 0; i < root.children.length; i++) {
+            root.children[i].style.visibility = "";
+        }
+        root.style.visibility = "hidden";
+    },
+    closeAll: function() {
+        for (var i = 0; i < this.menu.length; i++) {
+            this.close(this.menu[i]);
+        }
+    }
+}
+
+
+
+]]></onPageCreate>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <left>171</left>
+      <top>84</top>
+      <width>123</width>
+      <height>33</height>
+      <backgroundSkin>skin1</backgroundSkin>
+      <text>菜单1</text>
+      <fontColor>FFFFFF</fontColor>
+      <cursor>pointer</cursor>
+      <onClick>g5.menu1.show(0);
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <left>28</left>
+      <top>19</top>
+      <width>185</width>
+      <height>33</height>
+      <backgroundSkin>skin1</backgroundSkin>
+      <text>初始化菜单</text>
+      <fontColor>FFFFFF</fontColor>
+      <cursor>pointer</cursor>
+      <onClick>//第一个菜单
+g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel1")).x, eb.getDivRect(ee.getControl("panel1")).y + eb.getDivRect(ee.getControl("panel1")).h + 2);
+g5.menu1.addMainMenu("常用功能","");
+    g5.menu1.addSubMenu("百度搜索引擎","http://www.baidu.com");
+    g5.menu1.addSubMenu("搜狐门户","http://www.sohu.com");
+    g5.menu1.addSubMenu("登录电子邮箱","http://mail.163.com");
+    g5.menu1.addSubMenu("谷歌已走","http://www.google.hk");
+    g5.menu1.addSubMenu("淘宝购物","http://www.taobao.com");
+    g5.menu1.addSubMenu("阿里巴巴","http://www.1688.com");
+g5.menu1.addMainMenu("不常用功能","");
+    g5.menu1.addSubMenu("功能1","http://www.baidu.com");
+    g5.menu1.addSubMenu("功能ABC","http://www.sohu.com");
+    g5.menu1.addSubMenu("文件夹","http://mail.163.com");
+    g5.menu1.addSubMenu("充电","http://www.google.hk");
+    g5.menu1.addSubMenu("华为手机","http://www.taobao.com");
+g5.menu1.addMainMenu("测试一把","");
+    g5.menu1.addSubMenu("百度搜索引擎","http://www.baidu.com");
+    g5.menu1.addSubMenu("搜狐门户","http://www.sohu.com");
+    g5.menu1.addSubMenu("登录电子邮箱","http://mail.163.com");
+    g5.menu1.addSubMenu("谷歌已走","http://www.google.hk");
+    g5.menu1.addSubMenu("淘宝购物","http://www.taobao.com");
+    g5.menu1.addSubMenu("阿里巴巴","http://www.1688.com");
+    g5.menu1.addSubMenu("功能1","http://www.baidu.com");
+    g5.menu1.addSubMenu("功能ABC","http://www.sohu.com");
+    g5.menu1.addSubMenu("文件夹","http://mail.163.com");
+    g5.menu1.addSubMenu("充电","http://www.google.hk");
+    g5.menu1.addSubMenu("华为手机","http://www.taobao.com");
+g5.menu1.addMainMenu("","");
+
+//第二个菜单
+g5.menu1.xCount = 5;
+g5.menu1.xSize = 100;
+g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel3")).x, eb.getDivRect(ee.getControl("panel3")).y + eb.getDivRect(ee.getControl("panel3")).h + 2);
+g5.menu1.addMainMenu("菜单二","");
+    g5.menu1.addSubMenu("百度搜索引擎","http://www.baidu.com");
+    g5.menu1.addSubMenu("搜狐门户","http://www.sohu.com");
+    g5.menu1.addSubMenu("登录电子邮箱","http://mail.163.com");
+    g5.menu1.addSubMenu("谷歌已走","http://www.google.hk");
+    g5.menu1.addSubMenu("淘宝购物","http://www.taobao.com");
+    g5.menu1.addSubMenu("阿里巴巴","http://www.1688.com");
+g5.menu1.addMainMenu("测试一把","");
+    g5.menu1.addSubMenu("百度搜索引擎","http://www.baidu.com");
+    g5.menu1.addSubMenu("搜狐门户","http://www.sohu.com");
+    g5.menu1.addSubMenu("登录电子邮箱","http://mail.163.com");
+    g5.menu1.addSubMenu("谷歌已走","http://www.google.hk");
+    g5.menu1.addSubMenu("淘宝购物","http://www.taobao.com");
+    g5.menu1.addSubMenu("阿里巴巴","http://www.1688.com");
+    g5.menu1.addSubMenu("功能1","http://www.baidu.com");
+    g5.menu1.addSubMenu("功能ABC","http://www.sohu.com");
+    g5.menu1.addSubMenu("文件夹","http://mail.163.com");
+    g5.menu1.addSubMenu("充电","http://www.google.hk");
+    g5.menu1.addSubMenu("华为手机","http://www.taobao.com");
+g5.menu1.addMainMenu("不常用功能","");
+    g5.menu1.addSubMenu("功能1","http://www.baidu.com");
+    g5.menu1.addSubMenu("功能ABC","http://www.sohu.com");
+    g5.menu1.addSubMenu("文件夹","http://mail.163.com");
+    g5.menu1.addSubMenu("充电","http://www.google.hk");
+    g5.menu1.addSubMenu("华为手机","http://www.taobao.com");
+g5.menu1.addMainMenu("","");
+
+
+//第三个菜单
+g5.menu1.xCount = 2;
+g5.menu1.xSize = 200;
+g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel4")).x, eb.getDivRect(ee.getControl("panel4")).y + eb.getDivRect(ee.getControl("panel4")).h + 2);
+g5.menu1.addMainMenu("菜单三","");
+    g5.menu1.addSubMenu("百度搜索引擎","http://www.baidu.com");
+    g5.menu1.addSubMenu("搜狐门户","http://www.sohu.com");
+    g5.menu1.addSubMenu("登录电子邮箱","http://mail.163.com");
+    g5.menu1.addSubMenu("谷歌已走","http://www.google.hk");
+    g5.menu1.addSubMenu("淘宝购物","http://www.taobao.com");
+    g5.menu1.addSubMenu("阿里巴巴","http://www.1688.com");
+    g5.menu1.addSubMenu("百度搜索引擎","http://www.baidu.com");
+    g5.menu1.addSubMenu("搜狐门户","http://www.sohu.com");
+    g5.menu1.addSubMenu("登录电子邮箱","http://mail.163.com");
+    g5.menu1.addSubMenu("谷歌已走","http://www.google.hk");
+    g5.menu1.addSubMenu("淘宝购物","http://www.taobao.com");
+    g5.menu1.addSubMenu("阿里巴巴","http://www.1688.com");
+g5.menu1.addMainMenu("测试一把","");
+    g5.menu1.addSubMenu("百度搜索引擎","http://www.baidu.com");
+    g5.menu1.addSubMenu("搜狐门户","http://www.sohu.com");
+    g5.menu1.addSubMenu("登录电子邮箱","http://mail.163.com");
+    g5.menu1.addSubMenu("谷歌已走","http://www.google.hk");
+    g5.menu1.addSubMenu("淘宝购物","http://www.taobao.com");
+    g5.menu1.addSubMenu("阿里巴巴","http://www.1688.com");
+    g5.menu1.addSubMenu("功能1","http://www.baidu.com");
+    g5.menu1.addSubMenu("功能ABC","http://www.sohu.com");
+    g5.menu1.addSubMenu("文件夹","http://mail.163.com");
+    g5.menu1.addSubMenu("充电","http://www.google.hk");
+    g5.menu1.addSubMenu("华为手机","http://www.taobao.com");
+g5.menu1.addMainMenu("不常用功能","");
+    g5.menu1.addSubMenu("功能1","http://www.baidu.com");
+    g5.menu1.addSubMenu("功能ABC","http://www.sohu.com");
+    g5.menu1.addSubMenu("文件夹","http://mail.163.com");
+    g5.menu1.addSubMenu("充电","http://www.google.hk");
+    g5.menu1.addSubMenu("华为手机","http://www.taobao.com");
+g5.menu1.addMainMenu("","");
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel3">
+      <left>310</left>
+      <top>84</top>
+      <width>123</width>
+      <height>33</height>
+      <backgroundSkin>skin1</backgroundSkin>
+      <text>菜单2</text>
+      <fontColor>FFFFFF</fontColor>
+      <cursor>pointer</cursor>
+      <onClick>g5.menu1.show(1);
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel4">
+      <left>449</left>
+      <top>84</top>
+      <width>123</width>
+      <height>33</height>
+      <backgroundSkin>skin1</backgroundSkin>
+      <text>菜单3</text>
+      <fontColor>FFFFFF</fontColor>
+      <cursor>pointer</cursor>
+      <onClick>g5.menu1.show(2);
+
+
+</onClick>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

@@ -1,0 +1,2723 @@
+<page>
+  <controls count="260">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundImg>xz_bn.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+      <onPageCreate><![CDATA[//自动截取超长字串并在尾部加入...
+g5.cutString = function (str, len) {
+    if(str.length*2 <= len) {
+        return str;
+    }
+    var strlen = 0;
+    var s = "";
+    for(var i = 0;i < str.length; i++) {
+        s = s + str.charAt(i);
+        if (str.charCodeAt(i) > 128) {
+            strlen = strlen + 2;
+           if(strlen >= len){
+                return s.substring(0,s.length-1) + "...";
+            }
+        } else {
+            strlen = strlen + 1;
+            if(strlen >= len){
+                return s.substring(0,s.length-2) + "...";
+            }
+        }
+    }
+    return s;
+}
+g5.username = "<% request.get("username"); %>";
+g5.mingyuanKey = "<% request.get("mk"); %>";
+g5.ncKey = "<% request.get("ncKey"); %>";
+
+
+]]></onPageCreate>
+      <onControlLoad><![CDATA[g5.refreshPage = function (index) {
+    g5.pageCount[index] = parseInt(g5.dataset[index].rowCount / g5.pageSize) + 1;
+    ee.setText(g5.pageLabel[index], g5.pageIndex[index] + "/" + g5.pageCount[index]);
+}
+//初始化报表统计表
+var tableBody = ee.getControl("tablebody4");
+for (var rowIndex = 0; rowIndex < tableBody.rowCount; rowIndex++) {
+    for (var colIndex = 0; colIndex <= tableBody.colCount; colIndex++) {
+        if ((colIndex ==1)&amp;&amp;(rowIndex==0)) {
+            ee.setTableCellText(tableBody, colIndex, rowIndex, "数据分析-- 合约管控`http://218.75.64.147:9001/WebReport/ReportServer?reportlet=reportebs.cpt&amp;op=view");
+        } else if ((colIndex ==2)&amp;&amp;(rowIndex==0)) {
+            ee.setTableCellText(tableBody, colIndex, rowIndex, "04-15 10:00");
+        } else {
+            ee.setTableCellText(tableBody, colIndex, rowIndex, "");
+        }
+    }
+}
+//修改<A>颜色
+g5.addCss = function (cssText) {
+    var head = document.head || document.getElementsByTagName("head")[0];
+    var style = document.createElement("style");
+    style.type = "text/css";
+    if (style.styleSheet) {
+        style.styleSheet.cssText = cssText;
+    } else {
+        style.appendChild(document.createTextNode(cssText));
+    }
+    head.appendChild(style);
+}
+g5.addCss("a:link {color:#000000};");
+g5.addCss("a:visited {color:#808080};");
+g5.addCss("a:hover {color:#008000};");
+getData3();
+]]></onControlLoad>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>6</fieldCount>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>23</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <left>0</left>
+      <top>23</top>
+      <width>1236</width>
+      <height>308</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem2/layoutx1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>308</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>5</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>27</width>
+      <height>308</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2">
+      <left>27</left>
+      <top>0</top>
+      <width>581</width>
+      <height>308</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="TableTitle" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3">
+      <left>0</left>
+      <top>0</top>
+      <width>581</width>
+      <height>39</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>title1</backgroundSkin>
+      <columnCount>3</columnCount>
+      <tableBody>tablebody3</tableBody>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3/tabletitleitem7">
+      <left>0</left>
+      <top>0</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3/tabletitleitem8">
+      <left>28</left>
+      <top>0</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>待办公文</text>
+      <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3/tabletitleitem8/layoutx5">
+      <left>277</left>
+      <top>8</top>
+      <width>191</width>
+      <height>23</height>
+      <dockX>right</dockX>
+      <dockY>center</dockY>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3/tabletitleitem8/layoutx5/layoutxitem17">
+      <left>0</left>
+      <top>0</top>
+      <width>64</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>上一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick><![CDATA[if (eb.isEmpty(g5.dataset)) return;
+if (g5.pageIndex[2]<=1) return;
+g5.pageIndex[2]--;
+ee.setTableData(ee.getControl("tablebody3"), g5.dataset[2], (g5.pageIndex[2]-1)*g5.pageSize);
+g5.refreshPage(2);
+
+]]></onClick>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3/tabletitleitem8/layoutx5/layoutxitem18">
+      <left>64</left>
+      <top>0</top>
+      <width>63</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>1/1</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3/tabletitleitem8/layoutx5/layoutxitem18/panel14">
+      <left>0</left>
+      <top>0</top>
+      <width>2</width>
+      <height>23</height>
+      <dockX>left</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3/tabletitleitem8/layoutx5/layoutxitem18/panel15">
+      <left>61</left>
+      <top>0</top>
+      <width>2</width>
+      <height>23</height>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3/tabletitleitem8/layoutx5/layoutxitem19">
+      <left>127</left>
+      <top>0</top>
+      <width>64</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>下一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick><![CDATA[if (eb.isEmpty(g5.dataset)) return;
+if (g5.pageIndex[2]>=g5.pageCount[2]) return;
+g5.pageIndex[2]++;
+ee.setTableData(ee.getControl("tablebody3"), g5.dataset[2], (g5.pageIndex[2]-1)*g5.pageSize);
+g5.refreshPage(2);
+
+]]></onClick>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tabletitle3/tabletitleitem9">
+      <left>496</left>
+      <top>0</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontColor>008080</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableBody" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3">
+      <left>0</left>
+      <top>39</top>
+      <width>581</width>
+      <height>269</height>
+      <backgroundSkin>body1</backgroundSkin>
+      <rowCount>7</rowCount>
+      <tableTitle>tabletitle3</tableTitle>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/tablebodyitem7">
+      <left>0</left>
+      <top>0</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/tablebodyitem7/panel21">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/tablebodyitem7/panel22">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/tablebodyitem8">
+      <left>28</left>
+      <top>0</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+      <onUpdate><![CDATA[if (sender.rowIndex==0) {
+    ee.setVisible(ee.getControl("panel22"), false);
+    ee.setVisible(ee.getControl("panel23"), false);
+    ee.setVisible(ee.getControl("panel24"), false);
+}
+if (text.length==0) {
+    sender.onclick = function() {
+    }
+    sender.style.cursor = "normal";
+    ee.setText(sender,"");
+    return;
+}
+//初始化数据
+var a = text.split("`");
+if (a.length!=2) return;
+var name = a[0];
+var url = a[1];
+//name = g5.cutString(name,60);
+
+
+//设置单元格
+//ee.setText(sender, name);
+ee.setText(sender, "<a href=\"" + url + "\" target=\"_Blank\" style='text-decoration:none;'>" + name + "</a>");
+sender.linkurl = url;
+//sender.style.cursor = "hand";
+//sender.onclick = function () {
+//    window.open(this.linkurl);
+//}
+
+
+
+
+]]></onUpdate>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/tablebodyitem8/panel23">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/tablebodyitem9">
+      <left>496</left>
+      <top>0</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+      <onUpdate><![CDATA[if (text.length>=16) {
+    text = text.substring(5,5+11);
+}
+ee.setText(sender, text);]]></onUpdate>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/tablebodyitem9/panel24">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp19">
+      <left>0</left>
+      <top>38</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp19/panel21">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp19/panel22">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp20">
+      <left>28</left>
+      <top>38</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp20/panel23">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp21">
+      <left>496</left>
+      <top>38</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp21/panel24">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp22">
+      <left>0</left>
+      <top>77</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp22/panel21">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp22/panel22">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp23">
+      <left>28</left>
+      <top>77</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp23/panel23">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp24">
+      <left>496</left>
+      <top>77</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp24/panel24">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp25">
+      <left>0</left>
+      <top>115</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp25/panel21">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp25/panel22">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp26">
+      <left>28</left>
+      <top>115</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp26/panel23">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp27">
+      <left>496</left>
+      <top>115</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp27/panel24">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp28">
+      <left>0</left>
+      <top>154</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp28/panel21">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp28/panel22">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp29">
+      <left>28</left>
+      <top>154</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp29/panel23">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp30">
+      <left>496</left>
+      <top>154</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp30/panel24">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp31">
+      <left>0</left>
+      <top>192</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp31/panel21">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp31/panel22">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp32">
+      <left>28</left>
+      <top>192</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp32/panel23">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp33">
+      <left>496</left>
+      <top>192</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp33/panel24">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp34">
+      <left>0</left>
+      <top>231</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp34/panel21">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp34/panel22">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp35">
+      <left>28</left>
+      <top>231</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp35/panel23">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp36">
+      <left>496</left>
+      <top>231</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/tablebody3/temp36/panel24">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem3">
+      <left>608</left>
+      <top>0</top>
+      <width>24</width>
+      <height>308</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4">
+      <left>632</left>
+      <top>0</top>
+      <width>581</width>
+      <height>308</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="TableTitle" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2">
+      <left>0</left>
+      <top>0</top>
+      <width>581</width>
+      <height>39</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>title1</backgroundSkin>
+      <columnCount>3</columnCount>
+      <tableBody>tablebody2</tableBody>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2/tabletitleitem4">
+      <left>0</left>
+      <top>0</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2/tabletitleitem5">
+      <left>28</left>
+      <top>0</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>公告通知</text>
+      <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2/tabletitleitem5/layoutx3">
+      <left>277</left>
+      <top>8</top>
+      <width>191</width>
+      <height>23</height>
+      <dockX>right</dockX>
+      <dockY>center</dockY>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2/tabletitleitem5/layoutx3/layoutxitem11">
+      <left>0</left>
+      <top>0</top>
+      <width>64</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>上一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick><![CDATA[if (eb.isEmpty(g5.dataset)) return;
+if (g5.pageIndex[1]<=1) return;
+g5.pageIndex[1]--;
+ee.setTableData(ee.getControl("tablebody2"), g5.dataset[1], (g5.pageIndex[1]-1)*g5.pageSize);
+g5.refreshPage(1);
+
+]]></onClick>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2/tabletitleitem5/layoutx3/layoutxitem12">
+      <left>64</left>
+      <top>0</top>
+      <width>63</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>1/1</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2/tabletitleitem5/layoutx3/layoutxitem12/panel9">
+      <left>0</left>
+      <top>0</top>
+      <width>2</width>
+      <height>23</height>
+      <dockX>left</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2/tabletitleitem5/layoutx3/layoutxitem12/panel10">
+      <left>61</left>
+      <top>0</top>
+      <width>2</width>
+      <height>23</height>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2/tabletitleitem5/layoutx3/layoutxitem13">
+      <left>127</left>
+      <top>0</top>
+      <width>64</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>下一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick><![CDATA[if (eb.isEmpty(g5.dataset)) return;
+if (g5.pageIndex[1]>=g5.pageCount[1]) return;
+g5.pageIndex[1]++;
+ee.setTableData(ee.getControl("tablebody2"), g5.dataset[1], (g5.pageIndex[1]-1)*g5.pageSize);
+g5.refreshPage(1);
+
+]]></onClick>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tabletitle2/tabletitleitem6">
+      <left>496</left>
+      <top>0</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableBody" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2">
+      <left>0</left>
+      <top>39</top>
+      <width>581</width>
+      <height>269</height>
+      <backgroundSkin>body1</backgroundSkin>
+      <rowCount>7</rowCount>
+      <tableTitle>tabletitle2</tableTitle>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/tablebodyitem4">
+      <left>0</left>
+      <top>0</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/tablebodyitem4/panel5">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/tablebodyitem4/panel6">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/tablebodyitem5">
+      <left>28</left>
+      <top>0</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+      <onUpdate><![CDATA[if (sender.rowIndex==0) {
+    ee.setVisible(ee.getControl("panel6"), false);
+    ee.setVisible(ee.getControl("panel7"), false);
+    ee.setVisible(ee.getControl("panel8"), false);
+}
+if (text.length==0) {
+    sender.onclick = function() {
+    }
+    sender.style.cursor = "normal";
+    ee.setText(sender,"");
+    return;
+}
+//初始化数据
+var a = text.split("`");
+if (a.length!=2) return;
+var name = a[0];
+var url = a[1];
+//name = g5.cutString(name,60);
+
+
+//设置单元格
+//ee.setText(sender, name);
+ee.setText(sender, "<a href=\"" + url + "\" target=\"_Blank\" style='text-decoration:none;'>" + name + "</a>");
+sender.linkurl = url;
+//sender.style.cursor = "hand";
+//sender.onclick = function () {
+//    window.open(this.linkurl);
+//}
+
+]]></onUpdate>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/tablebodyitem5/panel7">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/tablebodyitem6">
+      <left>496</left>
+      <top>0</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/tablebodyitem6/panel8">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp1">
+      <left>0</left>
+      <top>38</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp1/panel5">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp1/panel6">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp2">
+      <left>28</left>
+      <top>38</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp2/panel7">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp3">
+      <left>496</left>
+      <top>38</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp3/panel8">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp4">
+      <left>0</left>
+      <top>77</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp4/panel5">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp4/panel6">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp5">
+      <left>28</left>
+      <top>77</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp5/panel7">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp6">
+      <left>496</left>
+      <top>77</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp6/panel8">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp7">
+      <left>0</left>
+      <top>115</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp7/panel5">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp7/panel6">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp8">
+      <left>28</left>
+      <top>115</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp8/panel7">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp9">
+      <left>496</left>
+      <top>115</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp9/panel8">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp10">
+      <left>0</left>
+      <top>154</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp10/panel5">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp10/panel6">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp11">
+      <left>28</left>
+      <top>154</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp11/panel7">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp12">
+      <left>496</left>
+      <top>154</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp12/panel8">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp13">
+      <left>0</left>
+      <top>192</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp13/panel5">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp13/panel6">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp14">
+      <left>28</left>
+      <top>192</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp14/panel7">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp15">
+      <left>496</left>
+      <top>192</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp15/panel8">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp16">
+      <left>0</left>
+      <top>231</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp16/panel5">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp16/panel6">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp17">
+      <left>28</left>
+      <top>231</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp17/panel7">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp18">
+      <left>496</left>
+      <top>231</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem4/tablebody2/temp18/panel8">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem5">
+      <left>1213</left>
+      <top>0</top>
+      <width>23</width>
+      <height>308</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem3">
+      <left>0</left>
+      <top>331</top>
+      <width>1236</width>
+      <height>19</height>
+      <backgroundColor>008080</backgroundColor>
+      <fontSize>12</fontSize>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem4">
+      <left>0</left>
+      <top>350</top>
+      <width>1236</width>
+      <height>308</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem4/layoutx2">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>308</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>5</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem6">
+      <left>0</left>
+      <top>0</top>
+      <width>27</width>
+      <height>308</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7">
+      <left>27</left>
+      <top>0</top>
+      <width>581</width>
+      <height>308</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="TableTitle" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1">
+      <left>0</left>
+      <top>0</top>
+      <width>581</width>
+      <height>39</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>title1</backgroundSkin>
+      <columnCount>3</columnCount>
+      <tableBody>tablebody1</tableBody>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1/tabletitleitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1/tabletitleitem2">
+      <left>28</left>
+      <top>0</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>单位新闻</text>
+      <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1/tabletitleitem2/layoutx4">
+      <left>277</left>
+      <top>8</top>
+      <width>191</width>
+      <height>23</height>
+      <dockX>right</dockX>
+      <dockY>center</dockY>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1/tabletitleitem2/layoutx4/layoutxitem14">
+      <left>0</left>
+      <top>0</top>
+      <width>64</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>上一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick><![CDATA[if (eb.isEmpty(g5.dataset)) return;
+if (g5.pageIndex[0]<=1) return;
+g5.pageIndex[0]--;
+ee.setTableData(ee.getControl("tablebody1"), g5.dataset[0], (g5.pageIndex[0]-1)*g5.pageSize);
+g5.refreshPage(0);
+
+]]></onClick>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1/tabletitleitem2/layoutx4/layoutxitem15">
+      <left>64</left>
+      <top>0</top>
+      <width>63</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>1/1</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1/tabletitleitem2/layoutx4/layoutxitem15/panel11">
+      <left>0</left>
+      <top>0</top>
+      <width>2</width>
+      <height>23</height>
+      <dockX>left</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1/tabletitleitem2/layoutx4/layoutxitem15/panel12">
+      <left>61</left>
+      <top>0</top>
+      <width>2</width>
+      <height>23</height>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1/tabletitleitem2/layoutx4/layoutxitem16">
+      <left>127</left>
+      <top>0</top>
+      <width>64</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>下一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick><![CDATA[if (eb.isEmpty(g5.dataset)) return;
+if (g5.pageIndex[0]>=g5.pageCount[0]) return;
+g5.pageIndex[0]++;
+ee.setTableData(ee.getControl("tablebody1"), g5.dataset[0], (g5.pageIndex[0]-1)*g5.pageSize);
+g5.refreshPage(0);
+
+]]></onClick>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tabletitle1/tabletitleitem3">
+      <left>496</left>
+      <top>0</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableBody" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1">
+      <left>0</left>
+      <top>39</top>
+      <width>581</width>
+      <height>269</height>
+      <backgroundSkin>body1</backgroundSkin>
+      <rowCount>7</rowCount>
+      <tableTitle>tabletitle1</tableTitle>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/tablebodyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+      <onUpdate>if (sender.rowIndex==0) {
+	ee.setVisible(sender.panel2, false);
+}</onUpdate>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/tablebodyitem1/panel1">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/tablebodyitem1/panel2">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/tablebodyitem2">
+      <left>28</left>
+      <top>0</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+      <onUpdate><![CDATA[if (sender.rowIndex==0) {
+    ee.setVisible(sender.panel3, false);
+}
+if (text.length==0) {
+    sender.onclick = function() {
+    }
+    sender.style.cursor = "normal";
+    ee.setText(sender,"");
+    return;
+}
+//初始化数据
+var a = text.split("`");
+if (a.length!=2) return;
+var name = a[0];
+var url = a[1];
+//name = g5.cutString(name,60);
+
+
+//设置单元格
+//ee.setText(sender, name);
+ee.setText(sender, "<a href=\"" + url + "\" target=\"_Blank\" style='text-decoration:none;'>" + name + "</a>");
+sender.linkurl = url;
+//sender.style.cursor = "hand";
+//sender.onclick = function () {
+//    window.open(this.linkurl);
+//}
+
+
+]]></onUpdate>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/tablebodyitem2/panel3">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/tablebodyitem3">
+      <left>496</left>
+      <top>0</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+      <onUpdate>if (sender.rowIndex==0) {
+	ee.setVisible(sender.panel4, false);
+}
+ee.setText(sender, text);
+</onUpdate>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/tablebodyitem3/panel4">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp37">
+      <left>0</left>
+      <top>38</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp37/panel1">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp37/panel2">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp38">
+      <left>28</left>
+      <top>38</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp38/panel3">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp39">
+      <left>496</left>
+      <top>38</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp39/panel4">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp40">
+      <left>0</left>
+      <top>77</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp40/panel1">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp40/panel2">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp41">
+      <left>28</left>
+      <top>77</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp41/panel3">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp42">
+      <left>496</left>
+      <top>77</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp42/panel4">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp43">
+      <left>0</left>
+      <top>115</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp43/panel1">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp43/panel2">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp44">
+      <left>28</left>
+      <top>115</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp44/panel3">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp45">
+      <left>496</left>
+      <top>115</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp45/panel4">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp46">
+      <left>0</left>
+      <top>154</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp46/panel1">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp46/panel2">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp47">
+      <left>28</left>
+      <top>154</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp47/panel3">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp48">
+      <left>496</left>
+      <top>154</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp48/panel4">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp49">
+      <left>0</left>
+      <top>192</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp49/panel1">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp49/panel2">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp50">
+      <left>28</left>
+      <top>192</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp50/panel3">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp51">
+      <left>496</left>
+      <top>192</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp51/panel4">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp52">
+      <left>0</left>
+      <top>231</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp52/panel1">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp52/panel2">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp53">
+      <left>28</left>
+      <top>231</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp53/panel3">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp54">
+      <left>496</left>
+      <top>231</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem7/tablebody1/temp54/panel4">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem8">
+      <left>608</left>
+      <top>0</top>
+      <width>24</width>
+      <height>308</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9">
+      <left>632</left>
+      <top>0</top>
+      <width>581</width>
+      <height>308</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="TableTitle" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4">
+      <left>0</left>
+      <top>0</top>
+      <width>581</width>
+      <height>39</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>title1</backgroundSkin>
+      <columnCount>3</columnCount>
+      <tableBody>tablebody4</tableBody>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4/tabletitleitem10">
+      <left>0</left>
+      <top>0</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4/tabletitleitem11">
+      <left>28</left>
+      <top>0</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>数据分析</text>
+      <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4/tabletitleitem11/layoutx6">
+      <left>277</left>
+      <top>8</top>
+      <width>191</width>
+      <height>23</height>
+      <dockX>right</dockX>
+      <dockY>center</dockY>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4/tabletitleitem11/layoutx6/layoutxitem20">
+      <left>0</left>
+      <top>0</top>
+      <width>64</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>上一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4/tabletitleitem11/layoutx6/layoutxitem21">
+      <left>64</left>
+      <top>0</top>
+      <width>63</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>1/1</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4/tabletitleitem11/layoutx6/layoutxitem21/panel13">
+      <left>0</left>
+      <top>0</top>
+      <width>2</width>
+      <height>23</height>
+      <dockX>left</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4/tabletitleitem11/layoutx6/layoutxitem21/panel16">
+      <left>61</left>
+      <top>0</top>
+      <width>2</width>
+      <height>23</height>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>FFFFFF</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4/tabletitleitem11/layoutx6/layoutxitem22">
+      <left>127</left>
+      <top>0</top>
+      <width>64</width>
+      <height>23</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>下一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tabletitle4/tabletitleitem12">
+      <left>496</left>
+      <top>0</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableBody" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4">
+      <left>0</left>
+      <top>39</top>
+      <width>581</width>
+      <height>269</height>
+      <backgroundSkin>body1</backgroundSkin>
+      <rowCount>7</rowCount>
+      <tableTitle>tabletitle4</tableTitle>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/tablebodyitem10">
+      <left>0</left>
+      <top>0</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/tablebodyitem10/panel25">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/tablebodyitem10/panel26">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/tablebodyitem11">
+      <left>28</left>
+      <top>0</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+      <onUpdate><![CDATA[if (sender.rowIndex==0) {
+    ee.setVisible(ee.getControl("panel26"), false);
+    ee.setVisible(ee.getControl("panel27"), false);
+    ee.setVisible(ee.getControl("panel28"), false);
+}
+if (text.length==0) {
+    sender.onclick = function() {
+    }
+    sender.style.cursor = "normal";
+    ee.setText(sender,"");
+    return;
+}
+//初始化数据
+var a = text.split("`");
+if (a.length!=2) return;
+var name = a[0];
+var url = a[1];
+name = g5.cutString(name,60);
+
+
+//设置单元格
+ee.setText(sender, "<a href=\"" + url + "\" target=\"_Blank\" style='text-decoration:none;'>" + name + "</a>");
+sender.linkurl = url;
+//sender.style.cursor = "hand";
+//sender.onclick = function () {
+//    window.open(this.linkurl);
+//}
+
+]]></onUpdate>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/tablebodyitem11/panel27">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/tablebodyitem12">
+      <left>496</left>
+      <top>0</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/tablebodyitem12/panel28">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp55">
+      <left>0</left>
+      <top>38</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp55/panel25">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp55/panel26">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp56">
+      <left>28</left>
+      <top>38</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp56/panel27">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp57">
+      <left>496</left>
+      <top>38</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp57/panel28">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp58">
+      <left>0</left>
+      <top>77</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp58/panel25">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp58/panel26">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp59">
+      <left>28</left>
+      <top>77</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp59/panel27">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp60">
+      <left>496</left>
+      <top>77</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp60/panel28">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp61">
+      <left>0</left>
+      <top>115</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp61/panel25">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp61/panel26">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp62">
+      <left>28</left>
+      <top>115</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp62/panel27">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp63">
+      <left>496</left>
+      <top>115</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp63/panel28">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp64">
+      <left>0</left>
+      <top>154</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp64/panel25">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp64/panel26">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp65">
+      <left>28</left>
+      <top>154</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp65/panel27">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp66">
+      <left>496</left>
+      <top>154</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp66/panel28">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp67">
+      <left>0</left>
+      <top>192</top>
+      <width>28</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp67/panel25">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp67/panel26">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp68">
+      <left>28</left>
+      <top>192</top>
+      <width>468</width>
+      <height>39</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp68/panel27">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp69">
+      <left>496</left>
+      <top>192</top>
+      <width>85</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp69/panel28">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp70">
+      <left>0</left>
+      <top>231</top>
+      <width>28</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp70/panel25">
+      <left>10</left>
+      <top>11</top>
+      <width>17</width>
+      <height>16</height>
+      <dockY>center</dockY>
+      <backgroundImg>dot.png</backgroundImg>
+      <backgroundImgMode>center</backgroundImgMode>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp70/panel26">
+      <left>11</left>
+      <top>0</top>
+      <width>20</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp71">
+      <left>28</left>
+      <top>231</top>
+      <width>468</width>
+      <height>38</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>内容</text>
+      <fontColor>404040</fontColor>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp71/panel27">
+      <left>0</left>
+      <top>0</top>
+      <width>468</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp72">
+      <left>496</left>
+      <top>231</top>
+      <width>85</width>
+      <height>38</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>2014-11-17</text>
+      <fontFamily>Arial</fontFamily>
+      <fontColor>696969</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem9/tablebody4/temp72/panel28">
+      <left>0</left>
+      <top>0</top>
+      <width>75</width>
+      <height>1</height>
+      <backgroundColor>C0C0C0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem4/layoutx2/layoutxitem10">
+      <left>1213</left>
+      <top>0</top>
+      <width>23</width>
+      <height>308</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem5">
+      <left>0</left>
+      <top>658</top>
+      <width>1236</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem6">
+      <left>0</left>
+      <top>680</top>
+      <width>1236</width>
+      <height>39</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>众 安 房 产 有 限 公 司</text>
+      <fontSize>12</fontSize>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="2">
+    <taskSetItem name="getData3">
+      <script1>eio.clear();
+eio.appendString8(g5.username);
+eio.appendString8(g5.mingyuanKey);
+eio.appendString8(g5.ncKey);
+ee.postUrl("getData3","/msg2.aspx?queryCount=7");
+ee.setTableCellText(ee.getControl("tablebody1"), 1, 0, "正在加载，请稍候...` ");
+ee.setTableCellText(ee.getControl("tablebody2"), 1, 0, "正在加载，请稍候...` ");
+ee.setTableCellText(ee.getControl("tablebody3"), 1, 0, "正在加载，请稍候...` ");
+return;</script1>
+      <script2>//session.set("username","700328");
+session.set("username",request.get("username"));
+var username = session.get("username");
+var sql = "select '' as f1,INFO_NAME || '`' || INFO_URL || '`' || FROM_TYPE || '`' || info_emgdegree as f2,INFO_TIME as f3 " +
+    "from oa_p6_nc_infoview where info_operator = '" + username + "' order by f3 desc";
+var sqlResult = db.executeQuery("ZAOracle", sql);
+eio.appendDataSet(sqlResult, "f1,f2,f3", 0, 10000);
+
+
+
+
+</script2>
+      <script3>//alert(eio.buffi);
+g5.pageSize = 7;
+g5.dataset = new Array();
+g5.dataset.push(eio.readDataSet());
+g5.dataset.push(eio.readDataSet());
+g5.dataset.push(eio.readDataSet());
+g5.pageIndex = new Array();
+g5.pageIndex.push(1);
+g5.pageIndex.push(1);
+g5.pageIndex.push(1);
+g5.pageCount = new Array();
+g5.pageCount.push(1);
+g5.pageCount.push(1);
+g5.pageCount.push(1);
+g5.pageLabel = new Array();
+g5.pageLabel.push(ee.getControl("layoutxitem15"));
+g5.pageLabel.push(ee.getControl("layoutxitem12"));
+g5.pageLabel.push(ee.getControl("layoutxitem18"));
+ee.setTableData(ee.getControl("tablebody1"), g5.dataset[0], 0);
+ee.setTableData(ee.getControl("tablebody2"), g5.dataset[1], 0);
+ee.setTableData(ee.getControl("tablebody3"), g5.dataset[2], 0);
+g5.refreshPage(0);
+g5.refreshPage(1);
+g5.refreshPage(2);
+getData50();</script3>
+    </taskSetItem>
+    <taskSetItem name="getData50">
+      <script1>eio.clear();
+eio.appendString8(g5.username);
+eio.appendString8(g5.mingyuanKey);
+eio.appendString8(g5.ncKey);
+ee.postUrl("getData50","/msg2.aspx?queryCount=50");
+//ee.setTableCellText(ee.getControl("tablebody1"), 1, 0, "正在加载，请稍候...` ");
+//ee.setTableCellText(ee.getControl("tablebody2"), 1, 0, "正在加载，请稍候...` ");
+//ee.setTableCellText(ee.getControl("tablebody3"), 1, 0, "正在加载，请稍候...` ");
+return;
+
+
+
+
+
+
+
+
+</script1>
+      <script2>//session.set("username","700328");
+session.set("username",request.get("username"));
+var username = session.get("username");
+var sql = "select '' as f1,INFO_NAME || '`' || INFO_URL || '`' || FROM_TYPE || '`' || info_emgdegree as f2,INFO_TIME as f3 " +
+    "from oa_p6_nc_infoview where info_operator = '" + username + "' order by f3 desc";
+var sqlResult = db.executeQuery("ZAOracle", sql);
+eio.appendDataSet(sqlResult, "f1,f2,f3", 0, 10000);</script2>
+      <script3>//alert(eio.buffi);
+g5.pageSize = 7;
+g5.dataset = new Array();
+g5.dataset.push(eio.readDataSet());
+g5.dataset.push(eio.readDataSet());
+g5.dataset.push(eio.readDataSet());
+g5.pageIndex = new Array();
+g5.pageIndex.push(1);
+g5.pageIndex.push(1);
+g5.pageIndex.push(1);
+g5.pageCount = new Array();
+g5.pageCount.push(1);
+g5.pageCount.push(1);
+g5.pageCount.push(1);
+g5.pageLabel = new Array();
+g5.pageLabel.push(ee.getControl("layoutxitem15"));
+g5.pageLabel.push(ee.getControl("layoutxitem12"));
+g5.pageLabel.push(ee.getControl("layoutxitem18"));
+ee.setTableData(ee.getControl("tablebody1"), g5.dataset[0], 0);
+ee.setTableData(ee.getControl("tablebody2"), g5.dataset[1], 0);
+ee.setTableData(ee.getControl("tablebody3"), g5.dataset[2], 0);
+g5.refreshPage(0);
+g5.refreshPage(1);
+g5.refreshPage(2);
+
+
+</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

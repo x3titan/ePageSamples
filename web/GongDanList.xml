@@ -1,0 +1,1142 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<process-definition>
+  <database>
+    <dataTable name="primary" type="primary" sys_id="">dbo.[yk_jkzb]</dataTable>
+    <dataTable name="attach" type="attachment" sys_id="sys_id">dbo.[yk_jkzbAttach]</dataTable>
+    <dataTable name="log" type="log" sys_id="sys_id">dbo.[yk_jkzbLog]</dataTable>
+  </database>
+  <idformate>_yyyyMMddxxx</idformate>
+  <filter-definition>
+    <form span ="10" tableID="table_filter" url="handler/flowInfo.ashx" html_class="table tile">
+      <button handler="" operation="" value="待办工单" color="" span="1" click="getListTask(this);" class="btn btn-primary getListTask"></button>
+      <button handler="" operation="" value="已办工单" color="" span="1" click="getListDone(this);" class="btn btn-primary getListDone"></button>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="8" value=""></label>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="起始时间"></label>
+      <field id="sys_start" attribute="sys_start" type="date" max="100"  html_class="form-control-table m-b-10 " span="2" access="write-read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="结束时间"></label>
+      <field id="sys_end" attribute="sys_end" type="date" max="100" html_class="form-control-table m-b-10 " span="2" access="write-read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="filter_wb_phone" attribute="yichang" type="text" max="50" html_class="form-control-table" span="2" access="write-read"></field>
+      <button handler="" operation="" value="筛选" color="" span="1" click="getList(this);" class="btn btn-primary"></button>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="filter_zhiban" attribute="zhiban" type="text" max="50" html_class="form-control-table" span="2" access="write-read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="组别："></label>
+      <field id="filter_sdqk" attribute="sdqk" type="text" max="50" html_class="form-control-table" span="2" access="write-read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="审核人："></label>
+      <field id="filter_qianzi" attribute="qianzi" type="text" max="50" html_class="form-control-table" span="2" access="write-read"></field>
+      <!--<field id="filter_fromuser" attribute="sys_fromUser" type="text" max="50" html_class="" span="1" access="write-read"></field>-->
+
+      <!--<button handler="" operation="" value="导出" color="" span="1" click="outputFlowExcel(this);" class="btn btn-primary"></button>-->
+    </form>
+  </filter-definition>
+  <!--列表信息的字段（待开发）-->
+  <field-definition html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list">
+    <attribute name="sys_id" title="工单编号"></attribute>
+    <attribute name="starttime" title="时间（开始）"></attribute>
+    <attribute name="endtime" title="时间（结束）"></attribute>
+    <attribute name="zhiban" title="值班员"></attribute>
+    <!--<attribute name="yichang" title="故障异常情况"></attribute>
+    <attribute name="chuli" title="处理"></attribute>-->
+    <attribute name="sdqk" title="组别"></attribute>
+    <attribute name="fankui" title="送达"></attribute>
+    <attribute name="zh" title="综合班"></attribute>
+    <attribute name="wh" title="维护班"></attribute>
+    <attribute name="zr" title="主任"></attribute>
+    <attribute name="fankui1" title="反馈"></attribute>
+    <alarm>
+      <alarmTime name="endtime" advanceHours="2"></alarmTime>
+      <alarmFilter name="sys_state">SecondforProjectTeam,ThirdforProjectTeam,FourforProjectTeam,w1zhb,w2wh,w3zr,fiveforProjectTeam,sixforProjectTeam,sevenforProjectTeam,eightforProjectTeam</alarmFilter>
+    </alarm>
+    <!--<attribute name="huifr" title="回复人"></attribute>-->
+    <!--<attribute name="huifusj" title="回复时间"></attribute>
+    <attribute name="huifunr" title="回复内容"></attribute>-->
+  </field-definition>
+  <field-outexcel title="监控值班故障异常情况表">
+    <attribute name="sys_id" title="工单编号"></attribute>
+    <attribute name="starttime" title="时间（开始）"></attribute>
+    <attribute name="endtime" title="时间（结束）"></attribute>
+    <attribute name="zhiban" title="值班员"></attribute>
+    <attribute name="yichang" title="故障异常情况"></attribute>
+    <attribute name="chuli" title="处理"></attribute>
+    <attribute name="sdqk" title="组别"></attribute>
+    <attribute name="fankui" title="送达"></attribute>
+    <attribute name="zh" title="综合班"></attribute>
+    <attribute name="wh" title="维护班"></attribute>
+    <attribute name="zr" title="主任"></attribute>
+    <attribute name="fankui1" title="反馈"></attribute>
+  </field-outexcel>
+  <WordExport WordModel="3.doc"></WordExport>
+  <delete access="p_DeleteMonitorFailure"></delete>
+  <normal-state>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="table_normal" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10 w2" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="read"></field>
+      
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" head="回复人" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" head="回复时间" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" head="回复内容" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+
+      <button handler="" operation="" value="导出Word" color="" span="6" click="outPutFlowWord(this);" class="btn btn-primary"></button>
+
+    </form>
+  </normal-state>
+  
+  <start-state name="start" access="p_NewMonitorFailure">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="table_start" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="write-read-required"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="write-read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" value="$user_name" html_class="form-control m-b-10 span2" span="1" access="write-read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10 guzhang" span="5" access="write-read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="write-read-required"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="write-read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="read"></field>
+      
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+      
+      <button handler="doTransition" operation="派发" value="派发" color="按钮颜色" span="3" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="故障单保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="" operation="删除草稿" value="删除" color="按钮颜色" span="1" click="wdelete(this)" class="btn btn-primary w_delete_btn"></button>
+    </form>
+    <transition to="CreateOrSend" fetchable="false">
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="qianzi"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="sendTeam"></parameter>
+        <parameter name="backToTeam"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+  
+      
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </start-state>
+
+  <decision-state name="CreateOrSend">
+    <parameter name="sys_operation"></parameter>
+
+    <transition when="派发" to="ykselected">
+    </transition>
+    
+    <transition when="故障单保存" to="start">
+    </transition>
+  </decision-state>
+
+  <decision-state name="ykselected">
+    <parameter name="sdqk"></parameter>
+
+    <transition when="一组" to="SecondforProjectTeam"></transition>
+    <transition when="二组" to="ThirdforProjectTeam"></transition>
+    <transition when="三组" to="FourforProjectTeam"></transition>
+    
+  </decision-state>
+
+  <activity-state name="SecondforProjectTeam" access="p_OneGroup">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="SecondforProjectTeam" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+      
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="write-read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="write-read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="read"></field>
+      
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+      
+      <button handler="doTransition" operation="一组提交" value="提交" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="一组保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+
+    <transition to="SecondSendorSave" fetchable="false">
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="fankui"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+      
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </activity-state>
+  
+  <decision-state name="SecondSendorSave">
+    <parameter name="sys_operation"></parameter>
+
+    <transition when="一组提交" to="ykselected2"></transition>
+    <transition when="一组保存" to="SecondforProjectTeam"></transition>
+    <transition when="回退" to="start"></transition>
+  </decision-state>
+
+  <decision-state name="ykselected2">
+    <parameter name="selectsign"></parameter>
+
+    <transition when="综合班" to="w1zhb"></transition>
+    <transition when="维护班" to="w2wh"></transition>
+    <transition when="主任" to="w3zr"></transition>
+
+  </decision-state>
+
+  <activity-state name="ThirdforProjectTeam" access="p_TwoGroup">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="ThirdforProjectTeam" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="write-read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="write-read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="read"></field>
+
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+      
+      <button handler="doTransition" operation="二组提交" value="提交" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="二组保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+ 
+    <transition to="ThirdSendorSave" fetchable="false">
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="fankui"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+      
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+    
+  </activity-state>
+
+  <decision-state name="ThirdSendorSave">
+    <parameter name="sys_operation"></parameter>
+    <transition when="二组提交" to="ykselected2"></transition>
+    <transition when="二组保存" to="ThirdforProjectTeam"></transition>
+    <transition when="回退" to="start"></transition>
+  </decision-state>
+  
+  <decision-state name="ykselected2">
+    <parameter name="selectsign"></parameter>
+
+    <transition when="综合班" to="w1zhb"></transition>
+    <transition when="维护班" to="w2wh"></transition>
+    <transition when="主任" to="w3zr"></transition>
+
+  </decision-state>
+  
+  <activity-state name="FourforProjectTeam" access="p_ThreeGroup">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="FourforProjectTeam" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="write-read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="write-read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="read"></field>
+      
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+      
+      <button handler="doTransition" operation="三组提交" value="提交" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="三组保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+    <transition to="FourSendorSave" fetchable="false">
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="fankui"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </activity-state>
+
+  <decision-state name="FourSendorSave">
+    <parameter name="sys_operation"></parameter>
+    <transition when="三组提交" to="ykselected2"></transition>
+    <transition when="三组保存" to="FourforProjectTeam"></transition>
+    <transition when="回退" to="start"></transition>
+  </decision-state>
+  
+  <decision-state name="ykselected2">
+    <parameter name="selectsign"></parameter>
+
+    <transition when="综合班" to="w1zhb"></transition>
+    <transition when="维护班" to="w2wh"></transition>
+    <transition when="主任" to="w3zr"></transition>
+
+  </decision-state>
+
+  <activity-state name="w1zhb" access="p_General">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="w1zhb" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+      
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" value="$user_name" html_class="form-control cross-line-bordered m-b-10" span="2" access="write-read"></field>
+
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="write-read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="write-read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="write-read"></field>-->
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+
+      <button handler="doTransition" operation="提交" value="提交" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+
+    <transition to="w1SendorSave" fetchable="false">
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="sys_operation"></parameter>
+        <parameter name="qianzi"></parameter>
+        <parameter name="zh"></parameter>
+        <parameter name="wh"></parameter>
+        <parameter name="zr"></parameter>
+      </action>
+      
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </activity-state>
+
+  <decision-state name="w1SendorSave">
+    <parameter name="sys_operation"></parameter>
+    <transition when="提交" to="ykselected1"></transition>
+    <transition when="保存" to="w1zhb"></transition>
+    <transition when="回退" to="ykselected3"></transition>
+  </decision-state>
+
+  <decision-state name="ykselected1">
+    <parameter name="sdqk"></parameter>
+
+    <transition when="一组" to="fiveforProjectTeam"></transition>
+    <transition when="二组" to="sixforProjectTeam"></transition>
+    <transition when="三组" to="sevenforProjectTeam"></transition>
+
+  </decision-state>
+
+  <decision-state name="ykselected3">
+    <parameter name="sdqk"></parameter>
+
+    <transition when="一组" to="SecondforProjectTeam"></transition>
+    <transition when="二组" to="ThirdforProjectTeam"></transition>
+    <transition when="三组" to="FourforProjectTeam"></transition>
+
+  </decision-state>
+  
+  
+
+  <activity-state name="w2wh" access="p_Maintain">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="w2wh" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+      
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="write-read"></field>
+
+
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="write-read-required"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+
+      <button handler="doTransition" operation="维护班签字" value="提交" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="维护班保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+
+    <transition to="w2SendorSave" fetchable="false">
+      
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="sys_operation"></parameter>
+        <parameter name="qianzi"></parameter>
+        <parameter name="zh"></parameter>
+        <parameter name="wh"></parameter>
+        <parameter name="zr"></parameter>
+      </action>
+
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </activity-state>
+
+  <decision-state name="w2SendorSave">
+    <parameter name="sys_operation"></parameter>
+    <transition when="维护班签字" to="ykselected1"></transition>
+    <transition when="维护班保存" to="w2wh"></transition>
+    <transition when="回退" to="ykselected3"></transition>
+  </decision-state>
+
+  <decision-state name="ykselected1">
+    <parameter name="sdqk"></parameter>
+
+    <transition when="一组" to="fiveforProjectTeam"></transition>
+    <transition when="二组" to="sixforProjectTeam"></transition>
+    <transition when="三组" to="sevenforProjectTeam"></transition>
+
+  </decision-state>
+
+  <decision-state name="ykselected3">
+    <parameter name="sdqk"></parameter>
+
+    <transition when="一组" to="SecondforProjectTeam"></transition>
+    <transition when="二组" to="ThirdforProjectTeam"></transition>
+    <transition when="三组" to="FourforProjectTeam"></transition>
+
+  </decision-state>
+
+  <activity-state name="w3zr" access="p_Director">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="w3zr" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="write-read"></field>
+
+
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="write-read-required"></field>-->
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+      
+      <button handler="doTransition" operation="主任签字" value="提交" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+
+    <transition to="w3SendorSave" fetchable="false">
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="sys_operation"></parameter>
+        <parameter name="qianzi"></parameter>
+        <parameter name="zh"></parameter>
+        <parameter name="wh"></parameter>
+        <parameter name="zr"></parameter>
+      </action>
+
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </activity-state>
+
+  <decision-state name="w3SendorSave">
+    <parameter name="sys_operation"></parameter>
+    <transition when="主任签字" to="ykselected1"></transition>
+    <transition when="保存" to="w3zr"></transition>
+    <transition when="回退" to="ykselected3"></transition>
+  </decision-state>
+
+  <decision-state name="ykselected1">
+    <parameter name="sdqk"></parameter>
+
+    <transition when="一组" to="fiveforProjectTeam"></transition>
+    <transition when="二组" to="sixforProjectTeam"></transition>
+    <transition when="三组" to="sevenforProjectTeam"></transition>
+
+  </decision-state>
+
+  <decision-state name="ykselected3">
+    <parameter name="sdqk"></parameter>
+
+    <transition when="一组" to="SecondforProjectTeam"></transition>
+    <transition when="二组" to="ThirdforProjectTeam"></transition>
+    <transition when="三组" to="FourforProjectTeam"></transition>
+
+  </decision-state>
+
+  <activity-state name="fiveforProjectTeam" access="p_OneGroup">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="fiveforProjectTeam" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="read"></field>
+
+
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>     
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="write-read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+
+      <button handler="doTransition" operation="一组提交" value="提交" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="一组保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+
+    <transition to="fiveSendorSave" fetchable="false">
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="fankui"></parameter>
+        <parameter name="fankui1"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </activity-state>
+
+  <decision-state name="fiveSendorSave">
+    <parameter name="sys_operation"></parameter>
+    <transition when="一组提交" to="eightforProjectTeam"></transition>
+    <transition when="一组保存" to="fiveforProjectTeam"></transition>
+    <transition when="回退" to="ykselected4"></transition>
+  </decision-state>
+
+  <decision-state name="ykselected4">
+    <parameter name="selectsign"></parameter>
+
+    <transition when="综合班" to="w1zhb"></transition>
+    <transition when="维护班" to="w2wh"></transition>
+    <transition when="主任" to="w3zr"></transition>
+
+  </decision-state>
+
+
+  <activity-state name="sixforProjectTeam" access="p_TwoGroup">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="sixforProjectTeam" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="read"></field>
+
+
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="write-read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+
+      <button handler="doTransition" operation="二组提交" value="提交" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="二组保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+
+    <transition to="sixSendorSave" fetchable="false">
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="fankui"></parameter>
+        <parameter name="fankui1"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </activity-state>
+
+  <decision-state name="sixSendorSave">
+    <parameter name="sys_operation"></parameter>
+    <transition when="二组提交" to="eightforProjectTeam"></transition>
+    <transition when="二组保存" to="sixforProjectTeam"></transition>
+    <transition when="回退" to="ykselected4"></transition>
+  </decision-state>
+
+  <decision-state name="ykselected4">
+    <parameter name="selectsign"></parameter>
+
+    <transition when="综合班" to="w1zhb"></transition>
+    <transition when="维护班" to="w2wh"></transition>
+    <transition when="主任" to="w3zr"></transition>
+
+  </decision-state>
+
+  <activity-state name="sevenforProjectTeam" access="p_ThreeGroup">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="sevenforProjectTeam" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="read"></field>
+
+
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="write-read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifusj" attribute="huifusj" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read"></field>
+      </field>
+
+      <button handler="doTransition" operation="三组提交" value="提交" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="三组保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+
+    <transition to="sevenSendorSave" fetchable="false">
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="fankui"></parameter>
+        <parameter name="fankui1"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </activity-state>
+
+  <decision-state name="sevenSendorSave">
+    <parameter name="sys_operation"></parameter>
+    <transition when="三组提交" to="eightforProjectTeam"></transition>
+    <transition when="三组保存" to="sevenforProjectTeam"></transition>
+    <transition when="回退" to="ykselected4"></transition>
+  </decision-state>
+
+  <decision-state name="ykselected4">
+    <parameter name="selectsign"></parameter>
+
+    <transition when="综合班" to="w1zhb"></transition>
+    <transition when="维护班" to="w2wh"></transition>
+    <transition when="主任" to="w3zr"></transition>
+
+  </decision-state>
+
+  <activity-state name="eightforProjectTeam" access="p_Reply">
+    <bind-user>False</bind-user>
+    <form span="6" html_class="table table-striped table-bordered bootstrap-datatable datatable dt_list" tableID="eightforProjectTeam" url="handler/flowInfo.ashx">
+      <label html_class="form-control m-b-10 nowrap" span="1" value="时间："></label>
+      <field id="starttime" attribute="starttime" type="datetime" max="10" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="至："></label>
+      <field id="endtime" attribute="endtime" type="datetime" max="10" html_class="form-control m-b-10 span2 " span="1" access="read"></field>
+      <label html_class="form-control m-b-10 nowrap" span="1" value="值班员："></label>
+      <field id="zhiban" attribute="zhiban" type="text" max="50" html_class="form-control m-b-10 span2" span="1" access="read"></field>
+
+
+      <label html_class="form-control m-b-10 nowrap" span="1" value="故障异常情况："></label>
+      <field id="yichang" attribute="yichang" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="5" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="处理："></label>
+      <field id="sdqk" attribute="sdqk" type="select" nonText="-请选择-" dictionary="sdqk" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="chuli" attribute="chuli" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="送达："></label>
+      <field id="sendTeam" attribute="sendTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui" attribute="fankui" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="选择签字："></label>
+      <field id="selectsign" attribute="selectsign" type="select" nonText="-请选择-" dictionary="selectsign" dynamic="false" parentID="" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="2" value="确认："></label>
+      <field id="qianzi" attribute="qianzi" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="2" access="read"></field>
+
+
+      <!--<label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="综合班："></label>
+      <field id="wb_phone" attribute="zh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="维护班："></label>
+      <field id="wb_phone" attribute="wh" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="主任："></label>
+      <field id="wb_phone" attribute="zr" type="text" max="12" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>-->
+
+
+      <label html_class="form-control cross-line-bordered m-b-10 nowrap" span="1" value="反馈："></label>
+      <field id="backToTeam" attribute="backToTeam" type="text" max="50" html_class="form-control cross-line-bordered m-b-10" span="1" access="read"></field>
+      <field id="fankui1" attribute="fankui1" type="area" max="500" html_class="form-control cross-line-bordered m-b-10" span="4" access="read"></field>
+
+      <field id="clone_sum" type="clone" source="attach" span="6" access="read-write" btn_class="btn btn-primary" btn_value="+">
+        <field id="huifr" attribute="huifr" type="text" max="20" html_class="table-attach-text m-b-10" span="1" access="read-write"></field>
+        <field id="huifusj" attribute="huifusj" type="datetime" max="20" html_class="table-attach-text m-b-10" span="1" access="read-write"></field>
+        <field id="huifunr" attribute="huifunr" type="text" max="500" html_class="table-attach-text m-b-10" span="1" access="read-write"></field>
+        <button handler="" operation="" value="删除" color="按钮颜色" span="1" click="" class="delRow btn btn-danger"></button>
+      </field>
+
+      <button handler="doTransition" operation="结案" value="结案" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="保存" value="保存" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+      <button handler="doTransition" operation="回退" value="回退" check="false" color="按钮颜色" span="2" click="" class="btn btn-primary"></button>
+    </form>
+
+    <transition to="eightSendorSave" fetchable="false">
+      <!--更新动作-->
+      <action event="update" target="primary">
+        <parameter name="starttime"></parameter>
+        <parameter name="endtime"></parameter>
+        <parameter name="zhiban"></parameter>
+        <parameter name="yichang"></parameter>
+        <parameter name="chuli"></parameter>
+        <parameter name="sdqk"></parameter>
+        <parameter name="selectsign"></parameter>
+        <parameter name="fankui"></parameter>
+        <parameter name="fankui1"></parameter>
+        <!--<parameter name="huifu"></parameter>
+        <parameter name="huifuren"></parameter>
+        <parameter name="huifushijian"></parameter>-->
+        <parameter name="sys_operation"></parameter>
+      </action>
+
+      <action event="attachment" target="attach">
+        <clone name="huifr"></clone>
+        <clone name="huifusj"></clone>
+        <clone name="huifunr"></clone>
+        <parameter name="sys_operation"></parameter>
+      </action>
+
+      <action event="addlog" target="log">
+        <parameter name="sys_suggestion"></parameter>
+        <parameter name="sys_operation"></parameter>
+      </action>
+    </transition>
+  </activity-state>
+
+  <decision-state name="eightSendorSave">
+    <parameter name="sys_operation"></parameter>
+    <transition when="结案" to="end"></transition>
+    <transition when="保存" to="eightforProjectTeam"></transition>
+    <transition when="回退" to="ykselected5"></transition>
+  </decision-state>
+
+  <decision-state name="ykselected5">
+    <parameter name="sdqk"></parameter>
+
+    <transition when="一组" to="fiveforProjectTeam"></transition>
+    <transition when="二组" to="sixforProjectTeam"></transition>
+    <transition when="三组" to="sevenforProjectTeam"></transition>    
+
+  </decision-state>
+  
+  <end-state name="end"></end-state>
+
+</process-definition>

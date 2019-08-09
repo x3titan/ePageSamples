@@ -1,0 +1,94 @@
+<page>
+  <controls count="1">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>949</width>
+      <height>819</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onPageCreate><![CDATA[<%
+/*
+//充值成功回调
+payment_type=1
+&amp;subject=1%u966a%u9a7e%u5145%u503c
+&amp;trade_no=2016012121001004180033798750
+&amp;buyer_email=tam3000%40163.com
+&amp;gmt_create=2016-01-21+19%3a25%3a29
+&amp;notify_type=trade_status_sync
+&amp;quantity=1
+&amp;out_trade_no=112233445573
+&amp;notify_time=2016-01-21+19%3a25%3a30
+&amp;seller_id=2088021117176475
+&amp;trade_status=TRADE_SUCCESS
+&amp;is_total_fee_adjust=N
+&amp;total_fee=0.01
+&amp;gmt_payment=2016-01-21+19%3a25%3a30
+&amp;seller_email=mosquito%401peijia.com
+&amp;price=0.01
+&amp;buyer_id=2088002167604181
+&amp;notify_id=a02fe26a8bab82594f7625223c94473he0
+&amp;use_coupon=N
+&amp;sign_type=MD5
+&amp;sign=6266f08c80899c19d41708582eebfdbe
+*/
+
+if ((request.get("trade_status") == "TRADE_SUCCESS")&amp;&amp;(request.getQueryStringCount()==0)) {
+    //导入和分离参数
+    var i,j,paramName,sign="";
+    var params = new Array();
+    for (i=0; i < request.getFormCount(); i++) {
+        paramName = request.getFormKey(i);
+        if (paramName=="sign_type") continue;
+        if (paramName=="sign") {
+            sign = request.get(paramName);
+            continue;
+        }
+        var obj = new Object();
+        params.push(obj);
+        obj.paramName = paramName;
+        obj.paramValue = request.get(paramName);
+    }
+    //排序
+    var tempObj;
+    for (i=0; i<params.length-1; i++) {
+        for (j=i+1; j<params.length; j++) {
+            if (params[i].paramName>params[j].paramName) {
+                tempObj = params[i];
+                params[i]=params[j];
+                params[j]=tempObj;
+            }
+        }
+    }
+    //生成key
+    var key = "";
+    for (i=0; i<params.length; i++) {    
+        if (key!="") key += "&amp;";
+        key += params[i].paramName + "=" + params[i].paramValue;
+    }
+    //校验
+    if (sign.toLowerCase()!=es.getMd5(key+"kj9othli5f3o0pjubgycbz8u7ggdu3du").toLowerCase()) {
+        es.logWarning("检测到支付宝传送的非法数据包：" + request.getFormData());
+    } else {
+        var sql = "exec confirmPay '" + db.encode(request.get("out_trade_no")) + 
+            "','" + db.encode(request.get("buyer_email")) + "'";
+        var sqlResult = db.executeQuery("PJ", sql); 
+        es.logWarning("用户支付成功，本地订单号:" + request.get("out_trade_no") +
+            ",支付者账户:" + request.get("buyer_email") +
+            ",支付宝流水号:" + request.get("trade_no"));
+    }
+}
+
+%>
+
+]]></onPageCreate>
+      <onControlLoad>window.location.href = ee.pageRoot + "/student/sMain";
+</onControlLoad>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

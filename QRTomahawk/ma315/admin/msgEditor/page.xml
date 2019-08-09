@@ -1,0 +1,1334 @@
+<page>
+  <controls count="119">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>1358</width>
+      <height>1600</height>
+      <dockX>fill</dockX>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onPageCreate><![CDATA[<%
+if (session.get("ma315.username") != "tam") {
+    response.redirect("ee.aspx?_L_=/ma315/main");
+}
+
+%>]]></onPageCreate>
+      <onControlLoad>g5.newsType = "";
+getNewsList();
+</onControlLoad>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <left>129</left>
+      <top>582</top>
+      <width>1100</width>
+      <height>981</height>
+      <dockX>center</dockX>
+      <backgroundSkin>line1000</backgroundSkin>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel2/edit1">
+      <left>119</left>
+      <top>114</top>
+      <width>949</width>
+      <height>32</height>
+      <backgroundSkin>edit1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel3">
+      <left>48</left>
+      <top>114</top>
+      <width>71</width>
+      <height>33</height>
+      <text>标题：</text>
+      <hAlign>right</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel4">
+      <left>48</left>
+      <top>156</top>
+      <width>71</width>
+      <height>33</height>
+      <text>副标题：</text>
+      <hAlign>right</hAlign>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel2/edit2">
+      <left>119</left>
+      <top>156</top>
+      <width>949</width>
+      <height>32</height>
+      <backgroundSkin>edit1</backgroundSkin>
+    </control>
+    <control type="RichEdit" pathname="/divRoot/panel2/richedit1">
+      <left>48</left>
+      <top>237</top>
+      <width>1019</width>
+      <height>735</height>
+      <backgroundSkin>richedit</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel5">
+      <left>175</left>
+      <top>195</top>
+      <width>183</width>
+      <height>31</height>
+      <backgroundSkin>skin1000</backgroundSkin>
+      <text>提交修改</text>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>updateNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel8">
+      <left>48</left>
+      <top>195</top>
+      <width>71</width>
+      <height>33</height>
+      <text>新闻序号：</text>
+      <hAlign>right</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel9">
+      <left>118</left>
+      <top>195</top>
+      <width>38</width>
+      <height>33</height>
+      <text>-1</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel13">
+      <left>48</left>
+      <top>74</top>
+      <width>71</width>
+      <height>33</height>
+      <text>类别：</text>
+      <hAlign>right</hAlign>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel2/edit4">
+      <left>119</left>
+      <top>74</top>
+      <width>949</width>
+      <height>32</height>
+      <backgroundSkin>edit1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel14">
+      <left>0</left>
+      <top>0</top>
+      <width>1100</width>
+      <height>45</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>消息详细信息</text>
+      <fontSize>12</fontSize>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2/panel16">
+      <left>376</left>
+      <top>195</top>
+      <width>183</width>
+      <height>31</height>
+      <backgroundSkin>skin1000</backgroundSkin>
+      <text>删 除</text>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>deleteNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel7">
+      <left>0</left>
+      <top>1580</top>
+      <width>1358</width>
+      <height>20</height>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <backgroundColor>FFC080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <left>129</left>
+      <top>92</top>
+      <width>1100</width>
+      <height>477</height>
+      <dockX>center</dockX>
+      <backgroundColor>E0E0E0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>line1000</backgroundSkin>
+    </control>
+    <control type="TableTitle" pathname="/divRoot/panel1/tabletitle1">
+      <left>0</left>
+      <top>51</top>
+      <width>1100</width>
+      <height>37</height>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <columnCount>5</columnCount>
+      <tableBody>tablebody1</tableBody>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/panel1/tabletitle1/tabletitleitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>71</width>
+      <height>37</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>title1</backgroundSkin>
+      <text>序号</text>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/panel1/tabletitle1/tabletitleitem2">
+      <left>71</left>
+      <top>0</top>
+      <width>111</width>
+      <height>37</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>title1</backgroundSkin>
+      <text>消息类型</text>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/panel1/tabletitle1/tabletitleitem3">
+      <left>182</left>
+      <top>0</top>
+      <width>380</width>
+      <height>37</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>title1</backgroundSkin>
+      <text>标题</text>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/panel1/tabletitle1/tabletitleitem4">
+      <left>562</left>
+      <top>0</top>
+      <width>379</width>
+      <height>37</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>title1</backgroundSkin>
+      <text>子标题</text>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/panel1/tabletitle1/tabletitleitem5">
+      <left>941</left>
+      <top>0</top>
+      <width>159</width>
+      <height>37</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>title1</backgroundSkin>
+      <text>创建时间</text>
+      <heavy>87.5</heavy>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableBody" pathname="/divRoot/panel1/tablebody1">
+      <left>0</left>
+      <top>88</top>
+      <width>1100</width>
+      <height>389</height>
+      <rowCount>18</rowCount>
+      <tableTitle>tabletitle1</tableTitle>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/panel1/tablebody1/tablebodyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/panel1/tablebody1/tablebodyitem2">
+      <left>71</left>
+      <top>0</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/panel1/tablebody1/tablebodyitem3">
+      <left>182</left>
+      <top>0</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/panel1/tablebody1/tablebodyitem4">
+      <left>562</left>
+      <top>0</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/panel1/tablebody1/tablebodyitem5">
+      <left>941</left>
+      <top>0</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp1">
+      <left>0</left>
+      <top>22</top>
+      <width>71</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp2">
+      <left>71</left>
+      <top>22</top>
+      <width>111</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp3">
+      <left>182</left>
+      <top>22</top>
+      <width>380</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp4">
+      <left>562</left>
+      <top>22</top>
+      <width>379</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp5">
+      <left>941</left>
+      <top>22</top>
+      <width>159</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp6">
+      <left>0</left>
+      <top>43</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp7">
+      <left>71</left>
+      <top>43</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp8">
+      <left>182</left>
+      <top>43</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp9">
+      <left>562</left>
+      <top>43</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp10">
+      <left>941</left>
+      <top>43</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp11">
+      <left>0</left>
+      <top>65</top>
+      <width>71</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp12">
+      <left>71</left>
+      <top>65</top>
+      <width>111</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp13">
+      <left>182</left>
+      <top>65</top>
+      <width>380</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp14">
+      <left>562</left>
+      <top>65</top>
+      <width>379</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp15">
+      <left>941</left>
+      <top>65</top>
+      <width>159</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp16">
+      <left>0</left>
+      <top>86</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp17">
+      <left>71</left>
+      <top>86</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp18">
+      <left>182</left>
+      <top>86</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp19">
+      <left>562</left>
+      <top>86</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp20">
+      <left>941</left>
+      <top>86</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp21">
+      <left>0</left>
+      <top>108</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp22">
+      <left>71</left>
+      <top>108</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp23">
+      <left>182</left>
+      <top>108</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp24">
+      <left>562</left>
+      <top>108</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp25">
+      <left>941</left>
+      <top>108</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp26">
+      <left>0</left>
+      <top>130</top>
+      <width>71</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp27">
+      <left>71</left>
+      <top>130</top>
+      <width>111</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp28">
+      <left>182</left>
+      <top>130</top>
+      <width>380</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp29">
+      <left>562</left>
+      <top>130</top>
+      <width>379</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp30">
+      <left>941</left>
+      <top>130</top>
+      <width>159</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp31">
+      <left>0</left>
+      <top>151</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp32">
+      <left>71</left>
+      <top>151</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp33">
+      <left>182</left>
+      <top>151</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp34">
+      <left>562</left>
+      <top>151</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp35">
+      <left>941</left>
+      <top>151</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp36">
+      <left>0</left>
+      <top>173</top>
+      <width>71</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp37">
+      <left>71</left>
+      <top>173</top>
+      <width>111</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp38">
+      <left>182</left>
+      <top>173</top>
+      <width>380</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp39">
+      <left>562</left>
+      <top>173</top>
+      <width>379</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp40">
+      <left>941</left>
+      <top>173</top>
+      <width>159</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp41">
+      <left>0</left>
+      <top>194</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp42">
+      <left>71</left>
+      <top>194</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp43">
+      <left>182</left>
+      <top>194</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp44">
+      <left>562</left>
+      <top>194</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp45">
+      <left>941</left>
+      <top>194</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp46">
+      <left>0</left>
+      <top>216</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp47">
+      <left>71</left>
+      <top>216</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp48">
+      <left>182</left>
+      <top>216</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp49">
+      <left>562</left>
+      <top>216</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp50">
+      <left>941</left>
+      <top>216</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp51">
+      <left>0</left>
+      <top>238</top>
+      <width>71</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp52">
+      <left>71</left>
+      <top>238</top>
+      <width>111</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp53">
+      <left>182</left>
+      <top>238</top>
+      <width>380</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp54">
+      <left>562</left>
+      <top>238</top>
+      <width>379</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp55">
+      <left>941</left>
+      <top>238</top>
+      <width>159</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp56">
+      <left>0</left>
+      <top>259</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp57">
+      <left>71</left>
+      <top>259</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp58">
+      <left>182</left>
+      <top>259</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp59">
+      <left>562</left>
+      <top>259</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp60">
+      <left>941</left>
+      <top>259</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp61">
+      <left>0</left>
+      <top>281</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp62">
+      <left>71</left>
+      <top>281</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp63">
+      <left>182</left>
+      <top>281</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp64">
+      <left>562</left>
+      <top>281</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp65">
+      <left>941</left>
+      <top>281</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp66">
+      <left>0</left>
+      <top>303</top>
+      <width>71</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp67">
+      <left>71</left>
+      <top>303</top>
+      <width>111</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp68">
+      <left>182</left>
+      <top>303</top>
+      <width>380</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp69">
+      <left>562</left>
+      <top>303</top>
+      <width>379</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp70">
+      <left>941</left>
+      <top>303</top>
+      <width>159</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp71">
+      <left>0</left>
+      <top>324</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp72">
+      <left>71</left>
+      <top>324</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp73">
+      <left>182</left>
+      <top>324</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp74">
+      <left>562</left>
+      <top>324</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp75">
+      <left>941</left>
+      <top>324</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp76">
+      <left>0</left>
+      <top>346</top>
+      <width>71</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp77">
+      <left>71</left>
+      <top>346</top>
+      <width>111</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp78">
+      <left>182</left>
+      <top>346</top>
+      <width>380</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp79">
+      <left>562</left>
+      <top>346</top>
+      <width>379</width>
+      <height>21</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp80">
+      <left>941</left>
+      <top>346</top>
+      <width>159</width>
+      <height>21</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp81">
+      <left>0</left>
+      <top>367</top>
+      <width>71</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsId = ee.getText(this);
+if (g5.newsId.length==0) return;
+loadNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp82">
+      <left>71</left>
+      <top>367</top>
+      <width>111</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp83">
+      <left>182</left>
+      <top>367</top>
+      <width>380</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+      <text>　</text>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp84">
+      <left>562</left>
+      <top>367</top>
+      <width>379</width>
+      <height>22</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/tablebody1/temp85">
+      <left>941</left>
+      <top>367</top>
+      <width>159</width>
+      <height>22</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundSkin>body1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6">
+      <left>489</left>
+      <top>10</top>
+      <width>120</width>
+      <height>27</height>
+      <backgroundSkin>skin1000</backgroundSkin>
+      <text>+ 增加</text>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsType = ee.getEditText(ee.getControl("edit3"));
+addNews();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel10">
+      <left>18</left>
+      <top>8</top>
+      <width>306</width>
+      <height>33</height>
+      <backgroundSkin>line1000</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel10/panel11">
+      <left>0</left>
+      <top>0</top>
+      <width>79</width>
+      <height>33</height>
+      <dockX>left</dockX>
+      <dockY>fill</dockY>
+      <text>类别：</text>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/panel10/edit3">
+      <left>65</left>
+      <top>3</top>
+      <width>235</width>
+      <height>26</height>
+      <dockY>center</dockY>
+      <backgroundSkin>edit1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel15">
+      <left>353</left>
+      <top>11</top>
+      <width>120</width>
+      <height>27</height>
+      <backgroundSkin>skin1000</backgroundSkin>
+      <text>搜索</text>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.newsType = ee.getEditText(ee.getControl("edit3"));
+getNewsList();
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel12">
+      <left>0</left>
+      <top>0</top>
+      <width>1358</width>
+      <height>74</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>站点信息编辑器</text>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>24</fontSize>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="5">
+    <taskSetItem name="getNewsList">
+      <script1>eio.appendString8(g5.newsType);
+</script1>
+      <script2>var condition = eio.readString8();
+if (condition != "") {
+    condition = "and newsType='" + condition + "'"
+}
+var sql = "select * from news where siteId=2 " + condition + " order by newsType, regdatetime desc";
+var sqlResult = db.executeQuery("EBWeb", sql);
+eio.appendDataSet(sqlResult, "id,newsType,title,subTitle,regdatetime", 0, 100);
+
+
+</script2>
+      <script3>g5.dataset1 = eio.readDataSet();
+ee.setTableData(ee.getControl("tablebody1"), g5.dataset1, 0);
+</script3>
+    </taskSetItem>
+    <taskSetItem name="addNews">
+      <script1>eio.appendString8(g5.newsType);</script1>
+      <script2>var newsType = eio.readString8();
+var sql = "insert into news (siteId,newsType,title,subTitle,data) values (2,'" + newsType + "','新闻标题','副标题','内容')";
+db.executeNoneQuery("EBWeb", sql);
+</script2>
+      <script3>getNewsList();
+</script3>
+    </taskSetItem>
+    <taskSetItem name="loadNews">
+      <script1>eio.appendString8(g5.newsId);
+
+
+</script1>
+      <script2>var newsId = eio.readString8();
+var sql = "select * from news where id = " + newsId;
+var sqlResult = db.executeQuery("EBWeb", sql);
+if (db.read(sqlResult)) {
+    eio.appendString8(newsId);
+    eio.appendString16(db.getString(sqlResult,"newsType"));
+    eio.appendString16(db.getString(sqlResult,"title"));
+    eio.appendString16(db.getString(sqlResult,"subTitle"));
+    eio.appendString16(db.getString(sqlResult,"data"));
+} else {
+    eio.appendString8("0");
+    eio.appendString16("");
+    eio.appendString16("");
+    eio.appendString16("");
+    eio.appendString16("");
+}
+</script2>
+      <script3>var newsId = eio.readString8();
+var newsType = eio.readString16();
+var title  = eio.readString16();
+var subTitle  = eio.readString16();
+var data  = eio.readString16();
+ee.setText(ee.getControl("panel9"), newsId);
+ee.setEditText(ee.getControl("edit4"), newsType);
+ee.setEditText(ee.getControl("edit1"),title);
+ee.setEditText(ee.getControl("edit2"),subTitle);
+ee.setEditText(ee.getControl("richedit1"),data);
+
+
+</script3>
+    </taskSetItem>
+    <taskSetItem name="updateNews">
+      <script1>eio.appendString8(ee.getText(ee.getControl("panel9")));
+eio.appendString16(ee.getEditText(ee.getControl("edit4")));
+eio.appendString16(ee.getEditText(ee.getControl("edit1")));
+eio.appendString16(ee.getEditText(ee.getControl("edit2")));
+eio.appendString16(ee.getEditText(ee.getControl("richedit1")));
+</script1>
+      <script2>var newsId = eio.readString8();
+var newsType = eio.readString16();
+var title  = eio.readString16();
+var subTitle  = eio.readString16();
+var data  = eio.readString16();
+var sql = "update news set title = '" + db.encode(title) + "'" +
+    ",newsType='" + db.encode(newsType) + "'" +
+    ",subTitle='" + db.encode(subTitle) + "'" +
+    ",data='" + db.encode(data) + "'" +
+    " where id = " + newsId;
+if (db.executeNoneQuery("EBWeb",sql)) {
+    eio.appendString8("T");
+} else {
+    eio.appendString8("F");
+}</script2>
+      <script3>var result = eio.readString8();
+if (result=="T") {
+    alert("修改完成");
+    getNewsList();
+} else {
+    alert("修改失败");
+}
+getNewsList();</script3>
+    </taskSetItem>
+    <taskSetItem name="deleteNews">
+      <script1>eio.appendString8(ee.getText(ee.getControl("panel9")));</script1>
+      <script2>var newsId = eio.readString8();
+var sql = "delete news " +
+    " where id = " + newsId;
+if (db.executeNoneQuery("EBWeb",sql)) {
+    eio.appendString8("T");
+} else {
+    eio.appendString8("F");
+}</script2>
+      <script3>getNewsList();</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

@@ -1,0 +1,454 @@
+<page>
+  <controls count="26">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>1261</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onControlLoad><![CDATA[//滚动式菜单
+g5.gmenuControl = new Array();
+g5.aniEnabled = false;
+g5.gmenuControl.push(ee.getControl("layoutyitem4")); //主菜单
+g5.gmenuControl.push(ee.getControl("layoutyitem6"));
+g5.gmenuControl.push(ee.getControl("layoutyitem8"));
+g5.gmenuControl.push(ee.getControl("layoutyitem10"));
+g5.gmenuControl.push(ee.getControl("layoutyitem12"));
+g5.gmenuControl[0].subMenu = ee.getControl("layoutyitem5"); //子菜单
+g5.gmenuControl[1].subMenu = ee.getControl("layoutyitem7");
+g5.gmenuControl[2].subMenu = ee.getControl("layoutyitem9");
+g5.gmenuControl[3].subMenu = ee.getControl("layoutyitem11");
+g5.gmenuControl[4].subMenu = ee.getControl("layoutyitem13");
+g5.gmenuControl[0].subMenuHeight = 230; //子菜单高度
+g5.gmenuControl[1].subMenuHeight = 230;
+g5.gmenuControl[2].subMenuHeight = 230;
+g5.gmenuControl[3].subMenuHeight = 230;
+g5.gmenuControl[4].subMenuHeight = 230;
+
+g5.gmenuInit = function () {
+    var i;
+    for (i = 0; i < g5.gmenuControl.length; i++) {
+        ee.setRect(g5.gmenuControl[i].subMenu,null,null,null,1);
+        g5.gmenuControl[i].open = false;
+        g5.gmenuControl[i].aniEnabled = false;
+        g5.gmenuControl[i].aniStartH = 0;
+        g5.gmenuControl[i].aniEndH = 0;
+    }
+}
+g5.gmenuClick = function (index) {
+    if ((index<0)||(index>=g5.gmenuControl.length)) return;
+    if (g5.gmenuControl[index].open) { 
+        //ee.setRect(g5.gmenuControl[index].subMenu,null,null,null,1);
+        g5.gmenuStartAni(index, 1);
+    } else {
+        //ee.setRect(g5.gmenuControl[index].subMenu,null,null,null,g5.gmenuControl[index].subMenuHeight); 
+        g5.gmenuStartAni(index, g5.gmenuControl[index].subMenuHeight);
+    }
+    g5.gmenuControl[index].open = !g5.gmenuControl[index].open;
+    ee.setRect(g5.gmenuControl[index].parentNode, null, null, null, null, true);
+}
+g5.gmenuStartAni = function (index, endH) {
+    g5.gmenuControl[index].aniEnabled = true;
+    g5.gmenuControl[index].aniStartH = eb.getDivRect(g5.gmenuControl[index].subMenu).h;
+    g5.gmenuControl[index].aniEndH = endH;
+    g5.gmenuControl[index].aniStartTime = new Date();
+    //判断动画是否已经开始
+    if (!g5.aniEnabled) {
+        g5.aniEnabled = true;
+        setTimeout(g5.gmenuTimer, 1);
+    }
+}
+g5.gmenuTimer = function () {
+    var i;
+    //动画处理
+    for (i = 0; i < g5.gmenuControl.length; i++) {
+        if (!g5.gmenuControl[i].aniEnabled) continue;
+        var time = (new Date()).getTime() - g5.gmenuControl[i].aniStartTime.getTime();
+        time = time / 600;
+        time = Math.min(Math.max(0, time), 1);
+        var pos = eb.getInterpolation("bonus", time);
+        pos = parseInt(pos*(g5.gmenuControl[i].aniEndH - g5.gmenuControl[i].aniStartH)+g5.gmenuControl[i].aniStartH);
+        ee.setRect(g5.gmenuControl[i].subMenu,null,null,null, pos);
+        //动画是否结束
+        if (time >= 1) {
+            g5.gmenuControl[i].aniEnabled = false;
+        }   
+    }
+    ee.setRect(g5.gmenuControl[0].parentNode, null, null, null, null, true);
+
+    //判断是否所有的动画都结束了
+    for (i = 0; i < g5.gmenuControl.length; i++) {
+        if (g5.gmenuControl[i].aniEnabled) {
+            setTimeout(g5.gmenuTimer, 1);
+        }
+    }
+    g5.aniEnabled = false;    
+}
+g5.gmenuInit();
+                            
+//frame
+g5.frame = document.createElement("iframe");
+g5.frame.style.position = "absolute";
+g5.frame.style.width = "100%";
+g5.frame.style.height = "100%";
+g5.frame.style.scrolling = "auto";
+g5.frame.style.overflow = "auto";
+g5.frame.setAttribute("frameborder", "0", 0);
+ee.getControl("layoutxitem2").appendChild(g5.frame);
+
+ ]]></onControlLoad>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <left>0</left>
+      <top>0</top>
+      <width>1261</width>
+      <height>719</height>
+      <widthRatio>1</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.570182394924663</sizeRatio>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundImg>1.jpg</backgroundImg>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>1261</width>
+      <height>83</height>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.115438108484006</heightRatio>
+      <sizeRatio>0.0658207771609833</sizeRatio>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <fontFamily>黑体</fontFamily>
+      <fontSize>25</fontSize>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel6">
+      <left>189</left>
+      <top>5</top>
+      <width>883</width>
+      <height>73</height>
+      <leftRatio>0.149881046788263</leftRatio>
+      <topRatio>0.0602409638554217</topRatio>
+      <widthRatio>0.700237906423473</widthRatio>
+      <heightRatio>0.939759036144578</heightRatio>
+      <sizeRatio>0.0883352208380521</sizeRatio>
+      <dockX>center</dockX>
+      <dockY>fill</dockY>
+      <outerTop>5</outerTop>
+      <outerBottom>5</outerBottom>
+      <backgroundImg>title.png</backgroundImg>
+      <backgroundImgMode>fill</backgroundImgMode>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <left>0</left>
+      <top>83</top>
+      <width>1261</width>
+      <height>593</height>
+      <topRatio>0.115438108484006</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.824756606397775</heightRatio>
+      <sizeRatio>0.470261697065821</sizeRatio>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem2/layoutx1">
+      <left>0</left>
+      <top>0</top>
+      <width>1261</width>
+      <height>593</height>
+      <leftRatio>-0.000793021411578113</leftRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.470261697065821</sizeRatio>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>159</width>
+      <height>593</height>
+      <widthRatio>0.12609040444092</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>3.72955974842767</sizeRatio>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2">
+      <left>0</left>
+      <top>0</top>
+      <width>159</width>
+      <height>593</height>
+      <leftRatio>-0.00628930817610063</leftRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>3.72955974842767</sizeRatio>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>11</fieldCount>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem4">
+      <left>0</left>
+      <top>0</top>
+      <width>159</width>
+      <height>54</height>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0910623946037099</heightRatio>
+      <sizeRatio>0.339622641509434</sizeRatio>
+      <backgroundColor>235592</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <onClick>g5.gmenuClick(0);</onClick>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem5">
+      <left>0</left>
+      <top>54</top>
+      <width>159</width>
+      <height>81</height>
+      <topRatio>0.0910623946037099</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.136593591905565</heightRatio>
+      <sizeRatio>0.509433962264151</sizeRatio>
+      <backgroundColor>C3D3E7</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem5/panel4">
+      <left>27</left>
+      <top>15</top>
+      <width>104</width>
+      <height>37</height>
+      <leftRatio>0.169811320754717</leftRatio>
+      <topRatio>0.185185185185185</topRatio>
+      <widthRatio>0.654088050314465</widthRatio>
+      <heightRatio>0.45679012345679</heightRatio>
+      <sizeRatio>0.355769230769231</sizeRatio>
+      <dockX>center</dockX>
+      <text>点亮城市生活梦想</text>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.frame.src = "http://www.baidu.com";
+</onClick>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem6">
+      <left>0</left>
+      <top>135</top>
+      <width>159</width>
+      <height>54</height>
+      <topRatio>0.227655986509275</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0910623946037099</heightRatio>
+      <sizeRatio>0.339622641509434</sizeRatio>
+      <backgroundColor>F25536</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <onClick>g5.gmenuClick(1);</onClick>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem7">
+      <left>0</left>
+      <top>189</top>
+      <width>159</width>
+      <height>38</height>
+      <topRatio>0.318718381112985</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0640809443507589</heightRatio>
+      <sizeRatio>0.238993710691824</sizeRatio>
+      <backgroundColor>FCD6CE</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem7/panel5">
+      <left>27</left>
+      <top>55</top>
+      <width>104</width>
+      <height>56</height>
+      <leftRatio>0.169811320754717</leftRatio>
+      <topRatio>0.466101694915254</topRatio>
+      <widthRatio>0.654088050314465</widthRatio>
+      <heightRatio>0.474576271186441</heightRatio>
+      <sizeRatio>0.538461538461538</sizeRatio>
+      <dockX>center</dockX>
+      <text>点亮城市生活梦想</text>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.frame.src = "http://www.163.com";
+
+                               </onClick>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem8">
+      <left>0</left>
+      <top>227</top>
+      <width>159</width>
+      <height>54</height>
+      <topRatio>0.517706576728499</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0910623946037099</heightRatio>
+      <sizeRatio>0.339622641509434</sizeRatio>
+      <backgroundColor>235592</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <onClick>g5.gmenuClick(2);</onClick>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem9">
+      <left>0</left>
+      <top>281</top>
+      <width>159</width>
+      <height>53</height>
+      <topRatio>0.608768971332209</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0893760539629005</heightRatio>
+      <sizeRatio>0.333333333333333</sizeRatio>
+      <backgroundColor>C3D3E7</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem10">
+      <left>0</left>
+      <top>334</top>
+      <width>159</width>
+      <height>54</height>
+      <topRatio>0.69814502529511</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0910623946037099</heightRatio>
+      <sizeRatio>0.339622641509434</sizeRatio>
+      <backgroundColor>F25536</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <onClick>g5.gmenuClick(3);</onClick>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem11">
+      <left>0</left>
+      <top>388</top>
+      <width>159</width>
+      <height>54</height>
+      <topRatio>0.78920741989882</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0910623946037099</heightRatio>
+      <sizeRatio>0.339622641509434</sizeRatio>
+      <backgroundColor>FCD6CE</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem12">
+      <left>0</left>
+      <top>442</top>
+      <width>159</width>
+      <height>54</height>
+      <topRatio>0.88026981450253</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0910623946037099</heightRatio>
+      <sizeRatio>0.339622641509434</sizeRatio>
+      <backgroundColor>235592</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <cursor>pointer</cursor>
+      <onClick>g5.gmenuClick(4);</onClick>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem13">
+      <left>0</left>
+      <top>496</top>
+      <width>159</width>
+      <height>54</height>
+      <topRatio>0.971332209106239</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0910623946037099</heightRatio>
+      <sizeRatio>0.339622641509434</sizeRatio>
+      <backgroundColor>C3D3E7</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1/layouty2/layoutyitem14">
+      <left>0</left>
+      <top>550</top>
+      <width>159</width>
+      <height>43</height>
+      <topRatio>0.927487352445194</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0725126475548061</heightRatio>
+      <sizeRatio>0.270440251572327</sizeRatio>
+      <backgroundColor>f0f0f0</backgroundColor>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2">
+      <left>159</left>
+      <top>0</top>
+      <width>1102</width>
+      <height>593</height>
+      <leftRatio>0.125297383029342</leftRatio>
+      <widthRatio>0.87390959555908</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.538112522686025</sizeRatio>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem3">
+      <left>0</left>
+      <top>676</top>
+      <width>1261</width>
+      <height>43</height>
+      <topRatio>0.94019471488178</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>0.0598052851182197</heightRatio>
+      <sizeRatio>0.0340999206978588</sizeRatio>
+      <backgroundColor>083973</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel1">
+      <left>21</left>
+      <top>0</top>
+      <width>270</width>
+      <height>43</height>
+      <leftRatio>0.0166534496431404</leftRatio>
+      <widthRatio>0.21411578112609</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.159259259259259</sizeRatio>
+      <dockY>fill</dockY>
+      <text>版权所有 永康市路灯管理所</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel2">
+      <left>495</left>
+      <top>0</top>
+      <width>270</width>
+      <height>43</height>
+      <leftRatio>0.392545598731166</leftRatio>
+      <widthRatio>0.21411578112609</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.159259259259259</sizeRatio>
+      <dockX>center</dockX>
+      <dockY>fill</dockY>
+      <text>点亮城市生活梦想</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel3">
+      <left>971</left>
+      <top>0</top>
+      <width>270</width>
+      <height>43</height>
+      <leftRatio>0.770023790642347</leftRatio>
+      <widthRatio>0.21411578112609</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.159259259259259</sizeRatio>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <outerRight>20</outerRight>
+      <text>地址：浙江省永康市龙川西路</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <hAlign>right</hAlign>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

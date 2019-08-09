@@ -1,0 +1,121 @@
+<page>
+  <controls count="3">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>872</width>
+      <height>592</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onPageCreate><![CDATA[//document.write(unescape("%3Cscript src='http://res.wx.qq.com/open/js/jweixin-1.0.0.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+<%
+var t = es.getAppSetting("MA315_LastSignatureTime");
+t = parseInt(t);
+if (isNaN(t)) t = 0;
+var sig;
+if (((new Date()).getTime() - t) >= 7000*1000) {
+    sig = es.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&amp;appid=wx2e8e2f69fd36ca7b&amp;secret=a9c8dfc60798b6597079102c4e1ebf6c");
+    var p = sig.indexOf("access_token\":\"");
+    if (p>=0) {
+        p += 15;
+        sig = sig.substr(p, sig.length - p);
+        p = sig.indexOf("\"");
+        sig = sig.substr(0, p);
+        sig = es.get("https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + sig + "&amp;type=jsapi");
+        p = sig.indexOf("ticket\":\"");
+        if (p>=0) {
+            p += 9;
+            sig = sig.substr(p, sig.length - p);
+            p = sig.indexOf("\"");
+            sig = sig.substr(0, p);
+        } else {
+            sig = "";
+        }
+    } else {
+        sig = "";
+    }
+    if (sig.length>0) {
+        es.setAppSetting("MA315_LastSignatureTime", (new Date()).getTime() + "");
+        es.setAppSetting("MA315_Sig", sig);
+    }
+} else {
+    sig = es.getAppSetting("MA315_Sig");
+}
+var wxTimestamp = (new Date()).getTime() + "";
+var wxNonceStr = "suijizichuan";
+var wxUrl = request.getUrl();
+var wxStr1 = "jsapi_ticket=" + sig + "&amp;noncestr=" + wxNonceStr + "&amp;timestamp=" + wxTimestamp + "&amp;url=" + wxUrl;
+wxStr1 = es.getSha1(wxStr1);
+"var wxTimestamp = \"" + wxTimestamp + "\";\n" +
+"var wxNonceStr = \"" + wxNonceStr + "\";\n" +
+"var wxUrl = \"" + wxUrl + "\";\n" +
+"var wxSignature = \"" + wxStr1 + "\";\n";
+%>
+
+alert(wxSignature);
+
+wx.config({
+    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: 'wx2e8e2f69fd36ca7b', // 必填，公众号的唯一标识
+    timestamp: wxTimestamp, // 必填，生成签名的时间戳
+    nonceStr: wxNonceStr, // 必填，生成签名的随机串
+    signature: wxSignature,// 必填，签名，见附录1
+    jsApiList: ["onMenuShareAppMessage"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+});
+
+wx.ready(function(){
+    alert("ready");
+    // 获取“分享给朋友”按钮点击状态及自定义分享内容接口
+    wx.onMenuShareAppMessage({
+        title: 'MA315二维码移动互联网推广平台', // 分享标题
+        desc: "免费为企业搭建和维护手机网站，免费微信推广，用户仅仅通过扫描二维码即可获得防伪、溯源、抽奖、抵用券、说明书、厂商资料等18项功能展现。有效的提高产品的口碑和销量。", // 分享描述
+        link:"http://www.ma315.com",
+        imgUrl: "http://www.ma315.com/eEngine/cache/ma315/main/CPY0003.jpg", // 分享图标
+        type: 'link', // 分享类型,music、video或link，不填默认为link
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+]]></onPageCreate>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <left>20</left>
+      <top>37</top>
+      <width>832</width>
+      <height>52</height>
+      <dockX>fill</dockX>
+      <outerLeft>20</outerLeft>
+      <outerRight>20</outerRight>
+      <backgroundSkin>skin1</backgroundSkin>
+      <text>微信公众号测试页面</text>
+      <fontSizeAuto>30</fontSizeAuto>
+      <fontColor>FFFFFF</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel2">
+      <left>188</left>
+      <top>55</top>
+      <backgroundColor>FF0000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <alpha>0.5</alpha>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

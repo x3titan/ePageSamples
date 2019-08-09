@@ -1,0 +1,119 @@
+<page>
+  <controls count="10">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>513</width>
+      <height>703</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onControlLoad><![CDATA[<%
+var accountName = request.get("an");
+//验证厂商标识
+var sql = "select * from manufacturerInfo where accountName = '" + db.encode(accountName) + "'";
+var sqlResult = db.executeQuery("QR", sql);
+if (db.read(sqlResult)) {
+    session.set("accountName", accountName);
+    session.set("code1", request.get("c1"));
+    session.set("code2", request.get("c2"));
+    response.redirect("ee.aspx?_L_=/qrPortal/user/"+accountName);
+}
+%>]]></onControlLoad>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <left>0</left>
+      <top>0</top>
+      <width>513</width>
+      <height>703</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>513</width>
+      <height>159</height>
+      <backgroundColor>5A7DBE</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>Tomahawk二维码防伪溯源认证系统</text>
+      <fontSize>20</fontSize>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <left>0</left>
+      <top>159</top>
+      <width>513</width>
+      <height>362</height>
+      <backgroundColor>9DBDD7</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem2/layoutx1">
+      <left>0</left>
+      <top>0</top>
+      <width>513</width>
+      <height>362</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>60</width>
+      <height>362</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2">
+      <left>60</left>
+      <top>0</top>
+      <width>397</width>
+      <height>362</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>非常遗憾，您扫描的二维码无法通过我们的认证系统。</text>
+      <fontSize>40</fontSize>
+      <fontSizeAuto>20</fontSizeAuto>
+      <fontColor>FF0000</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem3">
+      <left>457</left>
+      <top>0</top>
+      <width>56</width>
+      <height>362</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem3">
+      <left>0</left>
+      <top>521</top>
+      <width>513</width>
+      <height>182</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundImg>for.gif</backgroundImg>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel1">
+      <left>0</left>
+      <top>14</top>
+      <width>513</width>
+      <height>150</height>
+      <dockX>fill</dockX>
+      <text>上海众烁信息科技有限公司为您的产品保驾护航
+
+http://www.zhongshuo.cn</text>
+      <fontSize>20</fontSize>
+      <fontSizeAuto>30</fontSizeAuto>
+      <fontColor>FFFFFF</fontColor>
+      <cursor>pointer</cursor>
+      <onClick>window.location.href="http://www.zhongshuo.cn";
+</onClick>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

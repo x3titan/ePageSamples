@@ -1,0 +1,502 @@
+<page>
+  <controls count="22">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onPageCreate><![CDATA[//onPageCreate 
+g5.userId = "<%
+    var userId = session.get("userid"); 
+    if (userId <=0) {
+       //response.redirect("ee.aspx?_L_=/web_jintan/login");
+    }
+    userId;
+%>";]]></onPageCreate>
+      <onPageLoad>//onPageLoad
+</onPageLoad>
+      <onControlLoad><![CDATA[//onControlLoad
+<%
+if (session.get("username").length == 0) {
+    //response.redirect("ee.aspx?_L_=/web_jintan/login");
+}
+%>
+g5.pages = new Array();
+
+//创建新页面
+g5.divTab = ee.getControl("layoutyitem4");
+g5.divFrame = ee.getControl("layoutyitem5");
+
+g5.appendPage = function (title, url,canClose) {
+    for (var i = 0; i < g5.pages.length; i++) {
+        if (g5.pages[i].title == title) {
+            g5.activePage(i);
+            return;
+        }
+    }
+    var page = new Object();
+    page.title = title;
+    page.url = url;
+    page.active = true;
+    page.divTab = createPanel(g5.divTab, "", "", 120 * g5.pages.length, 0, 120, 32);
+    page.divTab.style.cursor = "hand";
+    page.img1 = eb.createImg(page.divTab, "");
+    page.img1.style.width = "100%";
+    page.img1.style.height = "100%";
+    page.divText = createPanel(page.divTab, "", "", 0, 0, 120, 32);
+    page.text = addText(page.divText, title, "center", "middle", "宋体", 9, "000000", "normal");
+    page.divClose = createPanel(page.divTab, "", "", 103, 12, 8, 8); ;
+    page.divCloseImg = eb.createImg(page.divClose, "");
+    page.divCloseImg.style.width = "100%";
+    page.divCloseImg.style.height = "100%";
+    if(canClose==undefined){
+        canClose=true;
+    }
+    if(!canClose){
+        ee.setVisible(page.divClose, false);
+    }
+    page.divFrame = document.createElement("iframe");
+    page.divFrame.style.position = "absolute";
+    page.divFrame.style.width = "100%";
+    page.divFrame.style.height = "100%";
+    page.divFrame.style.scrolling = "auto";
+    page.divFrame.style.overflow = "auto";
+    page.divFrame.setAttribute("frameborder", "0", 0);
+    g5.divFrame.appendChild(page.divFrame);
+    page.divFrame.src = url;
+    page.divTab.onclick = function () {
+        var index = -1;
+        for (var i = 0; i < g5.pages.length; i++) {
+            if (g5.pages[i].divTab == this) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) return;
+        g5.activePage(index);
+    }
+    page.divClose.onclick = function () {
+        var i;
+        var index = -1;
+        for (i = 0; i < g5.pages.length; i++) {
+            if (g5.pages[i].divClose == this) {
+                index = i;
+                break;
+            }
+        }
+        if (index <= 0) return;
+        if (g5.pages[index].active) {
+            if (index + 1 < g5.pages.length) {
+                g5.activePage(index + 1);
+            } else if (index - 1 >= 0) {
+                g5.activePage(index - 1);
+            }
+        }
+        g5.pages[index].divTab.parentNode.removeChild(g5.pages[index].divTab);
+        g5.pages[index].divFrame.parentNode.removeChild(g5.pages[index].divFrame);
+        g5.pages.splice(index, 1);
+        for (i = 0; i < g5.pages.length; i++) {
+            g5.pages[i].divTab.style.left = i * 120 + "px";
+        }
+    }
+    g5.pages.push(page);
+    g5.activePage(g5.pages.length - 1);
+}
+//激活一个tab页面
+g5.activePage = function (index) {
+    for (var i = 0; i < g5.pages.length; i++) {
+        if (!g5.pages[i].active) {
+            continue;
+        }
+
+        g5.pages[i].active = false;
+        g5.pages[i].img1.src = "eeImage.aspx?_image_Url_=/web_jintan/main/p2d3c1.png";
+        if(i>0){
+            g5.pages[i].divCloseImg.src = "eeImage.aspx?_image_Url_=/web_jintan/main/p2d3d1.png";
+        }
+        ee.setTextColor(g5.pages[i].divText, "#ffffff");
+        g5.pages[i].divFrame.style.zIndex = 10;
+    }
+    g5.pages[index].active = true;
+    g5.pages[index].img1.src = "eeImage.aspx?_image_Url_=/web_jintan/main/p2d3c2.png";
+    if(index>0){
+    g5.pages[index].divCloseImg.src = "eeImage.aspx?_image_Url_=/web_jintan/main/p2d3d2.png";
+    }
+    ee.setTextColor(g5.pages[index].divText, "#000000");
+    g5.pages[index].divFrame.style.zIndex = 1000;
+}
+
+/////////////////////菜单部分
+g5.menu1 = {
+    menu: new Array(),
+    currentRootDiv: null,
+    currentSubDiv: null,
+    mainY: 0,
+    subY: 0,
+    currentX: 0,
+    xCount: 1, //子菜单横向个数
+    xSize: 180, //子菜单的横向间距
+    appendMenu: function(parent, x, y) {
+        this.currentRootDiv = eb.createDiv(parent);
+        eb.setDivRect(this.currentRootDiv, x, y, 24 + this.xCount * this.xSize + 100, 1000);
+        this.mainY = 0;
+        this.currentRootDiv.onmouseleave = function () {
+            g5.menu1.close(this);
+        }
+        this.currentRootDiv.style.visibility = "hidden";
+        this.menu.push(this.currentRootDiv);
+        this.currentRootDiv.style.zIndex = 10000;
+        return this.currentRootDiv;
+    },
+    show: function(menuIndex) {
+        if (menuIndex<0) return;
+        if (menuIndex>=this.menu.length) return;
+        this.closeAll();
+        for (var i = 0; i < this.menu[menuIndex].children.length; i++) {
+            this.menu[menuIndex].children[i].style.visibility = "hidden";
+            ee.showAni(this.menu[menuIndex].children[i]);
+        }
+        this.menu[menuIndex].style.visibility = "visible";
+    },
+    addMainMenu: function (name, url) {
+        var c;
+        if (this.mainY != 0) {
+            if (this.currentX == 0) this.subY--;
+            this.currentSubDiv.style.height = (this.subY * 30 + 35+2) + "px";
+            c = createPanel(this.currentSubDiv, "", "", 0, 0, this.currentSubDiv.offsetWidth, this.currentSubDiv.offsetHeight);
+            addSkin(c, ee.pageUrl.substr(ee.pageUrl, ee.pageUrl.indexOf("/", 1)) + "/skins/body2.png", 96, 96, 12, 11, 72, 74);
+            c.style.zIndex = 0;
+            if ((this.subY == 0) &amp;&amp; (this.currentX == 0)) {
+            } else {
+                //this.mainY += (this.subY * 30 + 40);
+            }
+            this.mainY += (this.subY * 30 + 35);
+        }
+        this.currentX = 0;
+        this.subY = 0;
+        if (name == "") {
+            this.currentRootDiv.style.height = (this.mainY+2) + "px";
+            return;
+        }
+        if (this.mainY == 0) this.mainY += 1;
+        this.currentSubDiv = createPanel(this.currentRootDiv, "", "", 0, this.mainY, 24 + this.xCount * this.xSize + 100, 30);
+        c = createPanel(this.currentSubDiv, "", "", 0, 10, 100, 20);
+        addText(c, name, "center", "middle", "宋体", 12, "000000", "normal");
+        c.mainDiv = this.currentSubDiv;
+        c.text = name;
+        c.url = url;
+        c.style.zIndex = 100;
+        eb.setAni(this.currentSubDiv, "null", "topFlyIn", "null", this.mainY*3*0, true, false);
+        if (c.url.length > 0) {
+            c.style.cursor = "hand";
+            c.onclick = function () {
+                g5.menu1.closeByButton(this);
+                //菜单点击修改位置
+               g5.appendPage(this.text, this.url);
+                //window.open(this.url);
+            }
+        } else {
+            c.style.cursor = "auto";
+        }
+    },
+    addSubMenu: function (name, url) {
+        var c;
+        c = createPanel(this.currentSubDiv, "", "", 24 + this.currentX * this.xSize + 100, 11 + this.subY * 30, 18, 19);
+        addImage(c, ee.pageUrl + "/dot.png","center","","");
+        c.style.zIndex = 100;
+        c = createPanel(this.currentSubDiv, "", "", 40 + this.currentX * this.xSize + 100, 11 + this.subY * 30, this.xSize - 13, 19);
+        addText(c, name, "left", "middle", "宋体",9, "000000", "normal");
+        c.mainDiv = this.currentRootDiv;
+        c.text = name;
+        c.url = url;
+        c.style.cursor = "hand";
+        c.style.zIndex = 100;
+        c.onclick = function () {
+            g5.menu1.closeByButton(this);
+            //菜单点击修改位置
+            g5.appendPage(this.text, this.url);
+            //window.open(this.url);
+        }
+        if ((this.currentX == 0) &amp;&amp; (this.subY != 0)) {
+            c = createPanel(this.currentSubDiv, "", "E0E0E0", 10 + 100, 33 + (this.subY - 1) * 30, this.xCount * this.xSize, 2);
+            c.style.zIndex = 100;
+        }
+        if (this.currentX == this.xCount - 1) {
+            this.subY++;
+        }
+        this.currentX = (this.currentX + 1) % this.xCount;
+    },
+    closeByButton: function(button) {
+        this.close(button.parentNode.parentNode);
+    },
+    close: function(root) {
+        for (var i = 0; i < root.children.length; i++) {
+            root.children[i].style.visibility = "";
+        }
+        root.style.visibility = "hidden";
+    },
+    closeAll: function() {
+        for (var i = 0; i < this.menu.length; i++) {
+            this.close(this.menu[i]);
+        }
+    }
+}
+//第一个菜单
+//var url3="http://192.168.50.80:33819/web_jintanEpage/systen_lightErr.htm?UserId="+g5.userId+"";
+var url2="http://114.80.168.38:53819/web_jintanEpage/system_LightRate.htm?UserId="+g5.userId+"";
+var url3="http://114.80.168.38:53819/web_jintanEpage/system_DeviceIntact.htm?UserId="+g5.userId+"";
+var url4="http://114.80.168.38:53819/web_jintanEpage/system_GDGL.htm?UserId="+g5.userId+"";
+var url5="http://114.80.168.38:53819/web_jintanEpage/system_materialList.htm?UserId="+g5.userId+"";
+//g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x+200, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.addMainMenu("台账报表","");
+    g5.menu1.addSubMenu("电源点情况","http://mail.163.com");
+    g5.menu1.addSubMenu("亮点率检查统计",url2);
+    g5.menu1.addSubMenu("设施完好率情况",url3);
+g5.menu1.addMainMenu("","");
+
+//g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel14")).x+ eb.getDivRect(ee.getControl("panel15")).x+100, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.appendMenu($("divRoot"), eb.getDivRect(ee.getControl("panel8")).x+ eb.getDivRect(ee.getControl("panel15")).x, eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10);
+g5.menu1.addMainMenu("工单管理","");
+   g5.menu1.addSubMenu("工单管理查询",url4);
+//g5.menu1.addMainMenu("工单耗材","");
+    g5.menu1.addSubMenu("工单耗材查询",url5);
+g5.menu1.addMainMenu("","");
+
+var url="http://192.168.50.104/gismap/GIS_Main.htm?UserId="+g5.userId+"";
+g5.appendPage("主页", url,false);
+]]></onControlLoad>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>80</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundImg>主界面title.png</backgroundImg>
+      <fontSize>20</fontSize>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15">
+      <left>632</left>
+      <top>1</top>
+      <width>604</width>
+      <height>69</height>
+      <dockX>right</dockX>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel12">
+      <left>23</left>
+      <top>2</top>
+      <width>70</width>
+      <height>70</height>
+      <outerRight>400</outerRight>
+      <backgroundImg>首页.png</backgroundImg>
+      <fontSize>14</fontSize>
+      <fontColor>008B8B</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick><![CDATA[var url="http://192.168.50.104/gismap/GIS_Main.htm?UserId="+g5.userId+"";
+g5.appendPage("主页", url);
+//ee.setText(ee.getControl("panel3"), "<iframe src=\" "+url+"\" " +
+   // " frameborder=\"0\" marginwidth=\"0\" marginheight=\"0\" scrolling=\"yes\" "+
+   // "style=\"width:1500px; height: 800px; position:absolute; top:0px; left:0px;\"></iframe>");]]></onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel10">
+      <left>97</left>
+      <top>2</top>
+      <width>70</width>
+      <height>70</height>
+      <outerRight>350</outerRight>
+      <backgroundImg>故障查询.png</backgroundImg>
+      <fontSize>14</fontSize>
+      <fontColor>008B8B</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>var url="http://114.80.168.38:53819/web_jintanEpage/system_lightErr.htm?UserId="+g5.userId+"";
+g5.appendPage("故障查询", url);</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel8">
+      <left>184</left>
+      <top>2</top>
+      <width>70</width>
+      <height>70</height>
+      <outerRight>300</outerRight>
+      <backgroundImg>工单管理.png</backgroundImg>
+      <fontSize>14</fontSize>
+      <fontColor>008B8B</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.menu1.show(1);
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel14">
+      <left>358</left>
+      <top>2</top>
+      <width>70</width>
+      <height>70</height>
+      <outerRight>250</outerRight>
+      <backgroundImg>台账管理.png</backgroundImg>
+      <fontSize>14</fontSize>
+      <fontColor>008B8B</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>eb.setDivRect(g5.menu1.menu[0],
+    eb.getDivRect(ee.getControl("panel14")).x + eb.getDivRect(ee.getControl("panel15")).x,
+    eb.getDivRect(ee.getControl("panel14")).y + eb.getDivRect(ee.getControl("panel14")).h + 10
+);
+g5.menu1.show(0);</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel22">
+      <left>445</left>
+      <top>2</top>
+      <width>70</width>
+      <height>70</height>
+      <outerRight>200</outerRight>
+      <backgroundImg>人员管理.png</backgroundImg>
+      <fontSize>14</fontSize>
+      <fontColor>008B8B</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>var url="http://114.80.168.38:53819/web_jintanEpage/system_StaffManagement.htm?UserId="+g5.userId+"";
+g5.appendPage("人员管理", url);</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel6">
+      <left>513</left>
+      <top>2</top>
+      <width>70</width>
+      <height>70</height>
+      <outerRight>150</outerRight>
+      <backgroundImg>注销.png</backgroundImg>
+      <fontSize>14</fontSize>
+      <fontColor>008B8B</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>window.location.href = ee.pageRoot + "/login"; </onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel15/panel4">
+      <left>271</left>
+      <top>3</top>
+      <width>70</width>
+      <height>70</height>
+      <backgroundImg>工程管理.png</backgroundImg>
+      <onClick>var url="http://114.80.168.38:53819/web_jintanEpage/jt_ProjectProcess.htm?UserId="+g5.userId+"";
+g5.appendPage("工程管理", url);</onClick>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <left>0</left>
+      <top>80</top>
+      <width>1236</width>
+      <height>607</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem2/layoutx1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>607</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>1</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>607</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>607</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>36</height>
+      <backgroundColor>8080FF</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4/panel2">
+      <left>0</left>
+      <top>34</top>
+      <width>1236</width>
+      <height>2</height>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <backgroundColor>45C1EB</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4/panel17">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>11</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundImg>shadowY.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem5">
+      <left>0</left>
+      <top>36</top>
+      <width>1236</width>
+      <height>571</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <backgroundImg>xz_bn.png</backgroundImg>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem3">
+      <left>0</left>
+      <top>687</top>
+      <width>1236</width>
+      <height>32</height>
+      <backgroundColor>489EBC</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>点亮城市生活梦想</text>
+      <fontColor>FFFFFF</fontColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel1">
+      <left>0</left>
+      <top>4</top>
+      <width>164</width>
+      <height>25</height>
+      <dockX>left</dockX>
+      <text>版权所有 金坛市路灯管理所</text>
+      <fontColor>FFFFFF</fontColor>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem3/panel3">
+      <left>896</left>
+      <top>1</top>
+      <width>340</width>
+      <height>25</height>
+      <dockX>right</dockX>
+      <text>地址：江苏省金坛市华城中路11号  电话（0519）82330578   </text>
+      <fontColor>FFFFFF</fontColor>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

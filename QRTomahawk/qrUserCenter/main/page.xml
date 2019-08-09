@@ -1,0 +1,263 @@
+<page>
+  <controls count="16">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onControlLoad><![CDATA[<%
+if (session.get("username").length == 0) {
+    response.redirect("ee.aspx?_L_=/qrUserCenter/login");
+}
+%>
+g5.pages = new Array();
+
+//创建新页面
+g5.divTab = ee.getControl("layoutyitem4");
+g5.divFrame = ee.getControl("layoutyitem5");
+
+g5.appendPage = function (title, url) {
+    for (var i = 0; i < g5.pages.length; i++) {
+        if (g5.pages[i].title == title) {
+            g5.activePage(i);
+            return;
+        }
+    }
+    var page = new Object();
+    page.title = title;
+    page.url = url;
+    page.active = true;
+    page.divTab = createPanel(g5.divTab, "", "", 120 * g5.pages.length, 0, 120, 32);
+    page.divTab.style.cursor = "hand";
+    page.img1 = eb.createImg(page.divTab, "");
+    page.img1.style.width = "100%";
+    page.img1.style.height = "100%";
+    page.divText = createPanel(page.divTab, "", "", 0, 0, 120, 32);
+    page.text = addText(page.divText, title, "center", "middle", "宋体", 9, "000000", "normal");
+    page.divClose = createPanel(page.divTab, "", "", 103, 12, 8, 8); ;
+    page.divCloseImg = eb.createImg(page.divClose, "");
+    page.divCloseImg.style.width = "100%";
+    page.divCloseImg.style.height = "100%";
+    page.divFrame = document.createElement("iframe");
+    page.divFrame.style.position = "absolute";
+    page.divFrame.style.width = "100%";
+    page.divFrame.style.height = "100%";
+    page.divFrame.style.scrolling = "auto";
+    page.divFrame.style.overflow = "auto";
+    page.divFrame.setAttribute("frameborder", "0", 0);
+    g5.divFrame.appendChild(page.divFrame);
+    page.divFrame.src = url;
+    page.divTab.onclick = function () {
+        var index = -1;
+        for (var i = 0; i < g5.pages.length; i++) {
+            if (g5.pages[i].divTab == this) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) return;
+        g5.activePage(index);
+    }
+    page.divClose.onclick = function () {
+        var i;
+        var index = -1;
+        for (i = 0; i < g5.pages.length; i++) {
+            if (g5.pages[i].divClose == this) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) return;
+        if (g5.pages[index].active) {
+            if (index + 1 < g5.pages.length) {
+                g5.activePage(index + 1);
+            } else if (index - 1 >= 0) {
+                g5.activePage(index - 1);
+            }
+        }
+        g5.pages[index].divTab.parentNode.removeChild(g5.pages[index].divTab);
+        g5.pages[index].divFrame.parentNode.removeChild(g5.pages[index].divFrame);
+        g5.pages.splice(index, 1);
+        for (i = 0; i < g5.pages.length; i++) {
+            g5.pages[i].divTab.style.left = i * 120 + "px";
+        }
+    }
+    g5.pages.push(page);
+    g5.activePage(g5.pages.length - 1);
+}
+//激活一个tab页面
+g5.activePage = function (index) {
+    for (var i = 0; i < g5.pages.length; i++) {
+        if (!g5.pages[i].active) {
+            continue;
+        }
+        g5.pages[i].active = false;
+        g5.pages[i].img1.src = "cache/qrUserCenter/main/p2d3c1.png";
+        g5.pages[i].divCloseImg.src = "cache/qrUserCenter/main/p2d3d1.png";
+        ee.setTextColor(g5.pages[i].divText, "#ffffff");
+        g5.pages[i].divFrame.style.zIndex = 10;
+    }
+    g5.pages[index].active = true;
+    g5.pages[index].img1.src = "cache/qrUserCenter/main/p2d3c2.png";
+    g5.pages[index].divCloseImg.src = "cache/qrUserCenter/main/p2d3d2.png";
+    ee.setTextColor(g5.pages[index].divText, "#000000");
+    g5.pages[index].divFrame.style.zIndex = 1000;
+}
+
+]]></onControlLoad>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>62</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <backgroundImg>titlec.jpg</backgroundImg>
+      <fontSize>14</fontSize>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel5">
+      <left>25</left>
+      <top>15</top>
+      <width>101</width>
+      <height>31</height>
+      <dockY>center</dockY>
+      <backgroundSkin>skin1000</backgroundSkin>
+      <text>批次信息</text>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.appendPage("批次信息", ee.pageRoot + "/batchInfo");</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel3">
+      <left>137</left>
+      <top>15</top>
+      <width>101</width>
+      <height>31</height>
+      <dockY>center</dockY>
+      <backgroundSkin>skin1000</backgroundSkin>
+      <text>溯源管理</text>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.appendPage("溯源管理", ee.pageRoot + "/tsourceAdmin");</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem1/panel6">
+      <left>249</left>
+      <top>15</top>
+      <width>101</width>
+      <height>31</height>
+      <dockY>center</dockY>
+      <backgroundSkin>skin1000</backgroundSkin>
+      <text>雇员管理</text>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.appendPage("雇员管理", ee.pageRoot + "/empAdmin");</onClick>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2">
+      <left>0</left>
+      <top>62</top>
+      <width>1236</width>
+      <height>625</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layouty1/layoutyitem2/layoutx1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>625</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>4</width>
+      <height>625</height>
+      <backgroundColor>5E9BB9</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2">
+      <left>4</left>
+      <top>0</top>
+      <width>1232</width>
+      <height>625</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2">
+      <left>0</left>
+      <top>0</top>
+      <width>1232</width>
+      <height>625</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4">
+      <left>0</left>
+      <top>0</top>
+      <width>1232</width>
+      <height>32</height>
+      <backgroundColor>8080FF</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4/panel2">
+      <left>0</left>
+      <top>31</top>
+      <width>1232</width>
+      <height>1</height>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <backgroundColor>008000</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem4/panel1">
+      <left>0</left>
+      <top>0</top>
+      <width>1232</width>
+      <height>7</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundImg>shadowY.png</backgroundImg>
+      <backgroundImgMode>stretch</backgroundImgMode>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem2/layoutx1/layoutxitem2/layouty2/layoutyitem5">
+      <left>0</left>
+      <top>32</top>
+      <width>1232</width>
+      <height>593</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <backgroundImg>xz_bn.png</backgroundImg>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layouty1/layoutyitem3">
+      <left>0</left>
+      <top>687</top>
+      <width>1236</width>
+      <height>32</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>MA315二维码防伪认证平台 用户管理中心</text>
+      <fontColor>FFFFFF</fontColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="0" />
+  <gridLines count="0" />
+</page>

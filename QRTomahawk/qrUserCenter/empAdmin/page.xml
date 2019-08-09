@@ -1,0 +1,2093 @@
+<page>
+  <controls count="155">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <onControlLoad><![CDATA[<%
+if (session.get("username").length == 0) {
+    response.redirect("ee.aspx?_L_=/qrUserCenter/hint/login");
+}
+%>
+
+g5.pageSize = 20;
+g5.pageCurrent = 1;
+g5.pageCount = 1;
+g5.pageJump = function (pageNumber) {
+    if (pageNumber<1) pageNumber = 1;
+    if (pageNumber>g5.pageCount) {
+        pageNumber = g5.pageCount;
+    }
+    if (g5.pageCurrent!=pageNumber) {
+        g5.pageCurrent = pageNumber;
+        if (g5.pageCurrent>0) {
+            query();
+        }
+    }
+}
+
+g5.refreshDetail = function(index) {
+    ee.setText(ee.getControl("layoutxitem13"), ee.getText(ee.getControl("tablebody1").cols[0].rows[index]));
+    ee.setEditText(ee.getControl("edit4"), ee.getText(ee.getControl("tablebody1").cols[1].rows[index]));
+    ee.setEditText(ee.getControl("edit5"), "");
+    ee.setEditText(ee.getControl("edit6"), "");
+    ee.setEditText(ee.getControl("edit2"), ee.getText(ee.getControl("tablebody1").cols[2].rows[index]));
+    ee.setEditText(ee.getControl("edit3"), ee.getText(ee.getControl("tablebody1").cols[4].rows[index]));
+}
+
+
+query();
+]]></onControlLoad>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1">
+      <left>0</left>
+      <top>0</top>
+      <width>1236</width>
+      <height>719</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>368</width>
+      <height>719</height>
+      <backgroundColor>E7F2F5</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/panel7">
+      <left>19</left>
+      <top>82</top>
+      <width>329</width>
+      <height>247</height>
+      <dockX>center</dockX>
+      <backgroundSkin>line1002</backgroundSkin>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx4">
+      <left>13</left>
+      <top>164</top>
+      <width>303</width>
+      <height>27</height>
+      <dockX>center</dockX>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx4/layoutxitem6">
+      <left>0</left>
+      <top>0</top>
+      <width>83</width>
+      <height>27</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>姓名</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx4/layoutxitem7">
+      <left>83</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx4/layoutxitem7/edit2">
+      <left>0</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>edit1</backgroundSkin>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx5">
+      <left>13</left>
+      <top>200</top>
+      <width>303</width>
+      <height>27</height>
+      <dockX>center</dockX>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx5/layoutxitem8">
+      <left>0</left>
+      <top>0</top>
+      <width>83</width>
+      <height>27</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>备注</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx5/layoutxitem9">
+      <left>83</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx5/layoutxitem9/edit3">
+      <left>0</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>edit1</backgroundSkin>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx6">
+      <left>13</left>
+      <top>19</top>
+      <width>303</width>
+      <height>27</height>
+      <dockX>center</dockX>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx6/layoutxitem10">
+      <left>0</left>
+      <top>0</top>
+      <width>83</width>
+      <height>27</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>序列号</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx6/layoutxitem13">
+      <left>83</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <backgroundColor>E7E8F5</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx7">
+      <left>13</left>
+      <top>55</top>
+      <width>303</width>
+      <height>27</height>
+      <dockX>center</dockX>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx7/layoutxitem14">
+      <left>0</left>
+      <top>0</top>
+      <width>83</width>
+      <height>27</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>用户名</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx7/layoutxitem15">
+      <left>83</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx7/layoutxitem15/edit4">
+      <left>0</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>edit1</backgroundSkin>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx8">
+      <left>13</left>
+      <top>92</top>
+      <width>303</width>
+      <height>27</height>
+      <dockX>center</dockX>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx8/layoutxitem16">
+      <left>0</left>
+      <top>0</top>
+      <width>83</width>
+      <height>27</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>密码</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx8/layoutxitem17">
+      <left>83</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx8/layoutxitem17/edit5">
+      <left>0</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>edit1</backgroundSkin>
+      <inputPassword>true</inputPassword>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx9">
+      <left>13</left>
+      <top>128</top>
+      <width>303</width>
+      <height>27</height>
+      <dockX>center</dockX>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx9/layoutxitem18">
+      <left>0</left>
+      <top>0</top>
+      <width>83</width>
+      <height>27</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>确认密码</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx9/layoutxitem19">
+      <left>83</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx1/layoutxitem1/panel7/layoutx9/layoutxitem19/edit6">
+      <left>0</left>
+      <top>0</top>
+      <width>220</width>
+      <height>27</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>edit1</backgroundSkin>
+      <inputPassword>true</inputPassword>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/panel2">
+      <left>364</left>
+      <top>0</top>
+      <width>4</width>
+      <height>719</height>
+      <dockX>right</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/panel3">
+      <left>21</left>
+      <top>18</top>
+      <width>325</width>
+      <height>45</height>
+      <dockX>center</dockX>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>用户详细信息</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/panel6">
+      <left>34</left>
+      <top>356</top>
+      <width>136</width>
+      <height>29</height>
+      <backgroundColor>80FFFF</backgroundColor>
+      <backgroundSkin>skin1001</backgroundSkin>
+      <text>新 增</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>insert();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/panel4">
+      <left>193</left>
+      <top>355</top>
+      <width>136</width>
+      <height>29</height>
+      <backgroundColor>80FFFF</backgroundColor>
+      <backgroundSkin>skin1001</backgroundSkin>
+      <text>修 改</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>modify();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem1/panel5">
+      <left>193</left>
+      <top>393</top>
+      <width>136</width>
+      <height>29</height>
+      <backgroundColor>80FFFF</backgroundColor>
+      <backgroundSkin>skin1001</backgroundSkin>
+      <text>删 除</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>del();</onClick>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem2">
+      <left>368</left>
+      <top>0</top>
+      <width>868</width>
+      <height>719</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <backgroundImg>xz_bn.png</backgroundImg>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/panel1">
+      <left>5</left>
+      <top>10</top>
+      <width>853</width>
+      <height>659</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <outerLeft>5</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <outerBottom>50</outerBottom>
+    </control>
+    <control type="LayoutY" pathname="/divRoot/layoutx1/layoutxitem2/layouty1">
+      <left>10</left>
+      <top>10</top>
+      <width>848</width>
+      <height>699</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <outerLeft>10</outerLeft>
+      <outerRight>10</outerRight>
+      <outerTop>10</outerTop>
+      <outerBottom>10</outerBottom>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>848</width>
+      <height>39</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem1/layoutx3">
+      <left>234</left>
+      <top>0</top>
+      <width>380</width>
+      <height>31</height>
+      <dockX>center</dockX>
+      <dockY>top</dockY>
+      <fieldCount>2</fieldCount>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem1/layoutx3/layoutxitem4">
+      <left>0</left>
+      <top>0</top>
+      <width>286</width>
+      <height>31</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+    </control>
+    <control type="Edit" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem1/layoutx3/layoutxitem4/edit1">
+      <left>0</left>
+      <top>0</top>
+      <width>286</width>
+      <height>31</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundSkin>edit1</backgroundSkin>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem1/layoutx3/layoutxitem5">
+      <left>286</left>
+      <top>0</top>
+      <width>94</width>
+      <height>31</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>搜 索</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.pageCurrent = 1;
+query();
+</onClick>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2">
+      <left>0</left>
+      <top>39</top>
+      <width>848</width>
+      <height>620</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+    </control>
+    <control type="TableTitle" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tabletitle1">
+      <left>0</left>
+      <top>0</top>
+      <width>848</width>
+      <height>31</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <columnCount>5</columnCount>
+      <tableBody>tablebody1</tableBody>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tabletitle1/tabletitleitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>69</width>
+      <height>31</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundSkin>body2</backgroundSkin>
+      <text>序列号</text>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tabletitle1/tabletitleitem2">
+      <left>69</left>
+      <top>0</top>
+      <width>141</width>
+      <height>31</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <backgroundSkin>body2</backgroundSkin>
+      <text>用户名</text>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tabletitle1/tabletitleitem3">
+      <left>210</left>
+      <top>0</top>
+      <width>97</width>
+      <height>31</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundSkin>body2</backgroundSkin>
+      <text>姓名</text>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tabletitle1/tabletitleitem4">
+      <left>307</left>
+      <top>0</top>
+      <width>117</width>
+      <height>31</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <backgroundSkin>body2</backgroundSkin>
+      <text>注册时间</text>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="TableTitleItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tabletitle1/tabletitleitem5">
+      <left>424</left>
+      <top>0</top>
+      <width>424</width>
+      <height>31</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <backgroundSkin>body2</backgroundSkin>
+      <text>备注</text>
+    </control>
+    <control type="TableBody" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1">
+      <left>0</left>
+      <top>31</top>
+      <width>848</width>
+      <height>589</height>
+      <backgroundSkin>line1002</backgroundSkin>
+      <rowCount>20</rowCount>
+      <tableTitle>tabletitle1</tableTitle>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/tablebodyitem1">
+      <left>0</left>
+      <top>0</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/tablebodyitem2">
+      <left>69</left>
+      <top>0</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/tablebodyitem3">
+      <left>210</left>
+      <top>0</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/tablebodyitem4">
+      <left>307</left>
+      <top>0</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="TableBodyItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/tablebodyitem5">
+      <left>424</left>
+      <top>0</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp1">
+      <left>0</left>
+      <top>29</top>
+      <width>69</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp2">
+      <left>69</left>
+      <top>29</top>
+      <width>141</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp3">
+      <left>210</left>
+      <top>29</top>
+      <width>97</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp4">
+      <left>307</left>
+      <top>29</top>
+      <width>117</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp5">
+      <left>424</left>
+      <top>29</top>
+      <width>424</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp6">
+      <left>0</left>
+      <top>59</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp7">
+      <left>69</left>
+      <top>59</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp8">
+      <left>210</left>
+      <top>59</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp9">
+      <left>307</left>
+      <top>59</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp10">
+      <left>424</left>
+      <top>59</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp11">
+      <left>0</left>
+      <top>88</top>
+      <width>69</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp12">
+      <left>69</left>
+      <top>88</top>
+      <width>141</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp13">
+      <left>210</left>
+      <top>88</top>
+      <width>97</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp14">
+      <left>307</left>
+      <top>88</top>
+      <width>117</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp15">
+      <left>424</left>
+      <top>88</top>
+      <width>424</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp16">
+      <left>0</left>
+      <top>118</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp17">
+      <left>69</left>
+      <top>118</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp18">
+      <left>210</left>
+      <top>118</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp19">
+      <left>307</left>
+      <top>118</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp20">
+      <left>424</left>
+      <top>118</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp21">
+      <left>0</left>
+      <top>147</top>
+      <width>69</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp22">
+      <left>69</left>
+      <top>147</top>
+      <width>141</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp23">
+      <left>210</left>
+      <top>147</top>
+      <width>97</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp24">
+      <left>307</left>
+      <top>147</top>
+      <width>117</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp25">
+      <left>424</left>
+      <top>147</top>
+      <width>424</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp26">
+      <left>0</left>
+      <top>177</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp27">
+      <left>69</left>
+      <top>177</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp28">
+      <left>210</left>
+      <top>177</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp29">
+      <left>307</left>
+      <top>177</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp30">
+      <left>424</left>
+      <top>177</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp31">
+      <left>0</left>
+      <top>206</top>
+      <width>69</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp32">
+      <left>69</left>
+      <top>206</top>
+      <width>141</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp33">
+      <left>210</left>
+      <top>206</top>
+      <width>97</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp34">
+      <left>307</left>
+      <top>206</top>
+      <width>117</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp35">
+      <left>424</left>
+      <top>206</top>
+      <width>424</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp36">
+      <left>0</left>
+      <top>236</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp37">
+      <left>69</left>
+      <top>236</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp38">
+      <left>210</left>
+      <top>236</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp39">
+      <left>307</left>
+      <top>236</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp40">
+      <left>424</left>
+      <top>236</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp41">
+      <left>0</left>
+      <top>265</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp42">
+      <left>69</left>
+      <top>265</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp43">
+      <left>210</left>
+      <top>265</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp44">
+      <left>307</left>
+      <top>265</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp45">
+      <left>424</left>
+      <top>265</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp46">
+      <left>0</left>
+      <top>294</top>
+      <width>69</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp47">
+      <left>69</left>
+      <top>294</top>
+      <width>141</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp48">
+      <left>210</left>
+      <top>294</top>
+      <width>97</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp49">
+      <left>307</left>
+      <top>294</top>
+      <width>117</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp50">
+      <left>424</left>
+      <top>294</top>
+      <width>424</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp51">
+      <left>0</left>
+      <top>324</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp52">
+      <left>69</left>
+      <top>324</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp53">
+      <left>210</left>
+      <top>324</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp54">
+      <left>307</left>
+      <top>324</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp55">
+      <left>424</left>
+      <top>324</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp56">
+      <left>0</left>
+      <top>353</top>
+      <width>69</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp57">
+      <left>69</left>
+      <top>353</top>
+      <width>141</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp58">
+      <left>210</left>
+      <top>353</top>
+      <width>97</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp59">
+      <left>307</left>
+      <top>353</top>
+      <width>117</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp60">
+      <left>424</left>
+      <top>353</top>
+      <width>424</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp61">
+      <left>0</left>
+      <top>383</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp62">
+      <left>69</left>
+      <top>383</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp63">
+      <left>210</left>
+      <top>383</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp64">
+      <left>307</left>
+      <top>383</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp65">
+      <left>424</left>
+      <top>383</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp66">
+      <left>0</left>
+      <top>412</top>
+      <width>69</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp67">
+      <left>69</left>
+      <top>412</top>
+      <width>141</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp68">
+      <left>210</left>
+      <top>412</top>
+      <width>97</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp69">
+      <left>307</left>
+      <top>412</top>
+      <width>117</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp70">
+      <left>424</left>
+      <top>412</top>
+      <width>424</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp71">
+      <left>0</left>
+      <top>442</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp72">
+      <left>69</left>
+      <top>442</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp73">
+      <left>210</left>
+      <top>442</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp74">
+      <left>307</left>
+      <top>442</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp75">
+      <left>424</left>
+      <top>442</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp76">
+      <left>0</left>
+      <top>471</top>
+      <width>69</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp77">
+      <left>69</left>
+      <top>471</top>
+      <width>141</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp78">
+      <left>210</left>
+      <top>471</top>
+      <width>97</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp79">
+      <left>307</left>
+      <top>471</top>
+      <width>117</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp80">
+      <left>424</left>
+      <top>471</top>
+      <width>424</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp81">
+      <left>0</left>
+      <top>501</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp82">
+      <left>69</left>
+      <top>501</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp83">
+      <left>210</left>
+      <top>501</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp84">
+      <left>307</left>
+      <top>501</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp85">
+      <left>424</left>
+      <top>501</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp86">
+      <left>0</left>
+      <top>530</top>
+      <width>69</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp87">
+      <left>69</left>
+      <top>530</top>
+      <width>141</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp88">
+      <left>210</left>
+      <top>530</top>
+      <width>97</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp89">
+      <left>307</left>
+      <top>530</top>
+      <width>117</width>
+      <height>30</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp90">
+      <left>424</left>
+      <top>530</top>
+      <width>424</width>
+      <height>30</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp91">
+      <left>0</left>
+      <top>560</top>
+      <width>69</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>55675</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp92">
+      <left>69</left>
+      <top>560</top>
+      <width>141</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp93">
+      <left>210</left>
+      <top>560</top>
+      <width>97</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp94">
+      <left>307</left>
+      <top>560</top>
+      <width>117</width>
+      <height>29</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>2015-01-01 23:22</text>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem2/tablebody1/temp95">
+      <left>424</left>
+      <top>560</top>
+      <width>424</width>
+      <height>29</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <text>字样</text>
+      <hAlign>left</hAlign>
+      <cursor>pointer</cursor>
+      <onClick>g5.refreshDetail(this.rowIndex); 
+
+
+</onClick>
+    </control>
+    <control type="LayoutYItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem3">
+      <left>0</left>
+      <top>659</top>
+      <width>848</width>
+      <height>40</height>
+      <backgroundColor>f0f0f0</backgroundColor>
+      <heavyEnabled>false</heavyEnabled>
+    </control>
+    <control type="LayoutX" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem3/layoutx2">
+      <left>280</left>
+      <top>9</top>
+      <width>287</width>
+      <height>31</height>
+      <dockX>center</dockX>
+      <dockY>bottom</dockY>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem3/layoutx2/layoutxitem3">
+      <left>0</left>
+      <top>0</top>
+      <width>96</width>
+      <height>31</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>上一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.pageJump(g5.pageCurrent-1);</onClick>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem3/layoutx2/layoutxitem11">
+      <left>96</left>
+      <top>0</top>
+      <width>95</width>
+      <height>31</height>
+      <backgroundColor>d0d0d0</backgroundColor>
+      <text>1/1</text>
+      <fontColor>008080</fontColor>
+      <fontBold>true</fontBold>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem3/layoutx2/layoutxitem11/panel8">
+      <left>0</left>
+      <top>0</top>
+      <width>95</width>
+      <height>2</height>
+      <dockX>fill</dockX>
+      <dockY>top</dockY>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem3/layoutx2/layoutxitem11/panel9">
+      <left>0</left>
+      <top>29</top>
+      <width>95</width>
+      <height>2</height>
+      <dockX>fill</dockX>
+      <dockY>bottom</dockY>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="LayoutXItem" pathname="/divRoot/layoutx1/layoutxitem2/layouty1/layoutyitem3/layoutx2/layoutxitem12">
+      <left>191</left>
+      <top>0</top>
+      <width>96</width>
+      <height>31</height>
+      <backgroundColor>008080</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+      <text>下一页</text>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <cursor>pointer</cursor>
+      <onClick>g5.pageJump(g5.pageCurrent+1);</onClick>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="4">
+    <taskSetItem name="query">
+      <script1>var e1 = ee.getEditText(ee.getControl("edit1"));
+//发送
+eio.appendInt32(g5.pageSize);
+eio.appendInt32(g5.pageCurrent);
+eio.appendString8(e1);
+
+
+
+
+</script1>
+      <script2><![CDATA[var pageSize = eio.readInt32();
+var pageCurrent = eio.readInt32();
+var e1 = eio.readString8();
+//产生条件语句
+var condition = "where accountName='" + db.encode(session.get("username")) + "'";
+if (e1.length>0) {
+    condition += " and (empAccountName like '%" + db.encode(e1) + "%'";
+    condition += " or cnName like '%" + db.encode(e1) + "%'";
+    condition += " or note like '%" + db.encode(e1) + "%')";
+}
+var sql, sqlResult;
+
+//获取记录数量
+sql = "select count(*) as c from MfEmp " + condition;
+sqlResult = db.executeQuery("QR", sql);
+db.read(sqlResult);
+var count = db.getInt32(sqlResult, "c");
+
+//读取表
+sql =
+    "SELECT id, empAccountName, cnName, left(convert(varchar, regdatetime, 120), 16) as regdatetime, note from MfEmp " +
+    condition + " order by regDatetime desc";
+var sqlResult = db.executeQuery("QR", sql);
+eio.appendInt32(count);
+eio.appendDataSet(sqlResult, "id,empAccountName,cnName,regdatetime,note", pageSize*(pageCurrent-1), pageSize);
+
+
+
+
+
+
+
+]]></script2>
+      <script3>g5.pageRecordCount = eio.readInt32();
+g5.dataset1 = eio.readDataSet();
+g5.pageCount = parseInt((g5.pageRecordCount-1)/g5.pageSize)+1;
+ee.setTableData(ee.getControl("tablebody1"), g5.dataset1, 0);
+ee.setText(ee.getControl("layoutxitem11"), g5.pageCurrent + "/" + g5.pageCount);
+</script3>
+    </taskSetItem>
+    <taskSetItem name="insert">
+      <script1><![CDATA[var e4 = ee.getEditText(ee.getControl("edit4"));
+var e5 = ee.getEditText(ee.getControl("edit5"));
+var e6 = ee.getEditText(ee.getControl("edit6"));
+var e2 = ee.getEditText(ee.getControl("edit2"));
+var e3 = ee.getEditText(ee.getControl("edit3"));
+
+//客户端验证
+if (e5!=e6) {
+    alert("对不起，您两次输入的密码不一致");
+    return;
+}
+if (e5.length<6) {
+    alert("对不起，密码长度至少6位。");
+    return;
+}
+if (e4.length<2) {
+    alert("对不起，用户名的长度至少2位。");
+    return;
+}
+
+//发送
+eio.appendString16(e4);
+eio.appendString16(e5);
+eio.appendString16(e2);
+eio.appendString16(e3);
+
+
+
+]]></script1>
+      <script2>var username = eio.readString16();
+var password = eio.readString16();
+var cnName = eio.readString16();
+var note = eio.readString16();
+
+var sql, sqlResult;
+
+//检测用户名是否存在
+sql = 
+    "select * from mfEmp where accountName='" + db.encode(session.get("username")) + "' "+
+    " and empAccountName='" + db.encode(username) + "'";
+sqlResult = db.executeQuery("QR", sql);
+if (db.read(sqlResult)) {
+    eio.appendString8("F");
+    eio.appendString8("账号已经存在");
+} else {
+    sql = 
+        "insert into mfEmp (accountName,empAccountName,password,cnName,note) values (" +
+        "'" + db.encode(session.get("username")) + "'," +
+        "'" + db.encode(username) + "'," +
+        "'" + db.encode(password) + "'," +
+        "'" + db.encode(cnName) + "'," +
+        "'" + db.encode(note) + "')";
+    db.executeNoneQuery("QR", sql);
+    eio.appendString8("T");
+}
+
+</script2>
+      <script3>var r = eio.readString8();
+if (r!="T") {
+    alert(eio.readString8());
+    return;
+}
+
+query();
+</script3>
+    </taskSetItem>
+    <taskSetItem name="modify">
+      <script1><![CDATA[var e1 = ee.getText(ee.getControl("layoutxitem13"));
+e1 = parseInt(e1);
+if (isNaN(e1)) return;
+var e5 = ee.getEditText(ee.getControl("edit5"));
+var e6 = ee.getEditText(ee.getControl("edit6"));
+var e2 = ee.getEditText(ee.getControl("edit2"));
+var e3 = ee.getEditText(ee.getControl("edit3"));
+
+//客户端验证
+if (e5!=e6) {
+    alert("对不起，您两次输入的密码不一致");
+    return;
+}
+if ((e5.length<6)&amp;&amp;(e5.length>0)) {
+    alert("对不起，密码长度至少6位。");
+    return;
+}
+
+//发送
+eio.appendInt32(e1);
+eio.appendString16(e5);
+eio.appendString16(e2);
+eio.appendString16(e3);]]></script1>
+      <script2><![CDATA[var id = eio.readInt32();
+var password = eio.readString16();
+var cnName = eio.readString16();
+var note = eio.readString16();
+
+var sql, sqlResult;
+
+//检测批号和序号范围是否存在
+sql = 
+    "update mfEmp set ";
+if (password.length>0) {
+    sql += "password='" + es.getMd5(password) + "',";
+}
+sql += 
+    "cnName='" + db.encode(cnName) + "'," +
+    "note='" + db.encode(note) + "' " +
+    "where id=" + id;
+db.executeNoneQuery("QR", sql);
+eio.appendString8("T");
+]]></script2>
+      <script3>var r = eio.readString8();
+if (r=="F") {
+    alert(eio.readString16());
+    return;
+}
+query();
+</script3>
+    </taskSetItem>
+    <taskSetItem name="del">
+      <script1><![CDATA[var e1 = ee.getText(ee.getControl("layoutxitem13"));
+
+//客户端验证
+e1 = parseInt(e1);
+if (!(e1>0)) {
+    alert("请选择一条记录后再进行操作");
+    return;
+}
+
+//发送
+eio.appendInt32(e1);
+]]></script1>
+      <script2>var id = eio.readInt32();
+
+var sql, sqlResult;
+
+sql = 
+    "delete mfEmp where accountName='" + db.encode(session.get("username")) + "' "+
+    " and id=" + id;
+db.executeNoneQuery("QR", sql);
+eio.appendString8("T");
+
+</script2>
+      <script3>query();</script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>

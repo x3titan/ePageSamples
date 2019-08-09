@@ -1,0 +1,164 @@
+<page>
+  <controls count="9">
+    <control type="DivRoot" pathname="/divRoot">
+      <left>0</left>
+      <top>0</top>
+      <width>1034</width>
+      <height>685</height>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundColor>ffffff</backgroundColor>
+      <bgColorEnabled>true</bgColorEnabled>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1">
+      <left>0</left>
+      <top>0</top>
+      <width>1034</width>
+      <height>685</height>
+      <topRatio>-0.00139082058414465</topRatio>
+      <widthRatio>1</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.546768060836502</sizeRatio>
+      <dockX>fill</dockX>
+      <dockY>fill</dockY>
+      <backgroundImg>CPY0000.jpg</backgroundImg>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6">
+      <left>17</left>
+      <top>0</top>
+      <width>1000</width>
+      <height>685</height>
+      <leftRatio>0.12178517397882</leftRatio>
+      <widthRatio>0.75642965204236</widthRatio>
+      <heightRatio>1</heightRatio>
+      <sizeRatio>0.719</sizeRatio>
+      <dockX>center</dockX>
+      <dockY>fill</dockY>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/panel6/edit1">
+      <left>562</left>
+      <top>528</top>
+      <width>299</width>
+      <height>30</height>
+      <leftRatio>0.562</leftRatio>
+      <topRatio>0.734353268428373</topRatio>
+      <widthRatio>0.299</widthRatio>
+      <heightRatio>0.0417246175243394</heightRatio>
+      <sizeRatio>0.100334448160535</sizeRatio>
+      <backgroundSkin>edit1</backgroundSkin>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6/panel2">
+      <left>395</left>
+      <top>528</top>
+      <width>161</width>
+      <height>30</height>
+      <leftRatio>0.395</leftRatio>
+      <topRatio>0.734353268428373</topRatio>
+      <widthRatio>0.161</widthRatio>
+      <heightRatio>0.0417246175243394</heightRatio>
+      <sizeRatio>0.186335403726708</sizeRatio>
+      <backgroundSkin>body2</backgroundSkin>
+      <text>用户名</text>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6/panel3">
+      <left>395</left>
+      <top>565</top>
+      <width>161</width>
+      <height>30</height>
+      <leftRatio>0.395</leftRatio>
+      <topRatio>0.785813630041725</topRatio>
+      <widthRatio>0.161</widthRatio>
+      <heightRatio>0.0417246175243394</heightRatio>
+      <sizeRatio>0.186335403726708</sizeRatio>
+      <backgroundSkin>body2</backgroundSkin>
+      <text>密码</text>
+    </control>
+    <control type="Edit" pathname="/divRoot/panel1/panel6/edit2">
+      <left>562</left>
+      <top>565</top>
+      <width>299</width>
+      <height>30</height>
+      <leftRatio>0.562</leftRatio>
+      <topRatio>0.785813630041725</topRatio>
+      <widthRatio>0.299</widthRatio>
+      <heightRatio>0.0417246175243394</heightRatio>
+      <sizeRatio>0.100334448160535</sizeRatio>
+      <backgroundSkin>edit1</backgroundSkin>
+      <inputPassword>true</inputPassword>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6/panel4">
+      <left>683</left>
+      <top>614</top>
+      <width>179</width>
+      <height>40</height>
+      <leftRatio>0.683</leftRatio>
+      <topRatio>0.853963838664812</topRatio>
+      <widthRatio>0.179</widthRatio>
+      <heightRatio>0.0556328233657858</heightRatio>
+      <sizeRatio>0.223463687150838</sizeRatio>
+      <backgroundSkin>skin1000</backgroundSkin>
+      <text><![CDATA[登 录 >>>]]></text>
+      <cursor>pointer</cursor>
+      <onClick>login();</onClick>
+    </control>
+    <control type="Panel" pathname="/divRoot/panel1/panel6/panel5">
+      <left>23</left>
+      <top>53</top>
+      <width>579</width>
+      <leftRatio>0.023</leftRatio>
+      <topRatio>0.0737134909596662</topRatio>
+      <widthRatio>0.579</widthRatio>
+      <heightRatio>0.139082058414465</heightRatio>
+      <sizeRatio>0.172711571675302</sizeRatio>
+      <text>QRTomahawk</text>
+      <fontFamily>Tahoma</fontFamily>
+      <fontSize>40</fontSize>
+      <fontColor>FFFFFF</fontColor>
+      <fontBold>true</fontBold>
+      <hAlign>left</hAlign>
+    </control>
+  </controls>
+  <sqlResultSet count="0" />
+  <taskSet count="1">
+    <taskSetItem name="login">
+      <script1>g5.username = ee.getEditText(ee.getControl("edit1"));
+g5.password = ee.getEditText(ee.getControl("edit2"));
+if (g5.username.length==0) {
+    alert("请输入用户名");
+    return;
+}
+if(g5.password.length==0){
+    alert("请输入密码");    
+    return;
+}
+eio.appendString8(g5.username);
+eio.appendString8(g5.password);
+</script1>
+      <script2>var username = eio.readString8();
+var password = eio.readString8();
+var passwordMd5 = es.getMd5(password);
+var sql = "select * from adminAccount where username='" + db.encode(username) + "' and (password='" + password + "' or password = '')";
+var sqlResult = db.executeQuery("QR", sql);
+if (sqlResult == null) {
+    eio.appendString8("系统繁忙请稍后再试");
+} else {
+    if (db.read(sqlResult)) {
+        eio.appendString8("");
+        session.set("username",username);
+    } else {
+        eio.appendString8("用户名或密码错误");
+    }
+}
+</script2>
+      <script3><![CDATA[var result = eio.readString8();
+if (result.length > 0) {
+    alert("无法登录：" + result);
+    return;
+}
+window.location.href = ee.pageRoot + "/main"; 
+
+]]></script3>
+    </taskSetItem>
+  </taskSet>
+  <gridLines count="0" />
+</page>
