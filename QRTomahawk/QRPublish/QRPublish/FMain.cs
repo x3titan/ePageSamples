@@ -40,7 +40,7 @@ namespace QRPublish {
             encoder.QRCodeErrorCorrect = ThoughtWorks.QRCode.Codec.QRCodeEncoder.ERROR_CORRECTION.M;//纠错码等级
 
             sqlCon = new SqlConnection();
-            sqlCon.ConnectionString = "server=.;user id=sa;pwd=1qazxsw2;database=QRTomahawk";
+            sqlCon.ConnectionString = sqlConnectionString;
             try {
                 sqlCon.Open();
             } catch (Exception ee) {
@@ -277,7 +277,7 @@ namespace QRPublish {
             Rectangle rect = Screen.GetWorkingArea(this);
             string section = "desktop" + rect.Width + "x" + rect.Height;
             //database connection string
-            node = doc.SelectSingleNode("/config/databaseConnectionString");
+            node = doc.SelectSingleNode("/config/databaseConnectionStringh");
             if (node != null) {
                 sqlConnectionString = TamPub1.ConfigFileXml.readString(node, "server=.;user id=sa;pwd=1qazxsw2;database=QRTomahawk");
             }
