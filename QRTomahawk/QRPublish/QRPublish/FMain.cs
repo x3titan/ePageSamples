@@ -28,29 +28,7 @@ namespace QRPublish {
 
         public FMain() {
             InitializeComponent();
-            printDocument = new PrintDocument();
-            printDocument.PrintPage += new PrintPageEventHandler(this.printDocument_PrintPage);
-            printDocument.BeginPrint += new PrintEventHandler(printDocument_BeginPrint);
-            printDocument.QueryPageSettings += new QueryPageSettingsEventHandler(printDocument_QueryPageSettings);
-            log.richTextBox = richTextBox1;
-            encoder = new ThoughtWorks.QRCode.Codec.QRCodeEncoder();
-            encoder.QRCodeEncodeMode = ThoughtWorks.QRCode.Codec.QRCodeEncoder.ENCODE_MODE.BYTE;//二维码编码方式
-            encoder.QRCodeScale = 10; //每个小方格的宽度
-            encoder.QRCodeVersion = 5; //二维码版本号
-            encoder.QRCodeErrorCorrect = ThoughtWorks.QRCode.Codec.QRCodeEncoder.ERROR_CORRECTION.M;//纠错码等级
-
-            sqlCon = new SqlConnection();
-            sqlCon.ConnectionString = sqlConnectionString;
-            try {
-                sqlCon.Open();
-            } catch (Exception ee) {
-                log.writeLogError("无法连接数据库,errorString=" + ee.Message);
-                return;
-            }
-            sqlCmd = new SqlCommand();
-            sqlCmd.Connection = sqlCon;
-            log.writeLogCommon("数据库连接成功");
-
+            
         }
 
         void printDocument_QueryPageSettings(object sender, QueryPageSettingsEventArgs e) {
@@ -267,103 +245,51 @@ namespace QRPublish {
 
         private void loadConfig() {
             string filename = TamPub1.FileOperation.currentFilePath + "config.xml";
-            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
-            try {
-                doc.Load(filename);
-            } catch (Exception) {
-                return;
-            }
-            System.Xml.XmlNode node;
             Rectangle rect = Screen.GetWorkingArea(this);
             string section = "desktop" + rect.Width + "x" + rect.Height;
             //database connection string
-            node = doc.SelectSingleNode("/config/databaseConnectionStringh");
-            if (node != null) {
-                sqlConnectionString = TamPub1.ConfigFileXml.readString(node, "server=.;user id=sa;pwd=1qazxsw2;database=QRTomahawk");
-            }
+            sqlConnectionString = TamPub1.ConfigFileXml.readString(filename, "dbConnectionString", "server=.;user id=sa;pwd=XXX;database=QRTomahawk");
             //窗口尺寸
-            node = doc.SelectSingleNode("/config/" + section + "/mainWidth");
-            if (node != null) {
-                Width = TamPub1.ConfigFileXml.readInt32(node, 100);
-            }
-            node = doc.SelectSingleNode("/config/" + section + "/mainHeight");
-            if (node != null) {
-                Height = TamPub1.ConfigFileXml.readInt32(node, 100);
-            }
-            node = doc.SelectSingleNode("/config/" + section + "/mainLeft");
-            if (node != null) {
-                Left = TamPub1.ConfigFileXml.readInt32(node, 100);
-            }
-            node = doc.SelectSingleNode("/config/" + section + "/mainTop");
-            if (node != null) {
-                Top = TamPub1.ConfigFileXml.readInt32(node, 100);
-            }
+            Width = TamPub1.ConfigFileXml.readInt32(filename, "config/" + section + "/mainWidth", 100);
+            Height = TamPub1.ConfigFileXml.readInt32(filename, "config/" + section + "/mainHeight", 100);
+            Left = TamPub1.ConfigFileXml.readInt32(filename, "config/" + section + "/mainLeft", 100);
+            Top = TamPub1.ConfigFileXml.readInt32(filename, "config/" + section + "/mainLeft", 100);
             //窗口状态
-            node = doc.SelectSingleNode("/config/" + section + "/mainState");
-            if (node != null) {
-                string state = TamPub1.ConfigFileXml.readString(node, "Normal");
-                if (state.Equals("Normal")) {
-                    WindowState = FormWindowState.Normal;
-                } else if (state.Equals("Maximized")) {
-                    WindowState = FormWindowState.Maximized;
-                }
+            string state = TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/mainState", "Normal");
+            if (state.Equals("Minimized")) {
+                WindowState = FormWindowState.Minimized;
+            } else if (state.Equals("Maximized")) {
+                WindowState = FormWindowState.Maximized;
+            } else {
+                WindowState = FormWindowState.Normal;
             }
             //textbox框
-            node = doc.SelectSingleNode("/config/" + section + "/textBox1");
-            if (node != null) {
-                textBox1.Text = TamPub1.ConfigFileXml.readString(node, "");
-            }
-            node = doc.SelectSingleNode("/config/" + section + "/textBox2");
-            if (node != null) {
-                textBox2.Text = TamPub1.ConfigFileXml.readString(node, "");
-            }
-            node = doc.SelectSingleNode("/config/" + section + "/textBox5");
-            if (node != null) {
-                textBox5.Text = TamPub1.ConfigFileXml.readString(node, "");
-            }
+            textBox1.Text = TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox1", "");
+            textBox2.Text = TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox2", "");
+            textBox5.Text = TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox5", "");
         }
 
         private void saveConfig() {
-            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
-            System.Xml.XmlNode root, sectionNode, node;
-            root = doc.AppendChild(doc.CreateElement("config"));
+            string filename = TamPub1.FileOperation.currentFilePath + "config.xml";
             Rectangle rect = Screen.GetWorkingArea(this);
             string section = "desktop" + rect.Width + "x" + rect.Height;
-            sectionNode = root.AppendChild(doc.CreateElement(section));
-            //窗口状态
-            node = sectionNode.AppendChild(doc.CreateElement("mainState"));
-            if (WindowState == FormWindowState.Maximized) {
-                node.InnerXml = "Maximized";
-                WindowState = FormWindowState.Normal;
-            } else {
-                if (WindowState == FormWindowState.Minimized) {
-                    WindowState = FormWindowState.Normal;
-                }
-                node.InnerXml = "Normal";
-            }
             //窗口尺寸
-            node = sectionNode.AppendChild(doc.CreateElement("mainWidth"));
-            node.InnerXml = Width.ToString();
-            node = sectionNode.AppendChild(doc.CreateElement("mainHeight"));
-            node.InnerXml = Height.ToString();
-            node = sectionNode.AppendChild(doc.CreateElement("mainLeft"));
-            node.InnerXml = Left.ToString();
-            node = sectionNode.AppendChild(doc.CreateElement("mainTop"));
-            node.InnerXml = Top.ToString();
-            //textBox框
-            node = sectionNode.AppendChild(doc.CreateElement("textBox1"));
-            node.InnerXml = textBox1.Text;
-            node = sectionNode.AppendChild(doc.CreateElement("textBox2"));
-            node.InnerXml = textBox2.Text;
-            node = sectionNode.AppendChild(doc.CreateElement("textBox5"));
-            node.InnerXml = textBox5.Text;
-
-            //存盘
-            string filename = TamPub1.FileOperation.currentFilePath + "config.xml";
-            if (System.IO.File.Exists(filename)) {
-                System.IO.File.Delete(filename);
+            TamPub1.ConfigFileXml.writeInt32(filename, "config/" + section + "/mainWidth", Width);
+            TamPub1.ConfigFileXml.writeInt32(filename, "config/" + section + "/mainHeight", Height);
+            TamPub1.ConfigFileXml.writeInt32(filename, "config/" + section + "/mainLeft", Left);
+            TamPub1.ConfigFileXml.writeInt32(filename, "config/" + section + "/mainLeft", Top);
+            //窗口状态
+            if (WindowState == FormWindowState.Minimized) {
+                TamPub1.ConfigFileXml.writeString(filename, "config/" + section + "/mainState", "Minimized");
+            } else if (WindowState == FormWindowState.Maximized) {
+                TamPub1.ConfigFileXml.writeString(filename, "config/" + section + "/mainState", "Maximized");
+            } else {
+                TamPub1.ConfigFileXml.writeString(filename, "config/" + section + "/mainState", "Normal");
             }
-            doc.Save(filename);
+            //textbox框
+            TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox1", textBox1.Text);
+            TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox2", textBox2.Text);
+            TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox5", textBox3.Text);
         }
 
         private bool loadModule(string filename) {
@@ -604,6 +530,28 @@ namespace QRPublish {
 
         private void FMain_Load(object sender, EventArgs e) {
             loadConfig();
+            printDocument = new PrintDocument();
+            printDocument.PrintPage += new PrintPageEventHandler(this.printDocument_PrintPage);
+            printDocument.BeginPrint += new PrintEventHandler(printDocument_BeginPrint);
+            printDocument.QueryPageSettings += new QueryPageSettingsEventHandler(printDocument_QueryPageSettings);
+            log.richTextBox = richTextBox1;
+            encoder = new ThoughtWorks.QRCode.Codec.QRCodeEncoder();
+            encoder.QRCodeEncodeMode = ThoughtWorks.QRCode.Codec.QRCodeEncoder.ENCODE_MODE.BYTE;//二维码编码方式
+            encoder.QRCodeScale = 10; //每个小方格的宽度
+            encoder.QRCodeVersion = 5; //二维码版本号
+            encoder.QRCodeErrorCorrect = ThoughtWorks.QRCode.Codec.QRCodeEncoder.ERROR_CORRECTION.M;//纠错码等级
+
+            sqlCon = new SqlConnection();
+            sqlCon.ConnectionString = sqlConnectionString;
+            try {
+                sqlCon.Open();
+            } catch (Exception ee) {
+                log.writeLogError("无法连接数据库,errorString=" + ee.Message);
+                return;
+            }
+            sqlCmd = new SqlCommand();
+            sqlCmd.Connection = sqlCon;
+            log.writeLogCommon("数据库连接成功");
         }
 
         private void FMain_FormClosing(object sender, FormClosingEventArgs e) {
