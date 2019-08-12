@@ -16,6 +16,7 @@ namespace QRPublish {
         public PrintDocument printDocument;
         public StringReader lineReader;
 
+        public string sqlConnectionString = "";
         public SqlConnection sqlCon = null;
         public SqlCommand sqlCmd;
         public SqlDataReader sqlResult = null;
@@ -275,6 +276,11 @@ namespace QRPublish {
             System.Xml.XmlNode node;
             Rectangle rect = Screen.GetWorkingArea(this);
             string section = "desktop" + rect.Width + "x" + rect.Height;
+            //database connection string
+            node = doc.SelectSingleNode("/config/databaseConnectionString");
+            if (node != null) {
+                sqlConnectionString = TamPub1.ConfigFileXml.readString(node, "server=.;user id=sa;pwd=1qazxsw2;database=QRTomahawk");
+            }
             //窗口尺寸
             node = doc.SelectSingleNode("/config/" + section + "/mainWidth");
             if (node != null) {
