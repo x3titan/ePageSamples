@@ -264,9 +264,9 @@ namespace QRPublish {
                 WindowState = FormWindowState.Normal;
             }
             //textbox框
-            textBox1.Text = TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox1", "");
-            textBox2.Text = TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox2", "");
-            textBox5.Text = TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox5", "");
+            textBox1.Text = TamPub1.ConfigFileXml.readString(filename, "config/textBox1", "");
+            textBox2.Text = TamPub1.ConfigFileXml.readString(filename, "config/textBox2", "");
+            textBox5.Text = TamPub1.ConfigFileXml.readString(filename, "config/textBox5", "");
         }
 
         private void saveConfig() {
@@ -287,9 +287,9 @@ namespace QRPublish {
                 TamPub1.ConfigFileXml.writeString(filename, "config/" + section + "/mainState", "Normal");
             }
             //textbox框
-            TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox1", textBox1.Text);
-            TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox2", textBox2.Text);
-            TamPub1.ConfigFileXml.readString(filename, "config/" + section + "/textBox5", textBox3.Text);
+            TamPub1.ConfigFileXml.writeString(filename, "config/textBox1", textBox1.Text);
+            TamPub1.ConfigFileXml.writeString(filename, "config/textBox2", textBox2.Text);
+            TamPub1.ConfigFileXml.writeString(filename, "config/textBox5", textBox5.Text);
         }
 
         private bool loadModule(string filename) {
