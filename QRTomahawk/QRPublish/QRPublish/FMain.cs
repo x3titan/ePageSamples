@@ -28,7 +28,7 @@ namespace QRPublish {
 
         public FMain() {
             InitializeComponent();
-            
+
         }
 
         void printDocument_QueryPageSettings(object sender, QueryPageSettingsEventArgs e) {
@@ -623,6 +623,24 @@ namespace QRPublish {
 
         }
 
+        private void button5_Click_1(object sender, EventArgs e) {
+            Int64 code1, code2 = 0;
+            Int64 qrSn = 3;
+            UInt32 qrKey = 0;// 529823775;
+            //code1 = TamPub1.EncryptEx.encrypt40bit(qrSn, qrKey);
+            //code2 = TamPub1.EncryptEx.encrypt40bit(qrSn, qrKey ^ 0x55555555);
+            //log.writeLogCommon(code1 + ", " + code2);
+            //qrSn += 4;
+            //code1 = TamPub1.EncryptEx.encrypt40bit(qrSn, qrKey);
+            //code2 = TamPub1.EncryptEx.encrypt40bit(qrSn, qrKey ^ 0x55555555);
+            //log.writeLogCommon(code1 + ", " + code2);
+
+            for (int i = 0; i < 20; i++) {
+                code1 = TamPub1.EncryptEx.encrypt40bit(i, qrKey);
+                log.writeLogCommon(code1.ToString("X10") + " -> " + code1);
+            }
+
+        }
     }
 
     public class PrintSetting {

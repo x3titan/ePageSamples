@@ -43,12 +43,14 @@ namespace TamPub1 {
         /// <summary>对任意长度数据加密，秘钥是字节</summary>
         public static byte[] encrypt(byte[] buff, byte key) {
             byte[] result = new byte[buff.Length];
+            byte keyBak = key;
             for (int i = 0; i < buff.Length; i++) {
-                key = Convert.ToByte(Chaos8Bit[buff[i] ^ key] ^ key);
+                key = Convert.ToByte(Chaos8Bit[buff[i] ^ key]);
                 result[i] = key;
             }
-            for (int i = 0; i < buff.Length; i++) {
-                key = Convert.ToByte(Chaos8Bit[buff[i] ^ key] ^ key);
+            key = keyBak;
+            for (int i = buff.Length - 1; i >= 0; i--) {
+                key = Convert.ToByte(Chaos8Bit[result[i] ^ key]);
                 result[i] = key;
             }
             return result;
