@@ -13,6 +13,7 @@ using System.Xml;
 
 namespace QRPublish {
     public partial class FMain : Form {
+        //http://www.ma315.com/q/q.htm?an=test&c2=3DE85F2271
         public PrintDocument printDocument;
         public StringReader lineReader;
 
